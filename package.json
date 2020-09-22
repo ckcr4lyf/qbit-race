@@ -1,0 +1,19 @@
+{
+  "name": "qbit-race",
+  "version": "1.0.0",
+  "description": "Qbit utilities for racing",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -p .",
+    "dev": "nodemon src/index.ts",
+    "start": "node build/index.js",
+    "test-dev": "ts-node src/index.ts"
+  },
+  "author": "Raghu Saxena",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^14.11.2",
+    "axios": "^0.20.0",
+    "dotenv": "^8.2.0"
+  }
+}
