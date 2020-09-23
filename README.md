@@ -1,11 +1,20 @@
-# WARNING
+# qBittorrent Racing
 
-This repository is still in development. Use at your own risk
+This repository is still in beta. There might be bugs. Feel free to open an issue if you encounter one
 
-Don't @ me if you get 0 ratio
+## Thanks
+
+<center>
+
+[<img src="https://user-images.githubusercontent.com/6680615/88460516-56eac500-cecf-11ea-8552-584eaaac5297.png" width="300">](https://clients.walkerservers.com/)
+
+Massive Thanks to <a href="https://walkerservers.com/">WalkerServers</a> for sponsoring this project. Check them out for affordable, high performance dedicated servers!
+</center>
 
 ## Repo Setup
 
+First, you need to download this repository, install some dependencies, and setup your enivronment variables file. 
+You may run the following commands:
 
 ```
 mkdir -p ~/scripts
@@ -16,28 +25,47 @@ npm install
 cp sample.env .env
 ```
 
-Now open `.env` in an editor like nano or something, and change the values for username and password. Port should be `8080` unless you changed it.
+Now open `.env` in an editor like nano or such, and change the valuesa s per your setup. `QBIT_PORT` is the port the Web UI is listening on, NOT the port for incoming BitTorrent connections.
+
+Once you think you've done it correctly, Validate it by running
+
+```
+npm run validate
+```
+
+If all went well, you'll see something like
+
+```
+2020-09-23T16:03:26.215Z [CONFIG] - Loaded .env
+2020-09-23T16:03:26.237Z [CONFIG] - Updated COOKIE to [redacted]
+2020-09-23T16:03:26.237Z [AUTH] - Login completed in 0.01 seconds.
+2020-09-23T16:03:26.237Z [TEST] - SUCCESS!
+```
 
 Once complete, you can move onto the autodl part.
 
 ## AutoDL setup
 
-In your filter, choose the action tab (or set it as global action). Select run program. 
-In the repo folder, run `pwd` to get the complete path.
-
-it should look like `/home/username/scripts/qbit-race/`. To the end of it, add on `tests/autodl_feed.js`, so it looks like
-
+To get the path to the script which will feed qBittorrent, run the following commands:
 ```
-/home/username/scripts/qbit-race/tests/autodl_feed.js
+cd ~/scripts/qbit-race/bin
+echo "$(pwd)/autodl_feed.js"
 ```
 
-For the arguments, enter:
+You will see a line like
 ```
-"$(InfoHash)" "$(InfoName)" "$(Tracker)" "$(TorrentPathName)"
+/home/username/scripts/qbit-race/bin/autodl_feed.js
 ```
 
-Enable. You should be good. There is no logging right now, so hope for the best. Worst case it wont add it, best case it will add and reannounce appropriately. 
+This is the path to the script. Now in AutoDL, change the Action for your filter (or Global action) to:
+```
+Choose .torrent action - Run Program
+Comamnd - /home/username/scripts/qbit-race/bin/autodl_feed.js
+Arguments - "$(InfoHash)" "$(InfoName)" "$(Tracker)" "$(TorrentPathName)"
+```
 
-# THIS IS NOT COMPLETE! 
+And click OK, and that should be it!
 
-If there is a clear bug (crashing etc) open an issue. Otherwise, be patient, I am ironing out the flow and adding features like discord notifications and logging!
+Now, when AutoDL geta a torrent, it will pass it to the script which will feed it to qBittorrent!
+
+You can view the logs under `~/scripts/qbit-race/logs` to try and debug.
