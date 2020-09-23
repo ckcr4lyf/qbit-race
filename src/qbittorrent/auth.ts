@@ -1,4 +1,24 @@
-export const login = (username: string, password: string) => {
+import axios from 'axios';
+import { QBIT_USERNAME, QBIT_HOST, QBIT_PASSWORD, QBIT_PORT, setCookie } from '../config';
+import { config_t } from '../interfaces';
 
-    console.log(username, password);
+export const login = () => {
+
+    return new Promise((resolve, reject) => {
+        axios.get(`http://${QBIT_HOST}:${QBIT_PORT}/api/v2/auth/login`, {
+            params: {
+                username: QBIT_USERNAME,
+                password: QBIT_PASSWORD
+            }
+        }).then(response => {
+            if (response.headers['set-cookie']){
+                setCookie(response.headers['set-cookie'][0]);
+                resolve();
+            } else {
+                reject();
+            }
+        }).catch(error => {
+            reject();
+        });
+    });
 }
