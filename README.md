@@ -1,6 +1,8 @@
 # qBittorrent Racing
 
-This repository is still in beta. There might be bugs. Feel free to open an issue if you encounter one
+This repository is still in beta. There might be bugs. Feel free to open an issue if you encounter one.
+
+You need node v12+ to run this. 
 
 ## Thanks
 
@@ -10,6 +12,16 @@ This repository is still in beta. There might be bugs. Feel free to open an issu
 
 Massive Thanks to <a href="https://walkerservers.com/">WalkerServers</a> for sponsoring this project. Check them out for affordable, high performance dedicated servers!
 </center>
+
+## TODO
+
+Features planned are:
+
+* Automatic tagging of torrents based on tracker
+* Pausing completed torrents when new is added
+* Skipping if 'x' amount of torrents currently 'racing'
+* Discord Notifications
+* ??? 
 
 ## Repo Setup
 

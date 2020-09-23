@@ -5,7 +5,7 @@ import { feedLogger } from './helpers/logger';
 
 module.exports = async (args: string[]) => {
 
-    const infohash = args[0];
+    const infohash = args[0].toLowerCase();
     const torrentName = args[1];
     const tracker = args[2];
     const path = args[3];

@@ -5,7 +5,7 @@ const api_1 = require("./qbittorrent/api");
 const utilities_1 = require("./helpers/utilities");
 const logger_1 = require("./helpers/logger");
 module.exports = async (args) => {
-    const infohash = args[0];
+    const infohash = args[0].toLowerCase();
     const torrentName = args[1];
     const tracker = args[2];
     const path = args[3];

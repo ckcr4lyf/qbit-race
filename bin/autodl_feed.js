@@ -8,11 +8,14 @@ if (!fs.existsSync(logsDir) || !fs.lstatSync(logsDir).isDirectory()){
     fs.mkdirSync(logsDir);
 }
 
+const autodlLogPath = path.join(logsDir, 'autodl.log');
+
 //Called with insufficient arguments
 if (process.argv.length !== 6){
-    const logPath = path.join(logsDir, 'feeder.log');
-    fs.appendFileSync(logPath, `BAD AUTODL CALL - ${process.argv.join(',')}\n`);
+    fs.appendFileSync(autodlLogPath, `BAD AUTODL CALL - ${process.argv.join(',')}\n`);
     process.exit(1);
+} else {
+    fs.appendFileSync(autodlLogPath, `GOOD AUTODL CALL - ${process.argv.join(',')}\n`);
 }
 
 const add_torrent = require('../build/add_torrent');
