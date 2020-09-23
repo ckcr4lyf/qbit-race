@@ -2,4 +2,5 @@
 node_modules/
 **/*.map
 notes.txt
+logs/
 tests/*.torrent

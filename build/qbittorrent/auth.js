@@ -16,10 +16,15 @@ exports.login = () => {
                 resolve();
             }
             else {
-                reject();
+                reject(response.status);
             }
         }).catch(error => {
-            reject();
+            if (error.response) {
+                reject(error.response.status);
+            }
+            else {
+                reject(999);
+            }
         });
     });
 };

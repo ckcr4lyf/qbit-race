@@ -7,6 +7,7 @@
     "build": "tsc -p .",
     "dev": "nodemon src/index.ts",
     "start": "node build/index.js",
+    "validate": "node tests/validate.js",
     "test-dev": "ts-node src/index.ts"
   },
   "author": "Raghu Saxena",

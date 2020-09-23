@@ -2,7 +2,8 @@ import axios from 'axios';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 
-import { QBIT_USERNAME, QBIT_HOST, QBIT_PASSWORD, QBIT_PORT, COOKIE } from '../config';
+import { QBIT_HOST, QBIT_PORT, COOKIE } from '../config';
+import { feedLogger  } from '../helpers/logger';
 
 export const getTorrents = () => {
     axios.get(`http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/info`, {
@@ -18,8 +19,15 @@ export const getTorrents = () => {
 export const addTorrent = (path: string) => {
     return new Promise((resolve, reject) => {
         let formData = new FormData();
-        const torrentData = fs.readFileSync(path);
-        formData.append("torrents", torrentData, 'dummy.torrent');
+
+        try {
+            const torrentData = fs.readFileSync(path);
+            formData.append("torrents", torrentData, 'dummy.torrent');
+        } catch (error) {
+            feedLogger.log('ADD TORRENT', `Unable to read file ${path}`);
+            reject();
+        }
+
         axios.request({
             method: 'POST',
             url: `http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/add`,
@@ -30,13 +38,11 @@ export const addTorrent = (path: string) => {
             },
             data: formData
         }).then(response => {
-            console.log(`[ADD TORRENT] Successfully added to qBittorrent!`);
+            feedLogger.log(`ADD TORRENT`, `Successfully added to qBittorrent!`);
             resolve();
-            // console.log(response.status);
-            // console.log(response.data);
         }).catch(error => {
+            feedLogger.log("ADD TORRENT", `Failed with error code ${error.response.status}`);
             reject();
-            console.log("RIP", error.response.status, error.response.data);
         });
     });
 }
@@ -53,15 +59,13 @@ export const getTrackers = (infohash: string): Promise<any[]> => {
         }).then(response => {
             resolve(response.data);
         }).catch(error => {
+            feedLogger.log(`GET TRACKERS`, `Failed with error code ${error.response.status}`)
             reject(error);
-            console.log("RIP", error);
         })
     })
 }
 
 export const reannounce = (infohash: string) => {
-    console.log(`In reannounce`);
-
     return new Promise((resolve, reject) => {
         axios.get(`http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/reannounce`, {
             params: {
@@ -71,9 +75,9 @@ export const reannounce = (infohash: string) => {
                 'Cookie': COOKIE
             }
         }).then(response => {
-            console.log(response.status, response.data);
             resolve();
         }).catch(error => {
+            feedLogger.log(`REANNOUNCE`, `Failed with error code ${error.response.status}`)
             reject(error);
         })
     })
