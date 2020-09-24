@@ -15,9 +15,9 @@ class Logger {
             }
         };
         this.logfile = path.join(__dirname, '../../logs', logfile);
-        if (!config_1.TESTING) {
-            fs.appendFileSync(this.logfile, '\n');
-        }
+        // if (!TESTING){
+        //     fs.appendFileSync(this.logfile, '\n');
+        // }
     }
 }
 exports.feedLogger = new Logger('feeder.log');

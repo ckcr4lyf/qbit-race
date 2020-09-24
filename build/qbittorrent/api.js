@@ -1,19 +1,44 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.reannounce = exports.getTrackers = exports.addTorrent = exports.getTorrents = void 0;
+exports.reannounce = exports.getTrackers = exports.addTorrent = exports.pauseTorrents = exports.getTorrents = void 0;
 const axios_1 = require("axios");
 const FormData = require("form-data");
 const fs = require("fs");
 const config_1 = require("../config");
 const logger_1 = require("../helpers/logger");
 exports.getTorrents = () => {
-    axios_1.default.get(`http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/info`, {
-        headers: { 'Cookie': config_1.COOKIE }
-    }).then(response => {
-        console.log(response.status);
-        console.log(response.data);
-    }).catch(error => {
-        console.log("RIP", error);
+    return new Promise((resolve, reject) => {
+        axios_1.default.get(`http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/info`, {
+            headers: { 'Cookie': config_1.COOKIE }
+        }).then(response => {
+            // console.log(response.status);
+            // console.log(response.data);
+            resolve(response.data);
+        }).catch(error => {
+            logger_1.feedLogger.log(`GET TORRENTS`, `Failed with error code ${error.response.status}`);
+            reject(error.response.status);
+        });
+    });
+};
+exports.pauseTorrents = (torrents) => {
+    return new Promise((resolve, reject) => {
+        if (torrents.length === 0) {
+            resolve();
+            return;
+        }
+        const infohashes = torrents.map(torrent => torrent.hash);
+        axios_1.default.get(`http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/pause`, {
+            params: {
+                hashes: infohashes.join('|')
+            },
+            headers: { 'Cookie': config_1.COOKIE }
+        }).then(response => {
+            logger_1.feedLogger.log('PAUSE TORRENTS', `Successfully paused ${infohashes.length} torrents!`);
+            resolve();
+        }).catch(error => {
+            logger_1.feedLogger.log('PAUSE TORRENTS', `Failed with error code ${error.response.status}`);
+            reject();
+        });
     });
 };
 exports.addTorrent = (path) => {

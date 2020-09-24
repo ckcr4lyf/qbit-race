@@ -4,6 +4,8 @@ const auth_1 = require("./qbittorrent/auth");
 const api_1 = require("./qbittorrent/api");
 const utilities_1 = require("./helpers/utilities");
 const logger_1 = require("./helpers/logger");
+const pre_race_1 = require("./helpers/pre_race");
+const settings_1 = require("../settings");
 module.exports = async (args) => {
     const infohash = args[0].toLowerCase();
     const torrentName = args[1];
@@ -19,6 +21,12 @@ module.exports = async (args) => {
     }
     let t2 = Date.now();
     logger_1.feedLogger.log('AUTH', `Login completed in ${((t2 - t1) / 1000).toFixed(2)} seconds.`);
+    logger_1.feedLogger.log('PRE RACE', 'Performing Pre Race check...');
+    const okay = await pre_race_1.preRaceCheck();
+    if (okay === false) {
+        logger_1.feedLogger.log('PRE RACE', `Conditions not met. Skipping ${torrentName}`);
+        process.exit(0); //it is a soft exit. 
+    }
     logger_1.feedLogger.log('ADD TORRENT', `Adding torrent ${torrentName}`);
     try {
         await api_1.addTorrent(path);
@@ -29,9 +37,7 @@ module.exports = async (args) => {
     await utilities_1.sleep(5000);
     logger_1.feedLogger.log("ADD TORRENT", "Getting trackers");
     let attempts = 0;
-    const WAIT_TIME = 5000; //In milliseconds
-    const ATTEMPT_LIMIT = 50;
-    while (attempts < ATTEMPT_LIMIT) {
+    while (attempts < settings_1.SETTINGS.REANNOUNCE_LIMIT) {
         logger_1.feedLogger.log(`REANNOUNCE`, `Attempt #${attempts + 1}: Querying tracker status...`);
         try {
             let trackers = await api_1.getTrackers(infohash);
@@ -41,7 +47,7 @@ module.exports = async (args) => {
                 //We need to reannounce
                 logger_1.feedLogger.log('REANNOUNCE', 'Need to reannounce. Sending request and sleeping...');
                 await api_1.reannounce(infohash);
-                await utilities_1.sleep(WAIT_TIME);
+                await utilities_1.sleep(settings_1.SETTINGS.REANNOUNCE_INTERVAL);
                 attempts++;
             }
             else {
@@ -54,5 +60,7 @@ module.exports = async (args) => {
             process.exit(1);
         }
     }
+    //We got here but failed reannounce failed. 
+    //Delete. 
 };
 //# sourceMappingURL=add_torrent.js.map

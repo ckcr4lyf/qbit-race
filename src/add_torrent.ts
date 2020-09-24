@@ -2,6 +2,8 @@ import { login } from './qbittorrent/auth';
 import { addTorrent, getTrackers, reannounce } from './qbittorrent/api'
 import { sleep } from './helpers/utilities';
 import { feedLogger } from './helpers/logger';
+import { preRaceCheck } from './helpers/pre_race';
+import { SETTINGS } from '../settings';
 
 module.exports = async (args: string[]) => {
 
@@ -20,6 +22,15 @@ module.exports = async (args: string[]) => {
 
     let t2 = Date.now();
     feedLogger.log('AUTH', `Login completed in ${((t2 - t1) / 1000).toFixed(2)} seconds.`);
+    feedLogger.log('PRE RACE', 'Performing Pre Race check...');
+
+    const okay = await preRaceCheck();
+
+    if (okay === false){
+        feedLogger.log('PRE RACE', `Conditions not met. Skipping ${torrentName}`);
+        process.exit(0); //it is a soft exit. 
+    }
+
     feedLogger.log('ADD TORRENT', `Adding torrent ${torrentName}`);
 
     try {
@@ -31,10 +42,8 @@ module.exports = async (args: string[]) => {
     await sleep(5000);
     feedLogger.log("ADD TORRENT",  "Getting trackers");
     let attempts = 0;
-    const WAIT_TIME = 5000; //In milliseconds
-    const ATTEMPT_LIMIT = 50;
 
-    while (attempts < ATTEMPT_LIMIT) {
+    while (attempts < SETTINGS.REANNOUNCE_LIMIT) {
 
         feedLogger.log(`REANNOUNCE`,  `Attempt #${attempts + 1}: Querying tracker status...`);
         
@@ -47,7 +56,7 @@ module.exports = async (args: string[]) => {
                 //We need to reannounce
                 feedLogger.log('REANNOUNCE', 'Need to reannounce. Sending request and sleeping...');
                 await reannounce(infohash);
-                await sleep(WAIT_TIME);
+                await sleep(SETTINGS.REANNOUNCE_INTERVAL);
                 attempts++;
             } else {
                 feedLogger.log('REANNOUNCE', 'Tracker is OK. Exiting...');
@@ -58,4 +67,9 @@ module.exports = async (args: string[]) => {
             process.exit(1);
         }
     }
+    
+    //We got here but failed reannounce failed. 
+    //Delete. 
+
+    
 }

@@ -9,9 +9,9 @@ class Logger {
     constructor (logfile: string) {
         this.logfile = path.join(__dirname, '../../logs', logfile);
 
-        if (!TESTING){
-            fs.appendFileSync(this.logfile, '\n');
-        }
+        // if (!TESTING){
+        //     fs.appendFileSync(this.logfile, '\n');
+        // }
     }
 
     log = (prefix: string, message: string) => {

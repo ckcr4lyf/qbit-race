@@ -38,7 +38,7 @@ if (!QBIT_PASSWORD) {
 }
 const setCookie = (cookie) => {
     exports.COOKIE = COOKIE = cookie;
-    logger_1.feedLogger.log(`CONFIG`, `Updated COOKIE to ${cookie}`);
+    logger_1.feedLogger.log(`CONFIG`, `Updated COOKIE!`); // to ${cookie}`);
 };
 exports.setCookie = setCookie;
 const setTesting = (valid) => {

@@ -4,3 +4,4 @@ node_modules/
 notes.txt
 logs/
 tests/*.torrent
+tests/examples.js
