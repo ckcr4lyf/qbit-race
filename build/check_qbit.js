@@ -2,11 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const config_1 = require("./config");
 const auth_1 = require("./qbittorrent/auth");
-const config_2 = require("./config");
 const logger_1 = require("./helpers/logger");
+const api_1 = require("./discord/api");
+const settings_1 = require("../settings");
+const messages_1 = require("./discord/messages");
 module.exports = async () => {
     let t1 = Date.now();
-    config_2.setTesting(true);
     try {
         await auth_1.login();
     }
@@ -21,6 +22,21 @@ module.exports = async () => {
     }
     let t2 = Date.now();
     logger_1.feedLogger.log('AUTH', `Login completed in ${((t2 - t1) / 1000).toFixed(2)} seconds.`);
+    const { enabled, botUsername, botAvatar } = settings_1.SETTINGS.DISCORD_NOTIFICATIONS || { enabled: false };
+    if (enabled === true) {
+        try {
+            // await sendMessage({
+            //     content: 'qbit-race validation test',
+            //     username: botUsername,
+            //     avatar_url: botAvatar
+            // });
+            await api_1.sendMessage(messages_1.addMessage('Ubuntu 20.04 LTS', ['ubuntu.com', 'linux.com'], 1024 * 1024 * 1024 * 3.412, 1));
+        }
+        catch (error) {
+            logger_1.feedLogger.log('DISCORD', 'Failed to validate discord webhook. Either disable discord notifications or fix the webhook.');
+            process.exit(1);
+        }
+    }
     logger_1.feedLogger.log(`TEST`, `SUCCESS!`);
 };
 //# sourceMappingURL=check_qbit.js.map

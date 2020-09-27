@@ -6,6 +6,8 @@ const utilities_1 = require("./helpers/utilities");
 const logger_1 = require("./helpers/logger");
 const pre_race_1 = require("./helpers/pre_race");
 const settings_1 = require("../settings");
+const api_2 = require("./discord/api");
+const messages_1 = require("./discord/messages");
 module.exports = async (args) => {
     const infohash = args[0].toLowerCase();
     const torrentName = args[1];
@@ -34,9 +36,33 @@ module.exports = async (args) => {
     catch (error) {
         process.exit(1);
     }
+    //Wait for torrent to register in Qbit, initial announce.
     await utilities_1.sleep(5000);
-    logger_1.feedLogger.log("ADD TORRENT", "Getting trackers");
+    //Now we get the torrent's trackers, which will let us set the tags.
+    let tags = [];
+    try {
+        let trackers = await api_1.getTrackers(infohash);
+        trackers.splice(0, 3);
+        tags = trackers.map(({ url }) => new URL(url).hostname);
+        logger_1.feedLogger.log('ADD TORRENT', `Adding ${tags.length} tags.`);
+        await api_1.addTags([{ hash: infohash }], tags);
+    }
+    catch (error) {
+        logger_1.feedLogger.log('ADD TORRENT', `Failed to add tags. Error code ${error}`);
+    }
+    //We also want to get the size of the torrent, for the notification.
+    let torrent;
+    try {
+        torrent = await api_1.getTorrentInfo(infohash);
+    }
+    catch (error) {
+        process.exit(1);
+    }
+    //Now we move anto reannounce
+    // await sleep(5000);
+    logger_1.feedLogger.log("ADD TORRENT", "Starting reannounce check...");
     let attempts = 0;
+    let announceOK = false;
     while (attempts < settings_1.SETTINGS.REANNOUNCE_LIMIT) {
         logger_1.feedLogger.log(`REANNOUNCE`, `Attempt #${attempts + 1}: Querying tracker status...`);
         try {
@@ -51,6 +77,7 @@ module.exports = async (args) => {
                 attempts++;
             }
             else {
+                announceOK = true;
                 logger_1.feedLogger.log('REANNOUNCE', 'Tracker is OK. Exiting...');
                 break;
             }
@@ -60,7 +87,22 @@ module.exports = async (args) => {
             process.exit(1);
         }
     }
-    //We got here but failed reannounce failed. 
-    //Delete. 
+    //We got here but failed reannounce failed. Delete it.
+    if (announceOK === false) {
+        logger_1.feedLogger.log('REANNOUNCE', `Did not get an OK from tracker even after ${settings_1.SETTINGS.REANNOUNCE_LIMIT} attempts. Deleting...`);
+        await api_1.deleteTorrents([{ hash: infohash }]);
+    }
+    else {
+        //Send message to discord (if enabled)
+        const { enabled, botUsername, botAvatar } = settings_1.SETTINGS.DISCORD_NOTIFICATIONS || { enabled: false };
+        if (enabled === true) {
+            try {
+                await api_2.sendMessage(messages_1.addMessage(torrent.name, tags, torrent.size, attempts));
+            }
+            catch (error) {
+                process.exit(1);
+            }
+        }
+    }
 };
 //# sourceMappingURL=add_torrent.js.map

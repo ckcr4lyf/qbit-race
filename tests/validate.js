@@ -8,5 +8,7 @@ if (!fs.existsSync(logsDir) || !fs.lstatSync(logsDir).isDirectory()){
     fs.mkdirSync(logsDir);
 }
 
+const { setLogfile } = require('../build/config');
+setLogfile('tests.log');
 const check_qbit = require('../build/check_qbit');
 check_qbit();

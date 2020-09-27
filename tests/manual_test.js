@@ -1,10 +1,15 @@
 #!/usr/bin/env node
-
 const fs = require('fs');
 const path = require('path');
 
+//Create logs folder if it doesnt exist
+const logsDir = path.join(__dirname, '../logs');
+if (!fs.existsSync(logsDir) || !fs.lstatSync(logsDir).isDirectory()){
+    fs.mkdirSync(logsDir);
+}
+
+const { setLogfile } = require('../build/config');
+setLogfile('tests.log');
 const add_torrent = require('../build/add_torrent');
-let args = ["d0d14c926e6e99761a2fdcff27b403d96376eff6","Fake Name", "fake.tracker", "/home/poiasd/scripts/qbit-race/tests/sample.torrent"];
+let args = ["hash","Fake Name", "fake.tracker", "/home/poiasd/scripts/qbit-race/tests/sample.torrent"];
 add_torrent(args);
-// args = ["d0d14c926e6e99761a2fdcff27b403d96376eff6","Fake Name", "mywaifu.best", "/home/poiasd/scripts/qbit-race/tests/sample.torrent"];
-// add_torrent(args);

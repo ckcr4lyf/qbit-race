@@ -1,8 +1,7 @@
-const { setTesting } = require('../build/config');
-setTesting(true);
-
+const { setLogfile } = require('../build/config');
+setLogfile('tests.log');
 const { login } = require('../build/qbittorrent/auth');
-const { getTorrents } = require('../build/qbittorrent/api');
+const { getTorrents, getTrackers, addTags } = require('../build/qbittorrent/api');
 const { preRaceCheck } = require('../build/helpers/pre_race')
 
 const SEEDING_STATES = ['uploading', 'stalledUP', 'forcedUP'];
@@ -10,8 +9,26 @@ const SEEDING_STATES = ['uploading', 'stalledUP', 'forcedUP'];
 (async() => {
 
     await login();
-    const okay = await preRaceCheck();
-    console.log(okay);
+    let torrents = await getTorrents();
+    const torrent = torrents[0];
+    console.log(torrent);
+    return;
+    for (let x = 0; x < torrents.length; x++){
+        const torrent = torrents[x];
+        let trackers = await getTrackers(torrent.hash);
+        trackers.splice(0, 3); //Remove DHT, PEX & LSD
+        // const tags = trackers.map( ({ url }) => {
+        //     let x = new URL(url)
+        //     return x.hostname;
+        // });
+        const tags = trackers.map(({ url }) => new URL(url).hostname);
+        await addTags([torrent], tags);
+    }
+
+    // console.log(tags);
+    // console.log(trackers);
+    // const okay = await preRaceCheck();
+    // console.log(okay);
     /*
     let torrents = await getTorrents();
     torrents = torrents.map(({name, hash, state, added_on}) => ({name, hash, state, added_on}));
@@ -28,4 +45,4 @@ const SEEDING_STATES = ['uploading', 'stalledUP', 'forcedUP'];
     console.log(torrents);
     // console.log({ downloading, paused, seeding });
     */
-})();
+})();   

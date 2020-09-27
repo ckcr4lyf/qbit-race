@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { QBIT_USERNAME, QBIT_HOST, QBIT_PASSWORD, QBIT_PORT, setCookie } from '../config';
-import { config_t } from '../interfaces';
 
 export const login = () => {
 

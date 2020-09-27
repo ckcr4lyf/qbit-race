@@ -5,6 +5,24 @@ import * as fs from 'fs';
 import { QBIT_HOST, QBIT_PORT, COOKIE } from '../config';
 import { feedLogger  } from '../helpers/logger';
 
+export const getTorrentInfo = (infohash: string) => {
+    return new Promise((resolve, reject) => {
+        axios.get(`http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/info`, {
+            params: {
+                hashes: infohash
+            },
+            headers: {'Cookie': COOKIE}
+        }).then(response => {
+            // console.log(response.status);
+            // console.log(response.data);
+            resolve(response.data[0]);
+        }).catch(error => {
+            feedLogger.log(`GET TORRENT INFO`, `Failed with error code ${error.response.status}`);
+            reject(error.response.status);
+        });
+    })
+}
+
 export const getTorrents = (): Promise<any[]> => {
     return new Promise((resolve, reject) => {
         axios.get(`http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/info`, {
@@ -42,6 +60,91 @@ export const pauseTorrents = (torrents: any[]) => {
             reject();
         });
     })
+}
+
+export const resumeTorrents = (torrents: any[]) => {
+    return new Promise((resolve, reject) => {
+
+        if (torrents.length === 0){
+            resolve();
+            return;
+        }
+
+        const infohashes = torrents.map(torrent => torrent.hash);
+        axios.get(`http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/resume`, {
+            params: {
+                hashes: infohashes.join('|')
+            },
+            headers: {'Cookie': COOKIE}
+        }).then(response => {
+            feedLogger.log('RESUME TORRENTS', `Successfully resumed ${infohashes.length} torrents!`);
+            resolve();
+        }).catch(error => {
+            feedLogger.log('RESUME TORRENTS', `Failed with error code ${error.response.status}`);
+            reject();
+        });
+    })
+}
+
+export const deleteTorrents = (torrents: any[]) => {
+    return new Promise((resolve, reject) => {
+
+        if (torrents.length === 0){
+            resolve();
+            return;
+        }
+
+        const infohashes = torrents.map(torrent => torrent.hash);
+        axios.get(`http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/delete`, {
+            params: {
+                hashes: infohashes.join('|'),
+                deleteFiles: true
+            },
+            headers: {'Cookie': COOKIE}
+        }).then(response => {
+            feedLogger.log('DELETE', `Successfully deleted ${torrents.length} torrents.`);
+            resolve();
+        }).catch(error => {
+            feedLogger.log('DELETE', `Failed with error code ${error.response.status}`);
+            reject();
+        })
+    })
+}
+
+export const addTags = (torrents: any[], tags: string[]) => {
+    return new Promise((resolve, reject) => {
+
+        if (torrents.length === 0){
+            resolve();
+            return;
+        }
+
+        if (tags.length === 0){
+            resolve();
+            return;
+        }
+
+        const infohashes = torrents.map(torrent => torrent.hash);
+        // const payload = new FormData();
+        // payload.append('hashes', infohashes.join('|'));
+        // payload.append('tags', tags.join(','));
+        let payload = `hashes=${infohashes.join('|')}&tags=${tags.join(',')}`;
+        axios.request({
+            method: 'POST',
+            url: `http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/addTags`, 
+            data: payload,
+            headers: {
+                'Cookie': COOKIE,
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        }).then(response => {
+            feedLogger.log('ADD TAGS', `Successfully added ${tags.length} tags to ${torrents.length} torrents.`);
+            resolve();
+        }).catch(error => {
+            // console.log(error.response);
+            feedLogger.log('ADD TAGS', `Failed with error code ${error.response.status}`);
+        });
+    });
 }
 
 export const addTorrent = (path: string) => {

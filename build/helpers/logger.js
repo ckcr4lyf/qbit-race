@@ -7,17 +7,13 @@ const config_1 = require("../config");
 class Logger {
     constructor(logfile) {
         this.log = (prefix, message) => {
+            let logfile = path.join(__dirname, '../../logs', config_1.LOGFILE); //Dynamically get the name from the environment / memory variable.
             let timeString = new Date().toISOString();
             let logEntry = `${timeString} [${prefix}] - ${message}\n`;
             console.log(logEntry.trim());
-            if (!config_1.TESTING) {
-                fs.appendFileSync(this.logfile, logEntry);
-            }
+            fs.appendFileSync(logfile, logEntry);
         };
         this.logfile = path.join(__dirname, '../../logs', logfile);
-        // if (!TESTING){
-        //     fs.appendFileSync(this.logfile, '\n');
-        // }
     }
 }
 exports.feedLogger = new Logger('feeder.log');

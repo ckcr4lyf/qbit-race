@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { TESTING } from '../config';
+import { LOGFILE } from '../config';
 
 class Logger {
 
@@ -8,22 +8,14 @@ class Logger {
 
     constructor (logfile: string) {
         this.logfile = path.join(__dirname, '../../logs', logfile);
-
-        // if (!TESTING){
-        //     fs.appendFileSync(this.logfile, '\n');
-        // }
     }
 
     log = (prefix: string, message: string) => {
-
+        let logfile = path.join(__dirname, '../../logs', LOGFILE); //Dynamically get the name from the environment / memory variable.
         let timeString = new Date().toISOString();
         let logEntry = `${timeString} [${prefix}] - ${message}\n`;
-
         console.log(logEntry.trim());
-
-        if (!TESTING){
-            fs.appendFileSync(this.logfile, logEntry);
-        }
+        fs.appendFileSync(logfile, logEntry);
     }
 }
 

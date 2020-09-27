@@ -1,11 +1,28 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.reannounce = exports.getTrackers = exports.addTorrent = exports.pauseTorrents = exports.getTorrents = void 0;
+exports.reannounce = exports.getTrackers = exports.addTorrent = exports.addTags = exports.deleteTorrents = exports.resumeTorrents = exports.pauseTorrents = exports.getTorrents = exports.getTorrentInfo = void 0;
 const axios_1 = require("axios");
 const FormData = require("form-data");
 const fs = require("fs");
 const config_1 = require("../config");
 const logger_1 = require("../helpers/logger");
+exports.getTorrentInfo = (infohash) => {
+    return new Promise((resolve, reject) => {
+        axios_1.default.get(`http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/info`, {
+            params: {
+                hashes: infohash
+            },
+            headers: { 'Cookie': config_1.COOKIE }
+        }).then(response => {
+            // console.log(response.status);
+            // console.log(response.data);
+            resolve(response.data[0]);
+        }).catch(error => {
+            logger_1.feedLogger.log(`GET TORRENT INFO`, `Failed with error code ${error.response.status}`);
+            reject(error.response.status);
+        });
+    });
+};
 exports.getTorrents = () => {
     return new Promise((resolve, reject) => {
         axios_1.default.get(`http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/info`, {
@@ -38,6 +55,81 @@ exports.pauseTorrents = (torrents) => {
         }).catch(error => {
             logger_1.feedLogger.log('PAUSE TORRENTS', `Failed with error code ${error.response.status}`);
             reject();
+        });
+    });
+};
+exports.resumeTorrents = (torrents) => {
+    return new Promise((resolve, reject) => {
+        if (torrents.length === 0) {
+            resolve();
+            return;
+        }
+        const infohashes = torrents.map(torrent => torrent.hash);
+        axios_1.default.get(`http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/resume`, {
+            params: {
+                hashes: infohashes.join('|')
+            },
+            headers: { 'Cookie': config_1.COOKIE }
+        }).then(response => {
+            logger_1.feedLogger.log('RESUME TORRENTS', `Successfully resumed ${infohashes.length} torrents!`);
+            resolve();
+        }).catch(error => {
+            logger_1.feedLogger.log('RESUME TORRENTS', `Failed with error code ${error.response.status}`);
+            reject();
+        });
+    });
+};
+exports.deleteTorrents = (torrents) => {
+    return new Promise((resolve, reject) => {
+        if (torrents.length === 0) {
+            resolve();
+            return;
+        }
+        const infohashes = torrents.map(torrent => torrent.hash);
+        axios_1.default.get(`http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/delete`, {
+            params: {
+                hashes: infohashes.join('|'),
+                deleteFiles: true
+            },
+            headers: { 'Cookie': config_1.COOKIE }
+        }).then(response => {
+            logger_1.feedLogger.log('DELETE', `Successfully deleted ${torrents.length} torrents.`);
+            resolve();
+        }).catch(error => {
+            logger_1.feedLogger.log('DELETE', `Failed with error code ${error.response.status}`);
+            reject();
+        });
+    });
+};
+exports.addTags = (torrents, tags) => {
+    return new Promise((resolve, reject) => {
+        if (torrents.length === 0) {
+            resolve();
+            return;
+        }
+        if (tags.length === 0) {
+            resolve();
+            return;
+        }
+        const infohashes = torrents.map(torrent => torrent.hash);
+        // const payload = new FormData();
+        // payload.append('hashes', infohashes.join('|'));
+        // payload.append('tags', tags.join(','));
+        let payload = `hashes=${infohashes.join('|')}&tags=${tags.join(',')}`;
+        axios_1.default.request({
+            method: 'POST',
+            url: `http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/addTags`,
+            data: payload,
+            headers: {
+                'Cookie': config_1.COOKIE,
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        }).then(response => {
+            logger_1.feedLogger.log('ADD TAGS', `Successfully added ${tags.length} tags to ${torrents.length} torrents.`);
+            resolve();
+        }).catch(error => {
+            // console.log(error.response);
+            logger_1.feedLogger.log('ADD TAGS', `Failed with error code ${error.response.status}`);
         });
     });
 };

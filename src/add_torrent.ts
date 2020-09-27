@@ -1,9 +1,11 @@
 import { login } from './qbittorrent/auth';
-import { addTorrent, getTrackers, reannounce } from './qbittorrent/api'
+import { addTags, addTorrent, deleteTorrents, getTorrentInfo, getTrackers, reannounce } from './qbittorrent/api'
 import { sleep } from './helpers/utilities';
 import { feedLogger } from './helpers/logger';
 import { preRaceCheck } from './helpers/pre_race';
 import { SETTINGS } from '../settings';
+import { sendMessage } from './discord/api';
+import { addMessage } from './discord/messages';
 
 module.exports = async (args: string[]) => {
 
@@ -23,7 +25,6 @@ module.exports = async (args: string[]) => {
     let t2 = Date.now();
     feedLogger.log('AUTH', `Login completed in ${((t2 - t1) / 1000).toFixed(2)} seconds.`);
     feedLogger.log('PRE RACE', 'Performing Pre Race check...');
-
     const okay = await preRaceCheck();
 
     if (okay === false){
@@ -38,10 +39,37 @@ module.exports = async (args: string[]) => {
     } catch (error) {
         process.exit(1);
     }
-
+    
+    //Wait for torrent to register in Qbit, initial announce.
     await sleep(5000);
-    feedLogger.log("ADD TORRENT",  "Getting trackers");
+
+    //Now we get the torrent's trackers, which will let us set the tags.
+    let tags: string[] = []
+
+    try {
+        let trackers: any[] = await getTrackers(infohash);
+        trackers.splice(0, 3);
+        tags = trackers.map(({ url }) => new URL(url).hostname);
+        feedLogger.log('ADD TORRENT', `Adding ${tags.length} tags.`);
+        await addTags([{ hash: infohash }], tags);
+    } catch (error) {
+        feedLogger.log('ADD TORRENT', `Failed to add tags. Error code ${error}`);
+    }
+
+    //We also want to get the size of the torrent, for the notification.
+    let torrent: any;
+
+    try {
+        torrent = await getTorrentInfo(infohash);
+    } catch (error){
+        process.exit(1);
+    }
+
+    //Now we move anto reannounce
+    // await sleep(5000);
+    feedLogger.log("ADD TORRENT",  "Starting reannounce check...");
     let attempts = 0;
+    let announceOK = false;
 
     while (attempts < SETTINGS.REANNOUNCE_LIMIT) {
 
@@ -59,6 +87,7 @@ module.exports = async (args: string[]) => {
                 await sleep(SETTINGS.REANNOUNCE_INTERVAL);
                 attempts++;
             } else {
+                announceOK = true;
                 feedLogger.log('REANNOUNCE', 'Tracker is OK. Exiting...');
                 break;
             }
@@ -68,8 +97,19 @@ module.exports = async (args: string[]) => {
         }
     }
     
-    //We got here but failed reannounce failed. 
-    //Delete. 
-
-    
+    //We got here but failed reannounce failed. Delete it.
+    if (announceOK === false){
+        feedLogger.log('REANNOUNCE', `Did not get an OK from tracker even after ${SETTINGS.REANNOUNCE_LIMIT} attempts. Deleting...`);
+        await deleteTorrents([{ hash: infohash }]);
+    } else {
+        //Send message to discord (if enabled)
+        const { enabled, botUsername, botAvatar } = SETTINGS.DISCORD_NOTIFICATIONS || { enabled: false }
+        if (enabled === true) {
+            try {
+                await sendMessage(addMessage(torrent.name, tags, torrent.size, attempts))
+            } catch (error){
+                process.exit(1);   
+            }
+        }
+    }
 }

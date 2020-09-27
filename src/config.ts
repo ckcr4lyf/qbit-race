@@ -1,20 +1,22 @@
 import * as dotenv from 'dotenv'
 import * as path from 'path';
 
+import { SETTINGS } from '../settings';
 import { feedLogger } from './helpers/logger';
+
+let COOKIE = '';
+let LOGFILE = 'default.log';
 
 dotenv.config({
     path: path.join(__dirname, '../.env')
 });
 
 feedLogger.log('CONFIG', 'Loaded .env');
-
 const QBIT_HOST = process.env.QBIT_HOST;
 const QBIT_PORT = process.env.QBIT_PORT;
 const QBIT_USERNAME = process.env.QBIT_USERNAME;
 const QBIT_PASSWORD = process.env.QBIT_PASSWORD;
-let COOKIE = '';
-let TESTING = false;
+const DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK;
 
 if (!QBIT_HOST){
     console.log("Please define QBIT_HOST in your .env file.");
@@ -36,13 +38,23 @@ if (!QBIT_PASSWORD){
     process.exit(1);
 }
 
+if (!DISCORD_WEBHOOK && SETTINGS.DISCORD_NOTIFICATIONS.enabled === true){
+    console.log("Please define DISCORD_WEBHOOK in your .env file. (Discord notifications are enabled but a webhook is not defined)\n");
+    process.exit(1);
+}
+
 const setCookie = (cookie: string) => {
     COOKIE = cookie;
     feedLogger.log(`CONFIG`, `Updated COOKIE!`);// to ${cookie}`);
 }
 
-const setTesting = (valid: boolean) => {
-    TESTING = valid;
+//logger.ts will get the LOGFILE from config.ts to decide which file to write to.
+//Different entrypoints may want to use setLogFile() to change the value of that variable
+//Then the next time something is logged, it will be done so to the new file. 
+//This was, for feeder we can set one log, for post race another. 
+//Potentially more logs for testing and shit.
+const setLogfile = (logfile: string) => {
+    LOGFILE = logfile;
 }
 
-export { QBIT_HOST, QBIT_PORT, QBIT_PASSWORD, QBIT_USERNAME, COOKIE, setCookie, TESTING, setTesting }
+export { QBIT_HOST, QBIT_PORT, QBIT_PASSWORD, QBIT_USERNAME, COOKIE, setCookie, LOGFILE, setLogfile, DISCORD_WEBHOOK }
