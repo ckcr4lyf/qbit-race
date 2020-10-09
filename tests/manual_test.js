@@ -11,5 +11,5 @@ if (!fs.existsSync(logsDir) || !fs.lstatSync(logsDir).isDirectory()){
 const { setLogfile } = require('../build/config');
 setLogfile('tests.log');
 const add_torrent = require('../build/add_torrent');
-let args = ["hash","Fake Name", "fake.tracker", "/home/poiasd/scripts/qbit-race/tests/sample.torrent"];
+let args = ["hash","Fake Name", "fake.tracker", "/home/poiasd/scripts/qbit-race/tests/sample.torrent", "--category", "test cat"];
 add_torrent(args);

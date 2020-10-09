@@ -133,7 +133,7 @@ exports.addTags = (torrents, tags) => {
         });
     });
 };
-exports.addTorrent = (path) => {
+exports.addTorrent = (path, category) => {
     return new Promise((resolve, reject) => {
         let formData = new FormData();
         try {
@@ -143,6 +143,10 @@ exports.addTorrent = (path) => {
         catch (error) {
             logger_1.feedLogger.log('ADD TORRENT', `Unable to read file ${path}`);
             reject();
+        }
+        if (category !== null) {
+            logger_1.feedLogger.log('ADD TORRENT', `Setting category to ${category}`);
+            formData.append('category', category);
         }
         axios_1.default.request({
             method: 'POST',
