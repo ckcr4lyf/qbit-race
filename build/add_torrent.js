@@ -13,6 +13,21 @@ module.exports = async (args) => {
     const torrentName = args[1];
     const tracker = args[2];
     const path = args[3];
+    let category = null;
+    //Check if `--category` is present. Then the next argument is the category to set.
+    for (let index = 4; index < args.length; index++) {
+        if (args[index] === '--category') {
+            //The next one should be the actual category
+            if (index + 1 < args.length) {
+                category = args[index + 1];
+            }
+            else {
+                //They fucked up. Let them know, but dont error out (act as if not set).
+                logger_1.feedLogger.log('ARGS', '--category set but the category is missing.');
+                break;
+            }
+        }
+    }
     let t1 = Date.now();
     try {
         await auth_1.login();
@@ -31,7 +46,7 @@ module.exports = async (args) => {
     }
     logger_1.feedLogger.log('ADD TORRENT', `Adding torrent ${torrentName}`);
     try {
-        await api_1.addTorrent(path);
+        await api_1.addTorrent(path, category);
     }
     catch (error) {
         process.exit(1);

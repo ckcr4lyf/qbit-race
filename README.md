@@ -44,13 +44,14 @@ echo "ln -s $(which node) /usr/bin/node"
 First, you need to download this repository, install some dependencies, and setup your enivronment variables file. 
 You may run the following commands:
 
-```
+```sh
 mkdir -p ~/scripts
 cd ~/scripts
 git clone https://github.com/ckcr4lyf/qbit-race.git
 cd qbit-race
 npm install
 cp sample.env .env
+cp sample.settings.js settings.js
 ```
 
 Now open `.env` in an editor like nano or such, and change the values as per your setup. `QBIT_PORT` is the port the Web UI is listening on, NOT the port for incoming BitTorrent connections. `DISCORD_WEBHOOK` is optional, you should replace it with your chanell's webhook URL if you enable Discord noticiations in `settings.js` (more info below)
@@ -69,6 +70,12 @@ If all went well, you'll see something like
 2020-09-27T12:40:10.656Z [AUTH] - Login completed in 0.07 seconds.
 2020-09-27T12:40:10.656Z [TEST] - SUCCESS!
 ```
+
+## Updating
+
+You may run `git pull` in the parent directory to automatically pull updates. If new settings are introduced, you will need to check `sample.settings.js` and manually add them to your `settings.js`.
+
+It is advised to backup your `settings.js` *just in case*.
 
 ## Additional Settings
 
@@ -101,7 +108,7 @@ If you enable discord notifications, and set the webhook URL in `.env`, you can 
 2020-09-27T13:32:33.680Z [TEST] - SUCCESS!
 ```
 
-## AutoDL setup
+## AutoDL setup (Basic)
 
 To get the path to the script which will feed qBittorrent, run the following commands:
 ```sh
@@ -124,6 +131,24 @@ Click OK, and that should be it!
 Now, when AutoDL geta a torrent, it will pass it to the script which will feed it to qBittorrent!
 
 You can view the logs under `~/scripts/qbit-race/logs` to try and debug.
+
+## AutoDL setup (Advanced)
+
+These are additional parameters you can specify in autoDL for additional functionality
+
+### Torrent Category
+
+In the arguments field, you may specify a category (per filter, or global) by adding to the end of arguments `--category "the category name"`
+
+For instance, a filter for Arch Linux ISOs could have the arguments:
+```
+`"$(InfoHash)" "$(InfoName)" "$(Tracker)" "$(TorrentPathName)" --category "never open"`
+```
+
+Which would set the category of all torrents that match said filter to "never open". If the category doesn't exist it will be created automatically. 
+
+Protip: qBittorrent has a feature that allows you to configure download paths by category. This might be useful to consolidate your downloads.`
+
 
 ## qBittorrent post race setup
 

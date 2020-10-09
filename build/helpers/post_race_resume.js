@@ -33,6 +33,7 @@ exports.postRaceResume = async (infohash, tracker) => {
     }
     catch (error) {
         logger_1.feedLogger.log('POST RACE', `Failed to get torrents from qBittorrent`);
+        process.exit(1);
     }
     torrents = torrents.map(({ name, hash, state, added_on, ratio, size, tags }) => ({ name, hash, state, added_on, ratio, size, tags }));
     const reannounceYoungest = Date.now() - (settings_1.SETTINGS.REANNOUNCE_INTERVAL * settings_1.SETTINGS.REANNOUNCE_LIMIT);
@@ -49,7 +50,7 @@ exports.postRaceResume = async (infohash, tracker) => {
             await api_1.sendMessage(messages_1.completeMessage(torrent.name, torrent.tags.split(','), torrent.size, torrent.ratio));
         }
         catch (error) {
-            process.exit(1);
+            logger_1.feedLogger.log('POST RACE', 'Failed to send notification to Discord');
         }
     }
     for (let x = 0; x < torrents.length; x++) {

@@ -147,7 +147,7 @@ export const addTags = (torrents: any[], tags: string[]) => {
     });
 }
 
-export const addTorrent = (path: string) => {
+export const addTorrent = (path: string, category?: string) => {
     return new Promise((resolve, reject) => {
         let formData = new FormData();
 
@@ -157,6 +157,11 @@ export const addTorrent = (path: string) => {
         } catch (error) {
             feedLogger.log('ADD TORRENT', `Unable to read file ${path}`);
             reject();
+        }
+
+        if (category !== null){
+            feedLogger.log('ADD TORRENT', `Setting category to ${category}`);
+            formData.append('category', category);
         }
 
         axios.request({
