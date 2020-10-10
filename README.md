@@ -136,6 +136,19 @@ You can view the logs under `~/scripts/qbit-race/logs` to try and debug.
 
 These are additional parameters you can specify in autoDL for additional functionality
 
+## Other Scripts
+
+### Tag Errored Torrents
+
+Sometimes torrents may be deleted from the tracker, or just an error in general. qBittorrent provides no easy way of sorting by these errors (Usually tracker responds with an error message).
+
+To tag all such torrents as `error`, from the root folder (`~/qbit-race`), run:
+```
+npm run tag_unreg
+```
+
+This will tag all torrents which do not have ANY working tracker.
+
 ### Torrent Category
 
 In the arguments field, you may specify a category (per filter, or global) by adding to the end of arguments `--category "the category name"`
