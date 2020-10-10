@@ -138,11 +138,11 @@ export const addTags = (torrents: any[], tags: string[]) => {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         }).then(response => {
-            feedLogger.log('ADD TAGS', `Successfully added ${tags.length} tags to ${torrents.length} torrents.`);
+            feedLogger.log('ADD TAGS API', `Successfully added ${tags.length} tags to ${torrents.length} torrents.`);
             resolve();
         }).catch(error => {
             // console.log(error.response);
-            feedLogger.log('ADD TAGS', `Failed with error code ${error.response.status}`);
+            feedLogger.log('ADD TAGS API', `Failed with error code ${error.response.status}`);
         });
     });
 }

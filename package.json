@@ -8,6 +8,7 @@
     "dev": "nodemon src/index.ts",
     "start": "node build/index.js",
     "validate": "node tests/validate.js",
+    "tag_unreg": "node bin/tag_errored.js",
     "test-dev": "ts-node src/index.ts"
   },
   "author": "Raghu Saxena",
