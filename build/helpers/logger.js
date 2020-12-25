@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.feedLogger = void 0;
+exports.feedLogger = exports.Logger = void 0;
 const fs = require("fs");
 const path = require("path");
 const config_1 = require("../config");
@@ -16,5 +16,6 @@ class Logger {
         this.logfile = path.join(__dirname, '../../logs', logfile);
     }
 }
+exports.Logger = Logger;
 exports.feedLogger = new Logger('feeder.log');
 //# sourceMappingURL=logger.js.map

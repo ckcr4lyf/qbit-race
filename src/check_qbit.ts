@@ -9,6 +9,18 @@ module.exports = async () => {
 
     let t1 = Date.now();
 
+    // Check settings
+
+    if (!Array.isArray(SETTINGS.PAUSE_SKIP_CATEGORIES)){
+        feedLogger.log('SETTINGS', `Failed to validate settings! PAUSE_SKIP_CATEGORIES is missing. Please check sample.settings.js and copy changes to settings.js`);
+        process.exit(1);
+    }
+
+    if (!Array.isArray(SETTINGS.PAUSE_SKIP_TAGS)){
+        feedLogger.log('SETTINGS', `Failed to validate settings! PAUSE_SKIP_TAGS is missing. Please check sample.settings.js and copy changes to settings.js`);
+        process.exit(1);
+    }
+
     try {
         await login();
     } catch (errorCode) {
@@ -16,7 +28,7 @@ module.exports = async () => {
         if (errorCode === 999){
             feedLogger.log(`TEST`, `FAILED! qBittorrent API is not listening at http://${QBIT_HOST}:${QBIT_PORT}`);
         } else {
-            feedLogger.log(`[AUTH]`, `Failed with error code ${errorCode}. Check username / password. Exiting...`);
+            feedLogger.log(`AUTH`, `Failed with error code ${errorCode}. Check username / password. Exiting...`);
         }
 
         process.exit(1);

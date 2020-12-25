@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { LOGFILE } from '../config';
 
-class Logger {
+export class Logger {
 
     logfile: string;
 
