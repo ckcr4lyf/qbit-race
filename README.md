@@ -8,11 +8,12 @@
 * Discord notifications on completion (w/ ratio)
 * Configuring the number of simultaneous races
 * Pause seeding torrents when a new race is about to begin
+* Skip torrents with certain tags / category from being paused prior to a race
 
 This repository is still in beta. There might be bugs. Feel free to open an issue if you encounter one. 
 You may also open an issue to request a feature, but please mark it with the prefix `[FEATURE REQUEST]`
 
-You need node v12+ to run this. 
+You need node v12+ to run this, and qbittorrent 4.2.x+
 
 ## Thanks
 
@@ -23,18 +24,32 @@ You need node v12+ to run this.
 Massive Thanks to <a href="https://walkerservers.com/">WalkerServers</a> for sponsoring this project. Check them out for affordable, high performance dedicated servers!
 </center>
 
+## Index
+
+* [General Information](#qbittorrent-racing)
+* [Thanks](#thanks)
+* [Index](#index)
+* [Important notice for nvm users](#important)
+* [Initial Setup](#repo-setup)
+* [Settings explanation](#additional-settings)
+* [Setup with autoDL](#autodl-setup-basic)
+* [Setup for post race notifications](#qbittorrent-post-race-setup)
+* [Auto tag tracker-error torrents](#tag-errored-torrents)
+* [Setting torrent category with autoDL](#torrent-category)
+
 ## Node requirement
 This project needs Node.js v12+.
 ### Important! 
 If you have installed Node.js with nvm, you will need to symlink it to your `bin` directory. Usually local bin will do, otherwise you may need to symlink it to `/usr/bin`
 
-You can get the correct command to symlink nvm's node by running these commands (The following commands print the symlink to execute, but doesn't actually run them)
+You can get the correct command to symlink nvm's node by running these commands (The following commands print the symlink to execute, but doesn't actually run them). 
 
+For shared seedboxes:
 ```sh
 echo "ln -s $(which node) ${HOME}/node"
 ```
 
-or (this might need a sudo)
+or, for deciated seedboxes: (this might need a sudo)
 ```sh
 echo "ln -s $(which node) /usr/bin/node"
 ```
@@ -86,6 +101,8 @@ There are additional parameters you can tweak in `settings.js`. These settings c
 |`REANNOUNCE_INTERVAL`|`5000`|milliseconds to wait before sending reannounce requests|
 |`REANNOUNCE_LIMIT`|`30`|Number of times to reannounce to the tracker before "giving up" (sometimes a torrent may be announced but then deleted by moderation)|
 |`PAUSE_RATIO`|`1`|When a new torrent is added, all seeding torrents above this ratio are paused. `-1` will not pause any torrents, this may lead to worse performance|
+|`PAUSE_SKIP_TAGS`|`["tracker.linux.org", "some_other_tag"]`|Prevent pausing of torrents before a race, if any of the tags match. This parameter is useful for skipping certain trackers where you may want to maintain seedtime|
+|`PAUSE_SKIP_CATEGORIES`|`["permaseeding", "some_other_category"]`|Prevent pausing of torrents before a race, if the category matches any in this list. Useful if you setup autoDL with some filters with the category option, and want to skip them|
 |`CONCURRENT_RACES`|`1`|How many torrents can be "raced" at once. If autodl grabs a torrent, but these many races are already in progress, the torrent will be silently skipped. While less parallel races give better performance, if you want to download everything autoDL grabs, set this to `-1`|
 |`COUNT_STALLED_DOWNLOADS`|`false`|If a seeder abandons the torrent midway, the download may be stalled. This option controlls whether such torrents should be counted when checking for `CONCURRENT_RACES`. It is advisable to keep this as false|
 |`DISCORD_NOTIFICATIONS`|`object`|See below for descripton|
@@ -136,22 +153,9 @@ You can view the logs under `~/scripts/qbit-race/logs` to try and debug.
 
 These are additional parameters you can specify in autoDL for additional functionality
 
-## Other Scripts
-
-### Tag Errored Torrents
-
-Sometimes torrents may be deleted from the tracker, or just an error in general. qBittorrent provides no easy way of sorting by these errors (Usually tracker responds with an error message).
-
-To tag all such torrents as `error`, from the root folder (`~/qbit-race`), run:
-```
-npm run tag_unreg
-```
-
-This will tag all torrents which do not have ANY working tracker.
-
 ### Torrent Category
 
-In the arguments field, you may specify a category (per filter, or global) by adding to the end of arguments `--category "the category name"`
+In the autoDL arguments field, you may specify a category (per filter, or global) by adding to the end of arguments `--category "the category name"`
 
 For instance, a filter for Arch Linux ISOs could have the arguments:
 ```
@@ -161,7 +165,6 @@ For instance, a filter for Arch Linux ISOs could have the arguments:
 Which would set the category of all torrents that match said filter to "never open". If the category doesn't exist it will be created automatically. 
 
 Protip: qBittorrent has a feature that allows you to configure download paths by category. This might be useful to consolidate your downloads.`
-
 
 ## qBittorrent post race setup
 
@@ -185,3 +188,16 @@ So the final entry would look like
 ```
 /home/username/scripts/qbit-race/bin/post_race.js "%I" "%N" "%T"
 ```
+
+## Other Scripts
+
+### Tag Errored Torrents
+
+Sometimes torrents may be deleted from the tracker, or just an error in general. qBittorrent provides no easy way of sorting by these errors (Usually tracker responds with an error message).
+
+To tag all such torrents as `error`, from the root folder (`~/qbit-race`), run:
+```
+npm run tag_unreg
+```
+
+This will tag all torrents which do not have ANY working tracker.

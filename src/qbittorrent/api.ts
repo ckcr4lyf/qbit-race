@@ -4,8 +4,9 @@ import * as fs from 'fs';
 
 import { QBIT_HOST, QBIT_PORT, COOKIE } from '../config';
 import { feedLogger  } from '../helpers/logger';
+import { torrentFromApi } from '../interfaces';
 
-export const getTorrentInfo = (infohash: string) => {
+export const getTorrentInfo = (infohash: string): Promise<torrentFromApi> => {
     return new Promise((resolve, reject) => {
         axios.get(`http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/info`, {
             params: {
@@ -23,7 +24,7 @@ export const getTorrentInfo = (infohash: string) => {
     })
 }
 
-export const getTorrents = (): Promise<any[]> => {
+export const getTorrents = (): Promise<torrentFromApi[]> => {
     return new Promise((resolve, reject) => {
         axios.get(`http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/info`, {
             headers: {'Cookie': COOKIE}
@@ -38,7 +39,7 @@ export const getTorrents = (): Promise<any[]> => {
     })
 }
 
-export const pauseTorrents = (torrents: any[]) => {
+export const pauseTorrents = (torrents: any[]): Promise<void> => {
     return new Promise((resolve, reject) => {
 
         if (torrents.length === 0){
@@ -62,7 +63,7 @@ export const pauseTorrents = (torrents: any[]) => {
     })
 }
 
-export const resumeTorrents = (torrents: any[]) => {
+export const resumeTorrents = (torrents: any[]): Promise<void> => {
     return new Promise((resolve, reject) => {
 
         if (torrents.length === 0){
@@ -86,7 +87,7 @@ export const resumeTorrents = (torrents: any[]) => {
     })
 }
 
-export const deleteTorrents = (torrents: any[]) => {
+export const deleteTorrents = (torrents: any[]): Promise<void> => {
     return new Promise((resolve, reject) => {
 
         if (torrents.length === 0){
@@ -111,7 +112,7 @@ export const deleteTorrents = (torrents: any[]) => {
     })
 }
 
-export const addTags = (torrents: any[], tags: string[]) => {
+export const addTags = (torrents: any[], tags: string[]): Promise<void> => {
     return new Promise((resolve, reject) => {
 
         if (torrents.length === 0){
@@ -147,7 +148,7 @@ export const addTags = (torrents: any[], tags: string[]) => {
     });
 }
 
-export const addTorrent = (path: string, category?: string) => {
+export const addTorrent = (path: string, category?: string): Promise<void> => {
     return new Promise((resolve, reject) => {
         let formData = new FormData();
 
@@ -201,7 +202,7 @@ export const getTrackers = (infohash: string): Promise<any[]> => {
     })
 }
 
-export const reannounce = (infohash: string) => {
+export const reannounce = (infohash: string): Promise<void> => {
     return new Promise((resolve, reject) => {
         axios.get(`http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/reannounce`, {
             params: {

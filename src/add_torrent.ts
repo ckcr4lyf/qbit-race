@@ -6,6 +6,7 @@ import { preRaceCheck } from './helpers/pre_race';
 import { SETTINGS } from '../settings';
 import { sendMessage } from './discord/api';
 import { addMessage } from './discord/messages';
+import { torrentFromApi } from './interfaces';
 
 module.exports = async (args: string[]) => {
 
@@ -73,7 +74,7 @@ module.exports = async (args: string[]) => {
     }
 
     //We also want to get the size of the torrent, for the notification.
-    let torrent: any;
+    let torrent: torrentFromApi;
 
     try {
         torrent = await getTorrentInfo(infohash);

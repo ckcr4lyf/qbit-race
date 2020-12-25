@@ -8,6 +8,15 @@ const settings_1 = require("../settings");
 const messages_1 = require("./discord/messages");
 module.exports = async () => {
     let t1 = Date.now();
+    // Check settings
+    if (!Array.isArray(settings_1.SETTINGS.PAUSE_SKIP_CATEGORIES)) {
+        logger_1.feedLogger.log('SETTINGS', `Failed to validate settings! PAUSE_SKIP_CATEGORIES is missing. Please check sample.settings.js and copy changes to settings.js`);
+        process.exit(1);
+    }
+    if (!Array.isArray(settings_1.SETTINGS.PAUSE_SKIP_TAGS)) {
+        logger_1.feedLogger.log('SETTINGS', `Failed to validate settings! PAUSE_SKIP_TAGS is missing. Please check sample.settings.js and copy changes to settings.js`);
+        process.exit(1);
+    }
     try {
         await auth_1.login();
     }
@@ -16,7 +25,7 @@ module.exports = async () => {
             logger_1.feedLogger.log(`TEST`, `FAILED! qBittorrent API is not listening at http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}`);
         }
         else {
-            logger_1.feedLogger.log(`[AUTH]`, `Failed with error code ${errorCode}. Check username / password. Exiting...`);
+            logger_1.feedLogger.log(`AUTH`, `Failed with error code ${errorCode}. Check username / password. Exiting...`);
         }
         process.exit(1);
     }
