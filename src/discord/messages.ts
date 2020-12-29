@@ -42,6 +42,11 @@ export const addMessage = (torrentName: string, trackers: string[], size: number
 
 export const completeMessage = (torrentName: string, trackers: string[], size: number, ratio: number) => {
 
+    let trackersMessage = trackers.join('\n');
+    if (trackersMessage === ''){
+        trackersMessage = 'No trackers set!';
+    }
+
     const humanSize = humanFileSize(size, false, 2);
     const body = {
         content: `Completed ${torrentName}! (Ratio: ${ratio.toFixed(2)})`,
@@ -61,7 +66,7 @@ export const completeMessage = (torrentName: string, trackers: string[], size: n
                     },
                     {
                         name: trackers.length === 1 ? 'Tracker' : 'Trackers',
-                        value: trackers.join('\n')
+                        value: trackersMessage
                     },
                     {
                         name: 'Size',
