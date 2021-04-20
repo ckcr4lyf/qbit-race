@@ -63,7 +63,7 @@ export const pauseTorrents = (torrents: any[]): Promise<void> => {
     })
 }
 
-export const resumeTorrents = (torrents: any[]): Promise<void> => {
+export const resumeTorrents = (torrents: torrentFromApi[]): Promise<void> => {
     return new Promise((resolve, reject) => {
 
         if (torrents.length === 0){
@@ -146,6 +146,27 @@ export const addTags = (torrents: any[], tags: string[]): Promise<void> => {
             feedLogger.log('ADD TAGS API', `Failed with error code ${error.response.status}`);
         });
     });
+}
+
+export const setCategory = (infohash: string, category: string) => {
+    return new Promise((resolve, reject) => {
+
+        let payload = `hashes=${infohash}&category=${category}`;
+        axios.request({
+            method: 'POST',
+            url: `http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/setCategory`,
+            data: payload,
+            headers: {
+                'Cookie': COOKIE,
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        }).then(response => {
+            feedLogger.log('SET CATEGORY API', `Successfully set category for ${infohash} to ${category}`);
+            resolve();
+        }).catch(error => {
+            feedLogger.log('SET CATEGORY API', `Failed with error code ${error.response.status}`);
+        })
+    })
 }
 
 export const addTorrent = (path: string, category?: string): Promise<void> => {

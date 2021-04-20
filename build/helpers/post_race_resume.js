@@ -7,6 +7,7 @@ const messages_1 = require("../discord/messages");
 const api_2 = require("../qbittorrent/api");
 const auth_1 = require("../qbittorrent/auth");
 const logger_1 = require("./logger");
+const resume_1 = require("./resume");
 /**
  * postRaceResume runs after a race completes and resumes torrents.
  *
@@ -15,7 +16,6 @@ const logger_1 = require("./logger");
  * If nothing is pending, it will resume all torrents.
  */
 exports.postRaceResume = async (infohash, tracker) => {
-    // feedLogger.log('POST RACE', `Called with infohash=${infohash}&tracker=${tracker}`);
     let torrents;
     let t1 = Date.now();
     try {
@@ -27,6 +27,22 @@ exports.postRaceResume = async (infohash, tracker) => {
     }
     let t2 = Date.now();
     logger_1.feedLogger.log('AUTH', `Login completed in ${((t2 - t1) / 1000).toFixed(2)} seconds.`);
+    // Check if this torrent's category is in the rename list
+    // In case they are on old settings, skip it
+    if (settings_1.SETTINGS.CATEGORY_FINISH_CHANGE !== undefined) {
+        const torrentInfo = await api_2.getTorrentInfo(infohash);
+        const newCategoryName = settings_1.SETTINGS.CATEGORY_FINISH_CHANGE[torrentInfo.category];
+        // Check if there was a rule for it or not
+        if (newCategoryName !== undefined) {
+            try {
+                await api_2.setCategory(infohash, newCategoryName);
+                logger_1.feedLogger.log('POST RACE', `Changed category for ${infohash} from ${torrentInfo.category} to ${newCategoryName}`);
+            }
+            catch (error) {
+                logger_1.feedLogger.log('POST RACE', `Failed to change category for ${infohash} from ${torrentInfo.category} to ${newCategoryName}`);
+            }
+        }
+    }
     logger_1.feedLogger.log('POST RACE', `Getting torrent list`);
     try {
         torrents = await api_2.getTorrents();
@@ -35,8 +51,6 @@ exports.postRaceResume = async (infohash, tracker) => {
         logger_1.feedLogger.log('POST RACE', `Failed to get torrents from qBittorrent`);
         process.exit(1);
     }
-    torrents = torrents.map(({ name, hash, state, added_on, ratio, size, tags }) => ({ name, hash, state, added_on, ratio, size, tags }));
-    const reannounceYoungest = Date.now() - (settings_1.SETTINGS.REANNOUNCE_INTERVAL * settings_1.SETTINGS.REANNOUNCE_LIMIT);
     //Get the stats for this torrent and send to discord
     const { enabled } = settings_1.SETTINGS.DISCORD_NOTIFICATIONS || { enabled: false };
     if (enabled === true) {
@@ -53,30 +67,7 @@ exports.postRaceResume = async (infohash, tracker) => {
             logger_1.feedLogger.log('POST RACE', 'Failed to send notification to Discord');
         }
     }
-    for (let x = 0; x < torrents.length; x++) {
-        const torrent = torrents[x];
-        if (torrent.state === 'downloading') {
-            logger_1.feedLogger.log('POST RACE', `We are still downloading, not resuming rest.`);
-            return; //We do not want to resume, since something else is downloading.
-        }
-        if (torrent.state === 'stalledDL' && (torrent.added_on * 1000) > reannounceYoungest) {
-            logger_1.feedLogger.log('POST RACE', `There is a torrent in reannounce phase, not resuming rest.`);
-            return; //This torrent is also still in the reannounce phase
-        }
-    }
-    const paused = torrents.filter(torrent => torrent.state === 'pausedUP');
-    if (paused.length === 0) {
-        logger_1.feedLogger.log('POST RACE', `No downloading, nothing to resume either.`);
-        return;
-    }
-    logger_1.feedLogger.log('POST RACE', `No downloading torrents. Resuming ${paused.length} torrents...`);
-    try {
-        await api_2.resumeTorrents(paused);
-    }
-    catch (error) {
-        logger_1.feedLogger.log('POST RACE', `Failed to resume torrents.`);
-        process.exit(1);
-    }
-    logger_1.feedLogger.log('POST RACE', `Resumed all torrents. Exiting...`);
+    // handle the resume part
+    await resume_1.resume('POST RACE', torrents);
 };
 //# sourceMappingURL=post_race_resume.js.map

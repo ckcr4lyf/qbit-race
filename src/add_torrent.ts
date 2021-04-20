@@ -1,5 +1,5 @@
 import { login } from './qbittorrent/auth';
-import { addTags, addTorrent, deleteTorrents, getTorrentInfo, getTrackers, reannounce } from './qbittorrent/api'
+import { addTags, addTorrent, deleteTorrents, getTorrentInfo, getTorrents, getTrackers, reannounce } from './qbittorrent/api'
 import { sleep } from './helpers/utilities';
 import { feedLogger } from './helpers/logger';
 import { preRaceCheck } from './helpers/pre_race';
@@ -7,6 +7,7 @@ import { SETTINGS } from '../settings';
 import { sendMessage } from './discord/api';
 import { addMessage } from './discord/messages';
 import { torrentFromApi } from './interfaces';
+import { resume } from './helpers/resume';
 
 module.exports = async (args: string[]) => {
 
@@ -118,6 +119,11 @@ module.exports = async (args: string[]) => {
     if (announceOK === false){
         feedLogger.log('REANNOUNCE', `Did not get an OK from tracker even after ${SETTINGS.REANNOUNCE_LIMIT} attempts. Deleting...`);
         await deleteTorrents([{ hash: infohash }]);
+
+        // Resume any that were paused
+        feedLogger.log('REANOUNCE', 'Going to resume any paused torrents...');
+        const torrents = await getTorrents();
+        resume('PRE RACE', torrents);
     } else {
         //Send message to discord (if enabled)
         const { enabled, botUsername, botAvatar } = SETTINGS.DISCORD_NOTIFICATIONS || { enabled: false }

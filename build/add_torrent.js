@@ -8,6 +8,7 @@ const pre_race_1 = require("./helpers/pre_race");
 const settings_1 = require("../settings");
 const api_2 = require("./discord/api");
 const messages_1 = require("./discord/messages");
+const resume_1 = require("./helpers/resume");
 module.exports = async (args) => {
     const infohash = args[0].toLowerCase();
     const torrentName = args[1];
@@ -106,6 +107,10 @@ module.exports = async (args) => {
     if (announceOK === false) {
         logger_1.feedLogger.log('REANNOUNCE', `Did not get an OK from tracker even after ${settings_1.SETTINGS.REANNOUNCE_LIMIT} attempts. Deleting...`);
         await api_1.deleteTorrents([{ hash: infohash }]);
+        // Resume any that were paused
+        logger_1.feedLogger.log('REANOUNCE', 'Going to resume any paused torrents...');
+        const torrents = await api_1.getTorrents();
+        resume_1.resume('PRE RACE', torrents);
     }
     else {
         //Send message to discord (if enabled)

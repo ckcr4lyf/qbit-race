@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.reannounce = exports.getTrackers = exports.addTorrent = exports.addTags = exports.deleteTorrents = exports.resumeTorrents = exports.pauseTorrents = exports.getTorrents = exports.getTorrentInfo = void 0;
+exports.reannounce = exports.getTrackers = exports.addTorrent = exports.setCategory = exports.addTags = exports.deleteTorrents = exports.resumeTorrents = exports.pauseTorrents = exports.getTorrents = exports.getTorrentInfo = void 0;
 const axios_1 = require("axios");
 const FormData = require("form-data");
 const fs = require("fs");
@@ -130,6 +130,25 @@ exports.addTags = (torrents, tags) => {
         }).catch(error => {
             // console.log(error.response);
             logger_1.feedLogger.log('ADD TAGS API', `Failed with error code ${error.response.status}`);
+        });
+    });
+};
+exports.setCategory = (infohash, category) => {
+    return new Promise((resolve, reject) => {
+        let payload = `hashes=${infohash}&category=${category}`;
+        axios_1.default.request({
+            method: 'POST',
+            url: `http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/setCategory`,
+            data: payload,
+            headers: {
+                'Cookie': config_1.COOKIE,
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        }).then(response => {
+            logger_1.feedLogger.log('SET CATEGORY API', `Successfully set category for ${infohash} to ${category}`);
+            resolve();
+        }).catch(error => {
+            logger_1.feedLogger.log('SET CATEGORY API', `Failed with error code ${error.response.status}`);
         });
     });
 };
