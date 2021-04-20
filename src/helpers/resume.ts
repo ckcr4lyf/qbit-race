@@ -6,7 +6,6 @@ import { feedLogger } from "./logger";
 
 export const resume = async (logPrefix: string, torrents: torrentFromApi[]) => {
 
-    feedLogger.log(logPrefix, `Getting torrent list`);
     const reannounceYoungest = Date.now() - (SETTINGS.REANNOUNCE_INTERVAL * SETTINGS.REANNOUNCE_LIMIT); 
 
     for (let x = 0; x < torrents.length; x++){

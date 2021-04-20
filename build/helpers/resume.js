@@ -5,7 +5,6 @@ const settings_1 = require("../../settings");
 const api_1 = require("../qbittorrent/api");
 const logger_1 = require("./logger");
 const resume = async (logPrefix, torrents) => {
-    logger_1.feedLogger.log(logPrefix, `Getting torrent list`);
     const reannounceYoungest = Date.now() - (settings_1.SETTINGS.REANNOUNCE_INTERVAL * settings_1.SETTINGS.REANNOUNCE_LIMIT);
     for (let x = 0; x < torrents.length; x++) {
         const torrent = torrents[x];
