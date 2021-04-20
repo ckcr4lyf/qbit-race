@@ -1,13 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.humanFileSize = exports.sleep = void 0;
-exports.sleep = (ms) => {
+const sleep = (ms) => {
     return new Promise((resolve, reject) => {
         setTimeout(resolve, ms);
     });
 };
+exports.sleep = sleep;
 //Thanks mpen @ StackOverflow! - https://stackoverflow.com/a/14919494/3857675
-exports.humanFileSize = (bytes, si = false, dp = 1) => {
+const humanFileSize = (bytes, si = false, dp = 1) => {
     const thresh = si ? 1000 : 1024;
     if (Math.abs(bytes) < thresh) {
         return bytes + ' B';
@@ -23,4 +24,5 @@ exports.humanFileSize = (bytes, si = false, dp = 1) => {
     } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1);
     return bytes.toFixed(dp) + ' ' + units[u];
 };
+exports.humanFileSize = humanFileSize;
 //# sourceMappingURL=utilities.js.map

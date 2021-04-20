@@ -6,7 +6,7 @@ const FormData = require("form-data");
 const fs = require("fs");
 const config_1 = require("../config");
 const logger_1 = require("../helpers/logger");
-exports.getTorrentInfo = (infohash) => {
+const getTorrentInfo = (infohash) => {
     return new Promise((resolve, reject) => {
         axios_1.default.get(`http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/info`, {
             params: {
@@ -23,7 +23,8 @@ exports.getTorrentInfo = (infohash) => {
         });
     });
 };
-exports.getTorrents = () => {
+exports.getTorrentInfo = getTorrentInfo;
+const getTorrents = () => {
     return new Promise((resolve, reject) => {
         axios_1.default.get(`http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/info`, {
             headers: { 'Cookie': config_1.COOKIE }
@@ -37,7 +38,8 @@ exports.getTorrents = () => {
         });
     });
 };
-exports.pauseTorrents = (torrents) => {
+exports.getTorrents = getTorrents;
+const pauseTorrents = (torrents) => {
     return new Promise((resolve, reject) => {
         if (torrents.length === 0) {
             resolve();
@@ -58,7 +60,8 @@ exports.pauseTorrents = (torrents) => {
         });
     });
 };
-exports.resumeTorrents = (torrents) => {
+exports.pauseTorrents = pauseTorrents;
+const resumeTorrents = (torrents) => {
     return new Promise((resolve, reject) => {
         if (torrents.length === 0) {
             resolve();
@@ -79,7 +82,8 @@ exports.resumeTorrents = (torrents) => {
         });
     });
 };
-exports.deleteTorrents = (torrents) => {
+exports.resumeTorrents = resumeTorrents;
+const deleteTorrents = (torrents) => {
     return new Promise((resolve, reject) => {
         if (torrents.length === 0) {
             resolve();
@@ -101,7 +105,8 @@ exports.deleteTorrents = (torrents) => {
         });
     });
 };
-exports.addTags = (torrents, tags) => {
+exports.deleteTorrents = deleteTorrents;
+const addTags = (torrents, tags) => {
     return new Promise((resolve, reject) => {
         if (torrents.length === 0) {
             resolve();
@@ -133,7 +138,8 @@ exports.addTags = (torrents, tags) => {
         });
     });
 };
-exports.setCategory = (infohash, category) => {
+exports.addTags = addTags;
+const setCategory = (infohash, category) => {
     return new Promise((resolve, reject) => {
         let payload = `hashes=${infohash}&category=${category}`;
         axios_1.default.request({
@@ -148,11 +154,13 @@ exports.setCategory = (infohash, category) => {
             logger_1.feedLogger.log('SET CATEGORY API', `Successfully set category for ${infohash} to ${category}`);
             resolve();
         }).catch(error => {
-            logger_1.feedLogger.log('SET CATEGORY API', `Failed with error code ${error.response.status}`);
+            logger_1.feedLogger.log('SET CATEGORY API', `Failed with error code ${error.response.status}. Make sure the category exists!`);
+            reject(error.response.status);
         });
     });
 };
-exports.addTorrent = (path, category) => {
+exports.setCategory = setCategory;
+const addTorrent = (path, category) => {
     return new Promise((resolve, reject) => {
         let formData = new FormData();
         try {
@@ -182,7 +190,8 @@ exports.addTorrent = (path, category) => {
         });
     });
 };
-exports.getTrackers = (infohash) => {
+exports.addTorrent = addTorrent;
+const getTrackers = (infohash) => {
     return new Promise((resolve, reject) => {
         axios_1.default.get(`http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/trackers`, {
             params: {
@@ -199,7 +208,8 @@ exports.getTrackers = (infohash) => {
         });
     });
 };
-exports.reannounce = (infohash) => {
+exports.getTrackers = getTrackers;
+const reannounce = (infohash) => {
     return new Promise((resolve, reject) => {
         axios_1.default.get(`http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/reannounce`, {
             params: {
@@ -216,4 +226,5 @@ exports.reannounce = (infohash) => {
         });
     });
 };
+exports.reannounce = reannounce;
 //# sourceMappingURL=api.js.map

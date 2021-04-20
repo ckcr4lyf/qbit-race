@@ -5,7 +5,7 @@ const api_1 = require("../qbittorrent/api");
 const logger_1 = require("./logger");
 const constants_1 = require("./constants");
 const settings_1 = require("../../settings");
-exports.preRaceCheck = () => {
+const preRaceCheck = () => {
     return new Promise(async (resolve, reject) => {
         logger_1.feedLogger.log('PRE RACE', `Getting torrent list`);
         let torrents;
@@ -89,4 +89,5 @@ exports.preRaceCheck = () => {
         resolve(true);
     });
 };
+exports.preRaceCheck = preRaceCheck;
 //# sourceMappingURL=pre_race.js.map

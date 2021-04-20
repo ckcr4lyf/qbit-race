@@ -4,7 +4,7 @@ exports.resume = void 0;
 const settings_1 = require("../../settings");
 const api_1 = require("../qbittorrent/api");
 const logger_1 = require("./logger");
-exports.resume = async (logPrefix, torrents) => {
+const resume = async (logPrefix, torrents) => {
     logger_1.feedLogger.log(logPrefix, `Getting torrent list`);
     const reannounceYoungest = Date.now() - (settings_1.SETTINGS.REANNOUNCE_INTERVAL * settings_1.SETTINGS.REANNOUNCE_LIMIT);
     for (let x = 0; x < torrents.length; x++) {
@@ -33,4 +33,5 @@ exports.resume = async (logPrefix, torrents) => {
     }
     logger_1.feedLogger.log(logPrefix, `Resumed all torrents. Exiting...`);
 };
+exports.resume = resume;
 //# sourceMappingURL=resume.js.map

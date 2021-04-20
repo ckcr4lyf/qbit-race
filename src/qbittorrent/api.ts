@@ -7,7 +7,7 @@ import { feedLogger  } from '../helpers/logger';
 import { torrentFromApi } from '../interfaces';
 
 export const getTorrentInfo = (infohash: string): Promise<torrentFromApi> => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve: (value: torrentFromApi) => void, reject) => {
         axios.get(`http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/info`, {
             params: {
                 hashes: infohash
@@ -148,7 +148,7 @@ export const addTags = (torrents: any[], tags: string[]): Promise<void> => {
     });
 }
 
-export const setCategory = (infohash: string, category: string) => {
+export const setCategory = (infohash: string, category: string): Promise<void> => {
     return new Promise((resolve, reject) => {
 
         let payload = `hashes=${infohash}&category=${category}`;
@@ -164,7 +164,8 @@ export const setCategory = (infohash: string, category: string) => {
             feedLogger.log('SET CATEGORY API', `Successfully set category for ${infohash} to ${category}`);
             resolve();
         }).catch(error => {
-            feedLogger.log('SET CATEGORY API', `Failed with error code ${error.response.status}`);
+            feedLogger.log('SET CATEGORY API', `Failed with error code ${error.response.status}. Make sure the category exists!`);
+            reject(error.response.status);
         })
     })
 }

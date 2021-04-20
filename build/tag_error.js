@@ -10,7 +10,7 @@ const logger_1 = require("./helpers/logger");
  * It will tag them as an errored torrent
  * Requested by Xan
  */
-exports.tagErroredTorrents = async (args) => {
+const tagErroredTorrents = async (args) => {
     const dryRun = args.some(arg => arg === '--dry-run');
     if (dryRun === true) {
         logger_1.feedLogger.log('FLAGS', `--dry-run specified. Will not tag any torrents!`);
@@ -66,4 +66,5 @@ exports.tagErroredTorrents = async (args) => {
     }
     logger_1.feedLogger.log('TAG', `Successfully tagged ${toTag.length} torrents!`);
 };
+exports.tagErroredTorrents = tagErroredTorrents;
 //# sourceMappingURL=tag_error.js.map

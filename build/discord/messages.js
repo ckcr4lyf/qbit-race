@@ -5,7 +5,7 @@ exports.completeMessage = exports.addMessage = void 0;
 const utilities_1 = require("../helpers/utilities");
 const settings_1 = require("../../settings");
 const { botUsername, botAvatar } = settings_1.SETTINGS.DISCORD_NOTIFICATIONS || { botUsername: 'qBittorrent', botAvatar: '' };
-exports.addMessage = (torrentName, trackers, size, reannounceCount) => {
+const addMessage = (torrentName, trackers, size, reannounceCount) => {
     const humanSize = utilities_1.humanFileSize(size, false, 2);
     const body = {
         content: `Added ${torrentName} (${humanSize})`,
@@ -37,7 +37,8 @@ exports.addMessage = (torrentName, trackers, size, reannounceCount) => {
     };
     return body;
 };
-exports.completeMessage = (torrentName, trackers, size, ratio) => {
+exports.addMessage = addMessage;
+const completeMessage = (torrentName, trackers, size, ratio) => {
     let trackersMessage = trackers.join('\n');
     if (trackersMessage === '') {
         trackersMessage = 'No trackers set!';
@@ -73,4 +74,5 @@ exports.completeMessage = (torrentName, trackers, size, ratio) => {
     };
     return body;
 };
+exports.completeMessage = completeMessage;
 //# sourceMappingURL=messages.js.map

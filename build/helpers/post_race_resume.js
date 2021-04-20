@@ -15,7 +15,7 @@ const resume_1 = require("./resume");
  * It also checks if any are stalled / in reannounce loop.
  * If nothing is pending, it will resume all torrents.
  */
-exports.postRaceResume = async (infohash, tracker) => {
+const postRaceResume = async (infohash, tracker) => {
     let torrents;
     let t1 = Date.now();
     try {
@@ -70,4 +70,5 @@ exports.postRaceResume = async (infohash, tracker) => {
     // handle the resume part
     await resume_1.resume('POST RACE', torrents);
 };
+exports.postRaceResume = postRaceResume;
 //# sourceMappingURL=post_race_resume.js.map

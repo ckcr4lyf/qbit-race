@@ -11,7 +11,7 @@ exports.SETTINGS = {
         botUsername: 'qBittorrent',
         botAvatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/New_qBittorrent_Logo.svg/600px-New_qBittorrent_Logo.svg.png'
     },
-    CATEOGORY_FINISH_CHANGE: {
+    CATEGORY_FINISH_CHANGE: {
         'OLD CAT': 'NEW CAT',
     }
 }
