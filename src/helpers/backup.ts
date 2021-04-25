@@ -28,7 +28,7 @@ export const backupCurrentConfig = () => {
         }
     }
 
-    const backupFilePath = path.join(backupFolderPath, `${(new Date()).toISOString()}_settings.js`);
+    const backupFilePath = path.join(backupFolderPath, `${(new Date()).getTime()}_settings.js`);
     fs.copyFileSync(settingsPath, backupFilePath);
     log.log('BACKUP', `Copied file to ${backupFilePath}`);
 }
