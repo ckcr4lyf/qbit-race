@@ -26,16 +26,21 @@ Massive Thanks to <a href="https://walkerservers.com/">WalkerServers</a> for spo
 
 ## Index
 
-* [General Information](#qbittorrent-racing)
-* [Thanks](#thanks)
-* [Index](#index)
-* [Important notice for nvm users](#important)
-* [Initial Setup](#repo-setup)
-* [Settings explanation](#additional-settings)
-* [Setup with autoDL](#autodl-setup-basic)
-* [Setup for post race notifications](#qbittorrent-post-race-setup)
-* [Auto tag tracker-error torrents](#tag-errored-torrents)
-* [Setting torrent category with autoDL](#torrent-category)
+- [qBittorrent Racing](#qbittorrent-racing)
+  - [Thanks](#thanks)
+  - [Index](#index)
+  - [Node requirement](#node-requirement)
+    - [Important!](#important)
+  - [Repo Setup](#repo-setup)
+  - [Updating](#updating)
+  - [Additional Settings](#additional-settings)
+  - [AutoDL setup (Basic)](#autodl-setup-basic)
+  - [AutoDL setup (Advanced)](#autodl-setup-advanced)
+    - [Torrent Category](#torrent-category)
+    - [Change Category on torrent completion](#change-category-on-torrent-completion)
+  - [qBittorrent post race setup](#qbittorrent-post-race-setup)
+  - [Other Scripts](#other-scripts)
+    - [Tag Errored Torrents](#tag-errored-torrents)
 
 ## Node requirement
 This project needs Node.js v12+.
@@ -166,6 +171,28 @@ Which would set the category of all torrents that match said filter to "never op
 
 Protip: qBittorrent has a feature that allows you to configure download paths by category. This might be useful to consolidate your downloads.`
 
+### Change Category on torrent completion
+
+Often it may be desirable to change the category of the torrent on completion, often when using with Sonarr / Radarr etc. You can add as many rules as you would like (of course, a single torrent is limited to a single cateogry still, by qbittorrent itself).
+
+To do so, there are two requirements:
+1. The torrent must be added with a category set
+2. The category *to be changed to* must already exist
+
+Then, in `settings.js`, you can add a line to the `CATEGORY_FINISH_CHANGE` object, of the form:
+
+```
+'THE_CATEGORY_FROM_AUTODL': 'THE_CATEGORY_AFTER_COMPLETION'
+```
+
+For instance, if you add it as "DOWNLOADING_LINUX", and want to change to "SEEDING_LINUX", you can set it up as:
+```
+CATEGORY_FINISH_CHANGE: {
+     'DOWNLOADING_LINUX': 'SEEDING_LINUX',
+     'ANOTHER_ONE': 'YET_ANOTHER_ONE'
+ }
+```
+
 ## qBittorrent post race setup
 
 After the race, the post race script will resume the torrents (if nothing else is downloading), and also send you a discord notification with the ratio (if you have enabled it).
@@ -188,6 +215,7 @@ So the final entry would look like
 ```
 /home/username/scripts/qbit-race/bin/post_race.js "%I" "%N" "%T"
 ```
+
 
 ## Other Scripts
 
