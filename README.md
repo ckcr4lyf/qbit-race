@@ -34,6 +34,7 @@ Massive Thanks to <a href="https://walkerservers.com/">WalkerServers</a> for spo
   - [Repo Setup](#repo-setup)
   - [Updating](#updating)
   - [Additional Settings](#additional-settings)
+    - [Backup Settings](#backup-settings)
   - [AutoDL setup (Basic)](#autodl-setup-basic)
   - [AutoDL setup (Advanced)](#autodl-setup-advanced)
     - [Torrent Category](#torrent-category)
@@ -111,6 +112,7 @@ There are additional parameters you can tweak in `settings.js`. These settings c
 |`CONCURRENT_RACES`|`1`|How many torrents can be "raced" at once. If autodl grabs a torrent, but these many races are already in progress, the torrent will be silently skipped. While less parallel races give better performance, if you want to download everything autoDL grabs, set this to `-1`|
 |`COUNT_STALLED_DOWNLOADS`|`false`|If a seeder abandons the torrent midway, the download may be stalled. This option controlls whether such torrents should be counted when checking for `CONCURRENT_RACES`. It is advisable to keep this as false|
 |`DISCORD_NOTIFICATIONS`|`object`|See below for descripton|
+`CATEGORY_FINISH_CHANGE`|`object`|Check [this section](#change-category-on-torrent-completion) for details|
 
 <br><br>
 If you would like to receive discord notifications, so you can enable this option. **REMEMBER TO SET YOUR WEBHOOK URL IN THE .env FILE!**. The description of the options is as follows:
@@ -129,6 +131,12 @@ If you enable discord notifications, and set the webhook URL in `.env`, you can 
 2020-09-27T13:32:33.680Z [DISCORD] - Message sent successfully!
 2020-09-27T13:32:33.680Z [TEST] - SUCCESS!
 ```
+
+### Backup Settings
+
+You can backup your settings easily by running `npm run backup`, useful if you plan to update just in case.
+
+The file will be saved as `currenttimestamp_settings.js` in the path `~/.backup/qbit-race/`
 
 ## AutoDL setup (Basic)
 
