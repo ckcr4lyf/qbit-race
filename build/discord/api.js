@@ -7,10 +7,10 @@ const logger_1 = require("../helpers/logger");
 const sendMessage = (body) => {
     return new Promise((resolve, reject) => {
         axios_1.default.post(config_1.DISCORD_WEBHOOK, body).then(response => {
-            logger_1.feedLogger.log('DISCORD', `Message sent successfully!`);
+            logger_1.logger.info(`Message sent successfully!`);
             resolve();
         }).catch(error => {
-            logger_1.feedLogger.log('DISCORD', `sendMessage failed with error code ${error.response.status}`);
+            logger_1.logger.error(`sendMessage failed with error code ${error.response.status}`);
             reject();
         });
     });

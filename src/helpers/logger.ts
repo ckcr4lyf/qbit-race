@@ -1,22 +1,27 @@
 import * as fs from 'fs';
 import * as path from 'path';
+
 import { LOGFILE } from '../config';
 
-export class Logger {
+class Logger {
 
-    logfile: string;
+    constructor () {}
 
-    constructor (logfile: string) {
-        this.logfile = path.join(__dirname, '../../logs', logfile);
+    private log(level: string, msg: string){
+        const dateString = new Date().toISOString();
+        const logString = `[${dateString}] ${level}: ${msg}\n`;
+        console.log(logString.trim());
+        const logfile = path.join(__dirname, '../../logs', LOGFILE);
+        fs.appendFileSync(logfile, logString);
     }
 
-    log = (prefix: string, message: string) => {
-        let logfile = path.join(__dirname, '../../logs', LOGFILE); //Dynamically get the name from the environment / memory variable.
-        let timeString = new Date().toISOString();
-        let logEntry = `${timeString} [${prefix}] - ${message}\n`;
-        console.log(logEntry.trim());
-        fs.appendFileSync(logfile, logEntry);
+    public info(msg: string){
+        this.log('INFO', msg);
+    }
+
+    public error(msg: string){
+        this.log('ERROR', msg);
     }
 }
 
-export const feedLogger = new Logger('feeder.log')
+export const logger = new Logger();

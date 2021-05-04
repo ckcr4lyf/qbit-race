@@ -14,11 +14,9 @@ const getTorrentInfo = (infohash) => {
             },
             headers: { 'Cookie': config_1.COOKIE }
         }).then(response => {
-            // console.log(response.status);
-            // console.log(response.data);
             resolve(response.data[0]);
         }).catch(error => {
-            logger_1.feedLogger.log(`GET TORRENT INFO`, `Failed with error code ${error.response.status}`);
+            logger_1.logger.error(`Get torrent info API failed with error code ${error.response.status}`);
             reject(error.response.status);
         });
     });
@@ -29,11 +27,9 @@ const getTorrents = () => {
         axios_1.default.get(`http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/info`, {
             headers: { 'Cookie': config_1.COOKIE }
         }).then(response => {
-            // console.log(response.status);
-            // console.log(response.data);
             resolve(response.data);
         }).catch(error => {
-            logger_1.feedLogger.log(`GET TORRENTS`, `Failed with error code ${error.response.status}`);
+            logger_1.logger.error(`Get torrents API failed with error code ${error.response.status}`);
             reject(error.response.status);
         });
     });
@@ -52,10 +48,10 @@ const pauseTorrents = (torrents) => {
             },
             headers: { 'Cookie': config_1.COOKIE }
         }).then(response => {
-            logger_1.feedLogger.log('PAUSE TORRENTS', `Successfully paused ${infohashes.length} torrents!`);
+            logger_1.logger.info(`Successfully paused ${infohashes.length} torrents!`);
             resolve();
         }).catch(error => {
-            logger_1.feedLogger.log('PAUSE TORRENTS', `Failed with error code ${error.response.status}`);
+            logger_1.logger.error(`Pause torrents API failed with error code ${error.response.status}`);
             reject();
         });
     });
@@ -74,10 +70,10 @@ const resumeTorrents = (torrents) => {
             },
             headers: { 'Cookie': config_1.COOKIE }
         }).then(response => {
-            logger_1.feedLogger.log('RESUME TORRENTS', `Successfully resumed ${infohashes.length} torrents!`);
+            logger_1.logger.info(`Successfully resumed ${infohashes.length} torrents!`);
             resolve();
         }).catch(error => {
-            logger_1.feedLogger.log('RESUME TORRENTS', `Failed with error code ${error.response.status}`);
+            logger_1.logger.error(`Resume torrents API failed with error code ${error.response.status}`);
             reject();
         });
     });
@@ -97,10 +93,10 @@ const deleteTorrents = (torrents) => {
             },
             headers: { 'Cookie': config_1.COOKIE }
         }).then(response => {
-            logger_1.feedLogger.log('DELETE', `Successfully deleted ${torrents.length} torrents.`);
+            logger_1.logger.info(`Successfully deleted ${torrents.length} torrents.`);
             resolve();
         }).catch(error => {
-            logger_1.feedLogger.log('DELETE', `Failed with error code ${error.response.status}`);
+            logger_1.logger.error(`Delete torrents API failed with error code ${error.response.status}`);
             reject();
         });
     });
@@ -117,9 +113,6 @@ const addTags = (torrents, tags) => {
             return;
         }
         const infohashes = torrents.map(torrent => torrent.hash);
-        // const payload = new FormData();
-        // payload.append('hashes', infohashes.join('|'));
-        // payload.append('tags', tags.join(','));
         let payload = `hashes=${infohashes.join('|')}&tags=${tags.join(',')}`;
         axios_1.default.request({
             method: 'POST',
@@ -130,11 +123,10 @@ const addTags = (torrents, tags) => {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         }).then(response => {
-            logger_1.feedLogger.log('ADD TAGS API', `Successfully added ${tags.length} tags to ${torrents.length} torrents.`);
+            logger_1.logger.info(`Successfully added ${tags.length} tags to ${torrents.length} torrents.`);
             resolve();
         }).catch(error => {
-            // console.log(error.response);
-            logger_1.feedLogger.log('ADD TAGS API', `Failed with error code ${error.response.status}`);
+            logger_1.logger.error(`Add tags API failed with error code ${error.response.status}`);
         });
     });
 };
@@ -151,10 +143,10 @@ const setCategory = (infohash, category) => {
                 'Content-Type': 'application/x-www-form-urlencoded',
             }
         }).then(response => {
-            logger_1.feedLogger.log('SET CATEGORY API', `Successfully set category for ${infohash} to ${category}`);
+            logger_1.logger.info(`Successfully set category for ${infohash} to ${category}`);
             resolve();
         }).catch(error => {
-            logger_1.feedLogger.log('SET CATEGORY API', `Failed with error code ${error.response.status}. Make sure the category exists!`);
+            logger_1.logger.error(`Set category API failed with error code ${error.response.status}. Make sure the category exists!`);
             reject(error.response.status);
         });
     });
@@ -168,11 +160,11 @@ const addTorrent = (path, category) => {
             formData.append("torrents", torrentData, 'dummy.torrent');
         }
         catch (error) {
-            logger_1.feedLogger.log('ADD TORRENT', `Unable to read file ${path}`);
+            logger_1.logger.error(`Unable to read file ${path}`);
             reject();
         }
         if (category !== null) {
-            logger_1.feedLogger.log('ADD TORRENT', `Setting category to ${category}`);
+            logger_1.logger.info(`Setting category to ${category}`);
             formData.append('category', category);
         }
         axios_1.default.request({
@@ -182,10 +174,10 @@ const addTorrent = (path, category) => {
              }),
             data: formData
         }).then(response => {
-            logger_1.feedLogger.log(`ADD TORRENT`, `Successfully added to qBittorrent!`);
+            logger_1.logger.info(`Successfully added to qBittorrent!`);
             resolve();
         }).catch(error => {
-            logger_1.feedLogger.log("ADD TORRENT", `Failed with error code ${error.response.status}`);
+            logger_1.logger.error(`Add torrent API failed with error code ${error.response.status}`);
             reject();
         });
     });
@@ -203,7 +195,7 @@ const getTrackers = (infohash) => {
         }).then(response => {
             resolve(response.data);
         }).catch(error => {
-            logger_1.feedLogger.log(`GET TRACKERS`, `Failed with error code ${error.response.status}`);
+            logger_1.logger.error(`Get trackers API failed with error code ${error.response.status}`);
             reject(error);
         });
     });
@@ -221,7 +213,7 @@ const reannounce = (infohash) => {
         }).then(response => {
             resolve();
         }).catch(error => {
-            logger_1.feedLogger.log(`REANNOUNCE`, `Failed with error code ${error.response.status}`);
+            logger_1.logger.error(`Reannounce API failed with error code ${error.response.status}`);
             reject(error);
         });
     });

@@ -1,10 +1,9 @@
-import { info } from 'console';
 import { SETTINGS } from '../../settings';
 import { torrentFromApi } from '../interfaces';
 import { resumeTorrents } from "../qbittorrent/api";
-import { feedLogger } from "./logger";
+import { logger } from "./logger";
 
-export const resume = async (logPrefix: string, torrents: torrentFromApi[]) => {
+export const resume = async (torrents: torrentFromApi[]) => {
 
     const reannounceYoungest = Date.now() - (SETTINGS.REANNOUNCE_INTERVAL * SETTINGS.REANNOUNCE_LIMIT); 
 
@@ -13,12 +12,12 @@ export const resume = async (logPrefix: string, torrents: torrentFromApi[]) => {
         const torrent = torrents[x];
 
         if (torrent.state === 'downloading'){
-            feedLogger.log(logPrefix, `We are still downloading, not resuming rest.`);
+            logger.info(`We are still downloading, not resuming rest.`);
             return; //We do not want to resume, since something else is downloading.
         }
 
         if (torrent.state === 'stalledDL' && (torrent.added_on * 1000) > reannounceYoungest){
-            feedLogger.log(logPrefix, `There is a torrent in reannounce phase, not resuming rest.`)
+            logger.info(`There is a torrent in reannounce phase, not resuming rest.`)
             return; //This torrent is also still in the reannounce phase
         }
 
@@ -27,18 +26,18 @@ export const resume = async (logPrefix: string, torrents: torrentFromApi[]) => {
     const paused = torrents.filter(torrent => torrent.state === 'pausedUP');
     
     if (paused.length === 0){
-        feedLogger.log(logPrefix, `No downloading, nothing to resume either.`);
+        logger.info(`No downloading, nothing to resume either.`);
         return;
     }
 
-    feedLogger.log(logPrefix, `No downloading torrents. Resuming ${paused.length} torrents...`);
+    logger.info(`No downloading torrents. Resuming ${paused.length} torrents...`);
 
     try {
         await resumeTorrents(paused);
     } catch (error) {
-        feedLogger.log(logPrefix, `Failed to resume torrents.`);
+        logger.error(`Failed to resume torrents.`);
         process.exit(1);
     }
 
-    feedLogger.log(logPrefix, `Resumed all torrents. Exiting...`); 
+    logger.info(`Resumed all torrents. Exiting...`); 
 }

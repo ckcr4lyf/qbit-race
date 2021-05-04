@@ -17,7 +17,6 @@ export const login = async (): Promise<void> => {
                 reject(response.status);
             }
         }).catch(error => {
-
             if (error.response){
                 reject(error.response.status);
             } else {

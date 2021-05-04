@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv'
 import * as path from 'path';
 
 import { SETTINGS } from '../settings';
-import { feedLogger } from './helpers/logger';
+import { logger } from './helpers/logger';
 
 let COOKIE = '';
 let LOGFILE = 'default.log';
@@ -11,7 +11,6 @@ dotenv.config({
     path: path.join(__dirname, '../.env')
 });
 
-feedLogger.log('CONFIG', 'Loaded .env');
 const QBIT_HOST = process.env.QBIT_HOST;
 const QBIT_PORT = process.env.QBIT_PORT;
 const QBIT_USERNAME = process.env.QBIT_USERNAME;
@@ -45,7 +44,7 @@ if (!DISCORD_WEBHOOK && SETTINGS.DISCORD_NOTIFICATIONS.enabled === true){
 
 const setCookie = (cookie: string) => {
     COOKIE = cookie;
-    feedLogger.log(`CONFIG`, `Updated COOKIE!`);// to ${cookie}`);
+    logger.info(`Updated COOKIE!`);
 }
 
 //logger.ts will get the LOGFILE from config.ts to decide which file to write to.

@@ -1,6 +1,6 @@
 import { login } from './qbittorrent/auth';
 import { addTags, getTorrents, getTrackers } from './qbittorrent/api';
-import { feedLogger } from './helpers/logger';
+import { logger } from './helpers/logger';
 
 /**
  * tagErroredTorrents gets a list of torrents from qBit, and then traverses their tracker.
@@ -14,7 +14,7 @@ import { feedLogger } from './helpers/logger';
     const dryRun = args.some(arg => arg === '--dry-run');
 
     if (dryRun === true){
-        feedLogger.log('FLAGS', `--dry-run specified. Will not tag any torrents!`);
+        logger.info(`--dry-run specified. Will not tag any torrents!`);
     }
 
     let torrents: any[];
@@ -23,7 +23,7 @@ import { feedLogger } from './helpers/logger';
     try {
         await login();
     } catch (error){
-        feedLogger.log('AUTH', 'Failed to login to qBittorrent');
+        logger.error('Failed to login to qBittorrent');
         process.exit(1);
     }
 
@@ -32,47 +32,44 @@ import { feedLogger } from './helpers/logger';
     try {
         torrents = await getTorrents();
     } catch (error){
-        feedLogger.log('GET TORRENTS', 'Failed to get torrents from qBittorrent');
+        logger.error('Failed to get torrents from qBittorrent');
         process.exit(1);
     }
 
-    //Map it to the useful shit, aka just infohashes (and name maybe).
-    //This is actually pointless but map looks cool so yolo. It may even free some memory
-    //When the GC runs
-    torrents = torrents.map(({ name, hash }) => ({ name, hash }));
     let toTag: string[] = [];
-    //Loop over them 
+
     for (const torrent of torrents){
-        
         let trackers: any[] = await getTrackers(torrent.hash);
         trackers.splice(0, 3);
         let working = trackers.some(tracker => tracker.status === 2);
 
         if (!working){
-            feedLogger.log('CHECK', `[${torrent.hash}] tracker error for ${torrent.name}`);
+            logger.info(`[${torrent.hash}] tracker error for ${torrent.name}`);
             toTag.push(torrent);
         }
     }
 
     //Now let's tag them
     if (toTag.length === 0){
-        feedLogger.log('TAG', 'No errored torrents to tag...');
+        logger.info('No errored torrents to tag...');
         process.exit(0);
     }
 
     if (dryRun === true){
-        feedLogger.log('TAG', 'Finished Dry Run. Exiting...');
+        logger.info('Finished Dry Run. Exiting...');
         return;
     }
 
-    feedLogger.log('TAG', `Tagging ${toTag.length} torrents...`);
+    logger.info(`Tagging ${toTag.length} torrents...`);
 
     try {
         await addTags(toTag, ['error']);
     } catch (error){
-        feedLogger.log('TAG', 'Failed to set tags');
+        logger.error('Failed to set tags');
         process.exit(1);
     }
 
-    feedLogger.log('TAG', `Successfully tagged ${toTag.length} torrents!`);
+    const t2 = Date.now();
+
+    logger.info(`Successfully tagged ${toTag.length} torrents in ${((t2 - t1) / 1000).toFixed(2)} seconds!`);
  }

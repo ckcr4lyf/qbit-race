@@ -26,16 +26,22 @@ Massive Thanks to <a href="https://walkerservers.com/">WalkerServers</a> for spo
 
 ## Index
 
-* [General Information](#qbittorrent-racing)
-* [Thanks](#thanks)
-* [Index](#index)
-* [Important notice for nvm users](#important)
-* [Initial Setup](#repo-setup)
-* [Settings explanation](#additional-settings)
-* [Setup with autoDL](#autodl-setup-basic)
-* [Setup for post race notifications](#qbittorrent-post-race-setup)
-* [Auto tag tracker-error torrents](#tag-errored-torrents)
-* [Setting torrent category with autoDL](#torrent-category)
+- [qBittorrent Racing](#qbittorrent-racing)
+  - [Thanks](#thanks)
+  - [Index](#index)
+  - [Node requirement](#node-requirement)
+    - [Important!](#important)
+  - [Repo Setup](#repo-setup)
+  - [Updating](#updating)
+  - [Additional Settings](#additional-settings)
+    - [Backup Settings](#backup-settings)
+  - [AutoDL setup (Basic)](#autodl-setup-basic)
+  - [AutoDL setup (Advanced)](#autodl-setup-advanced)
+    - [Torrent Category](#torrent-category)
+    - [Change Category on torrent completion](#change-category-on-torrent-completion)
+  - [qBittorrent post race setup](#qbittorrent-post-race-setup)
+  - [Other Scripts](#other-scripts)
+    - [Tag Errored Torrents](#tag-errored-torrents)
 
 ## Node requirement
 This project needs Node.js v12+.
@@ -106,6 +112,7 @@ There are additional parameters you can tweak in `settings.js`. These settings c
 |`CONCURRENT_RACES`|`1`|How many torrents can be "raced" at once. If autodl grabs a torrent, but these many races are already in progress, the torrent will be silently skipped. While less parallel races give better performance, if you want to download everything autoDL grabs, set this to `-1`|
 |`COUNT_STALLED_DOWNLOADS`|`false`|If a seeder abandons the torrent midway, the download may be stalled. This option controlls whether such torrents should be counted when checking for `CONCURRENT_RACES`. It is advisable to keep this as false|
 |`DISCORD_NOTIFICATIONS`|`object`|See below for descripton|
+`CATEGORY_FINISH_CHANGE`|`object`|Check [this section](#change-category-on-torrent-completion) for details|
 
 <br><br>
 If you would like to receive discord notifications, so you can enable this option. **REMEMBER TO SET YOUR WEBHOOK URL IN THE .env FILE!**. The description of the options is as follows:
@@ -124,6 +131,12 @@ If you enable discord notifications, and set the webhook URL in `.env`, you can 
 2020-09-27T13:32:33.680Z [DISCORD] - Message sent successfully!
 2020-09-27T13:32:33.680Z [TEST] - SUCCESS!
 ```
+
+### Backup Settings
+
+You can backup your settings easily by running `npm run backup`, useful if you plan to update just in case.
+
+The file will be saved as `currenttimestamp_settings.js` in the path `~/.backup/qbit-race/`
 
 ## AutoDL setup (Basic)
 
@@ -166,6 +179,28 @@ Which would set the category of all torrents that match said filter to "never op
 
 Protip: qBittorrent has a feature that allows you to configure download paths by category. This might be useful to consolidate your downloads.`
 
+### Change Category on torrent completion
+
+Often it may be desirable to change the category of the torrent on completion, often when using with Sonarr / Radarr etc. You can add as many rules as you would like (of course, a single torrent is limited to a single cateogry still, by qbittorrent itself).
+
+To do so, there are two requirements:
+1. The torrent must be added with a category set
+2. The category *to be changed to* must already exist
+
+Then, in `settings.js`, you can add a line to the `CATEGORY_FINISH_CHANGE` object, of the form:
+
+```
+'THE_CATEGORY_FROM_AUTODL': 'THE_CATEGORY_AFTER_COMPLETION'
+```
+
+For instance, if you add it as "DOWNLOADING_LINUX", and want to change to "SEEDING_LINUX", you can set it up as:
+```
+CATEGORY_FINISH_CHANGE: {
+     'DOWNLOADING_LINUX': 'SEEDING_LINUX',
+     'ANOTHER_ONE': 'YET_ANOTHER_ONE'
+ }
+```
+
 ## qBittorrent post race setup
 
 After the race, the post race script will resume the torrents (if nothing else is downloading), and also send you a discord notification with the ratio (if you have enabled it).
@@ -188,6 +223,7 @@ So the final entry would look like
 ```
 /home/username/scripts/qbit-race/bin/post_race.js "%I" "%N" "%T"
 ```
+
 
 ## Other Scripts
 

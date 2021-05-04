@@ -1,21 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.feedLogger = exports.Logger = void 0;
+exports.logger = void 0;
 const fs = require("fs");
 const path = require("path");
 const config_1 = require("../config");
 class Logger {
-    constructor(logfile) {
-        this.log = (prefix, message) => {
-            let logfile = path.join(__dirname, '../../logs', config_1.LOGFILE); //Dynamically get the name from the environment / memory variable.
-            let timeString = new Date().toISOString();
-            let logEntry = `${timeString} [${prefix}] - ${message}\n`;
-            console.log(logEntry.trim());
-            fs.appendFileSync(logfile, logEntry);
-        };
-        this.logfile = path.join(__dirname, '../../logs', logfile);
+    constructor() { }
+    log(level, msg) {
+        const dateString = new Date().toISOString();
+        const logString = `[${dateString}] ${level}: ${msg}\n`;
+        console.log(logString.trim());
+        const logfile = path.join(__dirname, '../../logs', config_1.LOGFILE);
+        fs.appendFileSync(logfile, logString);
+    }
+    info(msg) {
+        this.log('INFO', msg);
+    }
+    error(msg) {
+        this.log('ERROR', msg);
     }
 }
-exports.Logger = Logger;
-exports.feedLogger = new Logger('feeder.log');
+exports.logger = new Logger();
 //# sourceMappingURL=logger.js.map
