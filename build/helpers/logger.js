@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.logger = void 0;
 const fs = require("fs");
+const path = require("path");
 const config_1 = require("../config");
 class Logger {
     constructor() { }
@@ -9,7 +10,8 @@ class Logger {
         const dateString = new Date().toISOString();
         const logString = `[${dateString}] ${level}: ${msg}\n`;
         console.log(logString.trim());
-        fs.appendFileSync(config_1.LOGFILE, logString);
+        const logfile = path.join(__dirname, '../../logs', config_1.LOGFILE);
+        fs.appendFileSync(logfile, logString);
     }
     info(msg) {
         this.log('INFO', msg);

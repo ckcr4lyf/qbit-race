@@ -1,4 +1,6 @@
 import * as fs from 'fs';
+import * as path from 'path';
+
 import { LOGFILE } from '../config';
 
 class Logger {
@@ -9,7 +11,8 @@ class Logger {
         const dateString = new Date().toISOString();
         const logString = `[${dateString}] ${level}: ${msg}\n`;
         console.log(logString.trim());
-        fs.appendFileSync(LOGFILE, logString);
+        const logfile = path.join(__dirname, '../../logs', LOGFILE);
+        fs.appendFileSync(logfile, logString);
     }
 
     public info(msg: string){
