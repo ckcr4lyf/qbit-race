@@ -17,7 +17,6 @@ const resume_1 = require("./resume");
  */
 const postRaceResume = async (infohash, tracker) => {
     let torrents;
-    let t1 = Date.now();
     try {
         await auth_1.login();
     }
@@ -25,8 +24,7 @@ const postRaceResume = async (infohash, tracker) => {
         console.log(`Failed to login. Exiting...`);
         process.exit(1);
     }
-    let t2 = Date.now();
-    logger_1.feedLogger.log('AUTH', `Login completed in ${((t2 - t1) / 1000).toFixed(2)} seconds.`);
+    logger_1.logger.info(`Login completed!`);
     // Check if this torrent's category is in the rename list
     // In case they are on old settings, skip it
     if (settings_1.SETTINGS.CATEGORY_FINISH_CHANGE !== undefined) {
@@ -36,19 +34,19 @@ const postRaceResume = async (infohash, tracker) => {
         if (newCategoryName !== undefined) {
             try {
                 await api_2.setCategory(infohash, newCategoryName);
-                logger_1.feedLogger.log('POST RACE', `Changed category for ${infohash} from ${torrentInfo.category} to ${newCategoryName}`);
+                logger_1.logger.info(`Changed category for ${infohash} from ${torrentInfo.category} to ${newCategoryName}`);
             }
             catch (error) {
-                logger_1.feedLogger.log('POST RACE', `Failed to change category for ${infohash} from ${torrentInfo.category} to ${newCategoryName}`);
+                logger_1.logger.error(`Failed to change category for ${infohash} from ${torrentInfo.category} to ${newCategoryName}`);
             }
         }
     }
-    logger_1.feedLogger.log('POST RACE', `Getting torrent list`);
+    logger_1.logger.info(`Getting torrent list`);
     try {
         torrents = await api_2.getTorrents();
     }
     catch (error) {
-        logger_1.feedLogger.log('POST RACE', `Failed to get torrents from qBittorrent`);
+        logger_1.logger.error(`Failed to get torrents from qBittorrent`);
         process.exit(1);
     }
     //Get the stats for this torrent and send to discord
@@ -56,19 +54,19 @@ const postRaceResume = async (infohash, tracker) => {
     if (enabled === true) {
         let torrent = torrents.find(t => t.hash === infohash);
         if (torrent === undefined) {
-            logger_1.feedLogger.log('POST RACE', `Unable to find completed torrent (${infohash}) in array. Exiting...`);
+            logger_1.logger.error(`Unable to find completed torrent (${infohash}) in array. Exiting...`);
             process.exit(1);
         }
         try {
-            logger_1.feedLogger.log('POST RACE', 'Sending notification to deluge...');
+            logger_1.logger.info('Sending notification to deluge...');
             await api_1.sendMessage(messages_1.completeMessage(torrent.name, torrent.tags.split(','), torrent.size, torrent.ratio));
         }
         catch (error) {
-            logger_1.feedLogger.log('POST RACE', 'Failed to send notification to Discord');
+            logger_1.logger.error('Failed to send notification to Discord');
         }
     }
     // handle the resume part
-    await resume_1.resume('POST RACE', torrents);
+    await resume_1.resume(torrents);
 };
 exports.postRaceResume = postRaceResume;
 //# sourceMappingURL=post_race_resume.js.map

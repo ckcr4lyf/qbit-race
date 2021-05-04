@@ -3,7 +3,7 @@ import * as FormData from 'form-data';
 import * as fs from 'fs';
 
 import { QBIT_HOST, QBIT_PORT, COOKIE } from '../config';
-import { feedLogger  } from '../helpers/logger';
+import { logger } from '../helpers/logger';
 import { torrentFromApi } from '../interfaces';
 
 export const getTorrentInfo = (infohash: string): Promise<torrentFromApi> => {
@@ -14,11 +14,9 @@ export const getTorrentInfo = (infohash: string): Promise<torrentFromApi> => {
             },
             headers: {'Cookie': COOKIE}
         }).then(response => {
-            // console.log(response.status);
-            // console.log(response.data);
             resolve(response.data[0]);
         }).catch(error => {
-            feedLogger.log(`GET TORRENT INFO`, `Failed with error code ${error.response.status}`);
+            logger.error(`Get torrent info API failed with error code ${error.response.status}`);
             reject(error.response.status);
         });
     })
@@ -29,11 +27,9 @@ export const getTorrents = (): Promise<torrentFromApi[]> => {
         axios.get(`http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/info`, {
             headers: {'Cookie': COOKIE}
         }).then(response => {
-            // console.log(response.status);
-            // console.log(response.data);
             resolve(response.data);
         }).catch(error => {
-            feedLogger.log(`GET TORRENTS`, `Failed with error code ${error.response.status}`);
+            logger.error(`Get torrents API failed with error code ${error.response.status}`);
             reject(error.response.status);
         });
     })
@@ -54,10 +50,10 @@ export const pauseTorrents = (torrents: any[]): Promise<void> => {
             },
             headers: {'Cookie': COOKIE}
         }).then(response => {
-            feedLogger.log('PAUSE TORRENTS', `Successfully paused ${infohashes.length} torrents!`);
+            logger.info(`Successfully paused ${infohashes.length} torrents!`);
             resolve();
         }).catch(error => {
-            feedLogger.log('PAUSE TORRENTS', `Failed with error code ${error.response.status}`);
+            logger.error(`Pause torrents API failed with error code ${error.response.status}`);
             reject();
         });
     })
@@ -78,10 +74,10 @@ export const resumeTorrents = (torrents: torrentFromApi[]): Promise<void> => {
             },
             headers: {'Cookie': COOKIE}
         }).then(response => {
-            feedLogger.log('RESUME TORRENTS', `Successfully resumed ${infohashes.length} torrents!`);
+            logger.info(`Successfully resumed ${infohashes.length} torrents!`);
             resolve();
         }).catch(error => {
-            feedLogger.log('RESUME TORRENTS', `Failed with error code ${error.response.status}`);
+            logger.error(`Resume torrents API failed with error code ${error.response.status}`);
             reject();
         });
     })
@@ -103,10 +99,10 @@ export const deleteTorrents = (torrents: any[]): Promise<void> => {
             },
             headers: {'Cookie': COOKIE}
         }).then(response => {
-            feedLogger.log('DELETE', `Successfully deleted ${torrents.length} torrents.`);
+            logger.info(`Successfully deleted ${torrents.length} torrents.`);
             resolve();
         }).catch(error => {
-            feedLogger.log('DELETE', `Failed with error code ${error.response.status}`);
+            logger.error(`Delete torrents API failed with error code ${error.response.status}`);
             reject();
         })
     })
@@ -126,10 +122,8 @@ export const addTags = (torrents: any[], tags: string[]): Promise<void> => {
         }
 
         const infohashes = torrents.map(torrent => torrent.hash);
-        // const payload = new FormData();
-        // payload.append('hashes', infohashes.join('|'));
-        // payload.append('tags', tags.join(','));
         let payload = `hashes=${infohashes.join('|')}&tags=${tags.join(',')}`;
+
         axios.request({
             method: 'POST',
             url: `http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/addTags`, 
@@ -139,11 +133,10 @@ export const addTags = (torrents: any[], tags: string[]): Promise<void> => {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         }).then(response => {
-            feedLogger.log('ADD TAGS API', `Successfully added ${tags.length} tags to ${torrents.length} torrents.`);
+            logger.info(`Successfully added ${tags.length} tags to ${torrents.length} torrents.`);
             resolve();
         }).catch(error => {
-            // console.log(error.response);
-            feedLogger.log('ADD TAGS API', `Failed with error code ${error.response.status}`);
+            logger.error(`Add tags API failed with error code ${error.response.status}`);
         });
     });
 }
@@ -161,10 +154,10 @@ export const setCategory = (infohash: string, category: string): Promise<void> =
                 'Content-Type': 'application/x-www-form-urlencoded',
             }
         }).then(response => {
-            feedLogger.log('SET CATEGORY API', `Successfully set category for ${infohash} to ${category}`);
+            logger.info(`Successfully set category for ${infohash} to ${category}`);
             resolve();
         }).catch(error => {
-            feedLogger.log('SET CATEGORY API', `Failed with error code ${error.response.status}. Make sure the category exists!`);
+            logger.error(`Set category API failed with error code ${error.response.status}. Make sure the category exists!`);
             reject(error.response.status);
         })
     })
@@ -178,12 +171,12 @@ export const addTorrent = (path: string, category?: string): Promise<void> => {
             const torrentData = fs.readFileSync(path);
             formData.append("torrents", torrentData, 'dummy.torrent');
         } catch (error) {
-            feedLogger.log('ADD TORRENT', `Unable to read file ${path}`);
+            logger.error(`Unable to read file ${path}`);
             reject();
         }
 
         if (category !== null){
-            feedLogger.log('ADD TORRENT', `Setting category to ${category}`);
+            logger.info(`Setting category to ${category}`);
             formData.append('category', category);
         }
 
@@ -197,10 +190,10 @@ export const addTorrent = (path: string, category?: string): Promise<void> => {
             },
             data: formData
         }).then(response => {
-            feedLogger.log(`ADD TORRENT`, `Successfully added to qBittorrent!`);
+            logger.info(`Successfully added to qBittorrent!`);
             resolve();
         }).catch(error => {
-            feedLogger.log("ADD TORRENT", `Failed with error code ${error.response.status}`);
+            logger.error(`Add torrent API failed with error code ${error.response.status}`);
             reject();
         });
     });
@@ -218,7 +211,7 @@ export const getTrackers = (infohash: string): Promise<any[]> => {
         }).then(response => {
             resolve(response.data);
         }).catch(error => {
-            feedLogger.log(`GET TRACKERS`, `Failed with error code ${error.response.status}`)
+            logger.error(`Get trackers API failed with error code ${error.response.status}`)
             reject(error);
         })
     })
@@ -236,7 +229,7 @@ export const reannounce = (infohash: string): Promise<void> => {
         }).then(response => {
             resolve();
         }).catch(error => {
-            feedLogger.log(`REANNOUNCE`, `Failed with error code ${error.response.status}`)
+            logger.error(`Reannounce API failed with error code ${error.response.status}`)
             reject(error);
         })
     })

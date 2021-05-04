@@ -1,7 +1,7 @@
 import { login } from './qbittorrent/auth';
 import { addTags, addTorrent, deleteTorrents, getTorrentInfo, getTorrents, getTrackers, reannounce } from './qbittorrent/api'
 import { sleep } from './helpers/utilities';
-import { feedLogger } from './helpers/logger';
+import { logger } from './helpers/logger';
 import { preRaceCheck } from './helpers/pre_race';
 import { SETTINGS } from '../settings';
 import { sendMessage } from './discord/api';
@@ -25,7 +25,7 @@ module.exports = async (args: string[]) => {
                 category = args[index + 1];
             } else {
                 //They fucked up. Let them know, but dont error out (act as if not set).
-                feedLogger.log('ARGS', '--category set but the category is missing.');
+                logger.error('--category set but the category is missing.');
                 break;
             }
         }
@@ -36,21 +36,21 @@ module.exports = async (args: string[]) => {
     try {
         await login();
     } catch (error) {
-        console.log(`Failed to login. Exiting...`);
+        logger.error(`Failed to login. Exiting...`);
         process.exit(1);
     }
 
     let t2 = Date.now();
-    feedLogger.log('AUTH', `Login completed in ${((t2 - t1) / 1000).toFixed(2)} seconds.`);
-    feedLogger.log('PRE RACE', 'Performing Pre Race check...');
+    logger.info(`Login completed in ${((t2 - t1) / 1000).toFixed(2)} seconds.`);
+    logger.info('Performing Pre Race check...');
     const okay = await preRaceCheck();
 
     if (okay === false){
-        feedLogger.log('PRE RACE', `Conditions not met. Skipping ${torrentName}`);
+        logger.info(`Conditions not met. Skipping ${torrentName}`);
         process.exit(0); //it is a soft exit. 
     }
 
-    feedLogger.log('ADD TORRENT', `Adding torrent ${torrentName}`);
+    logger.info(`Adding torrent ${torrentName}`);
 
     try {
         await addTorrent(path, category);
@@ -68,10 +68,10 @@ module.exports = async (args: string[]) => {
         let trackers: any[] = await getTrackers(infohash);
         trackers.splice(0, 3);
         tags = trackers.map(({ url }) => new URL(url).hostname);
-        feedLogger.log('ADD TORRENT', `Adding ${tags.length} tags.`);
+        logger.info(`Adding ${tags.length} tags.`);
         await addTags([{ hash: infohash }], tags);
     } catch (error) {
-        feedLogger.log('ADD TORRENT', `Failed to add tags. Error code ${error}`);
+        logger.error(`Failed to add tags. Error code ${error}`);
     }
 
     //We also want to get the size of the torrent, for the notification.
@@ -84,14 +84,13 @@ module.exports = async (args: string[]) => {
     }
 
     //Now we move anto reannounce
-    // await sleep(5000);
-    feedLogger.log("ADD TORRENT",  "Starting reannounce check...");
+    logger.info("Starting reannounce check...");
     let attempts = 0;
     let announceOK = false;
 
     while (attempts < SETTINGS.REANNOUNCE_LIMIT) {
 
-        feedLogger.log(`REANNOUNCE`,  `Attempt #${attempts + 1}: Querying tracker status...`);
+        logger.info(`Attempt #${attempts + 1}: Querying tracker status...`);
         
         try {
             let trackers: any[] = await getTrackers(infohash);
@@ -100,33 +99,33 @@ module.exports = async (args: string[]) => {
 
             if (!working) {
                 //We need to reannounce
-                feedLogger.log('REANNOUNCE', 'Need to reannounce. Sending request and sleeping...');
+                logger.info('Need to reannounce. Sending request and sleeping...');
                 await reannounce(infohash);
                 await sleep(SETTINGS.REANNOUNCE_INTERVAL);
                 attempts++;
             } else {
                 announceOK = true;
-                feedLogger.log('REANNOUNCE', 'Tracker is OK. Exiting...');
+                logger.info('Tracker is OK. Exiting...');
                 break;
             }
         } catch (error) {
-            feedLogger.log('REANNOUNCE', 'Caught an error. Exiting...');
+            logger.error('Caught an error. Exiting...');
             process.exit(1);
         }
     }
     
     //We got here but failed reannounce failed. Delete it.
     if (announceOK === false){
-        feedLogger.log('REANNOUNCE', `Did not get an OK from tracker even after ${SETTINGS.REANNOUNCE_LIMIT} attempts. Deleting...`);
+        logger.info(`Did not get an OK from tracker even after ${SETTINGS.REANNOUNCE_LIMIT} attempts. Deleting...`);
         await deleteTorrents([{ hash: infohash }]);
 
         // Resume any that were paused
-        feedLogger.log('REANOUNCE', 'Going to resume any paused torrents...');
+        logger.info('Going to resume any paused torrents...');
         const torrents = await getTorrents();
-        resume('PRE RACE', torrents);
+        resume(torrents);
     } else {
         //Send message to discord (if enabled)
-        const { enabled, botUsername, botAvatar } = SETTINGS.DISCORD_NOTIFICATIONS || { enabled: false }
+        const { enabled } = SETTINGS.DISCORD_NOTIFICATIONS || { enabled: false }
         if (enabled === true) {
             try {
                 await sendMessage(addMessage(torrent.name, tags, torrent.size, attempts))
