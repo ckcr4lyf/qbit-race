@@ -16,3 +16,11 @@ export interface torrentFromApi {
     tags: string; // "" or CSV of multiple tags
     size: number;
 }
+
+export interface torrentStatusEvent {
+    infohash: string;
+    size: number;
+    uploaded: number;
+    downloaded: number;
+    ratio: number;
+}

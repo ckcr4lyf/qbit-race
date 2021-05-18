@@ -6,3 +6,4 @@ logs/
 tests/*.torrent
 tests/examples.js
 settings.js
+db.json
