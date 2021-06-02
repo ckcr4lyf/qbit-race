@@ -8,6 +8,8 @@ import { sendMessage } from './discord/api';
 import { addMessage } from './discord/messages';
 import { torrentFromApi } from './interfaces';
 import { resume } from './helpers/resume';
+import { addEventToDb, addTorrentToDb } from './helpers/db';
+import { EVENTS } from './helpers/constants';
 
 module.exports = async (args: string[]) => {
 
@@ -124,6 +126,25 @@ module.exports = async (args: string[]) => {
         const torrents = await getTorrents();
         resume(torrents);
     } else {
+
+        // Save torrent to DB
+        addTorrentToDb({
+            infohash: infohash,
+            size: torrent.size,
+            name: torrent.name,
+            trackers: tags,
+        });
+
+        // Save event to DB
+        addEventToDb({
+            infohash: infohash,
+            timestamp: Date.now(),
+            uploaded: 0,
+            downloaded: 0,
+            ratio: 0,
+            eventType: EVENTS.ADDED,
+        });
+
         //Send message to discord (if enabled)
         const { enabled } = SETTINGS.DISCORD_NOTIFICATIONS || { enabled: false }
         if (enabled === true) {

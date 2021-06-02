@@ -9,6 +9,8 @@ const settings_1 = require("../settings");
 const api_2 = require("./discord/api");
 const messages_1 = require("./discord/messages");
 const resume_1 = require("./helpers/resume");
+const db_1 = require("./helpers/db");
+const constants_1 = require("./helpers/constants");
 module.exports = async (args) => {
     const infohash = args[0].toLowerCase();
     const torrentName = args[1];
@@ -112,6 +114,22 @@ module.exports = async (args) => {
         resume_1.resume(torrents);
     }
     else {
+        // Save torrent to DB
+        db_1.addTorrentToDb({
+            infohash: infohash,
+            size: torrent.size,
+            name: torrent.name,
+            trackers: tags,
+        });
+        // Save event to DB
+        db_1.addEventToDb({
+            infohash: infohash,
+            timestamp: Date.now(),
+            uploaded: 0,
+            downloaded: 0,
+            ratio: 0,
+            eventType: constants_1.EVENTS.ADDED,
+        });
         //Send message to discord (if enabled)
         const { enabled } = settings_1.SETTINGS.DISCORD_NOTIFICATIONS || { enabled: false };
         if (enabled === true) {

@@ -1,3 +1,5 @@
+import { EVENTS } from "./helpers/constants";
+
 export interface config_t {
     QBIT_HOST: string,
     QBIT_PORT: string,
@@ -19,8 +21,16 @@ export interface torrentFromApi {
 
 export interface torrentStatusEvent {
     infohash: string;
-    size: number;
+    timestamp: number;
     uploaded: number;
     downloaded: number;
     ratio: number;
+    eventType: EVENTS;
+}
+
+export interface torrentDbInfo {
+    infohash: string;
+    size: number;
+    name: string;
+    trackers: string[];
 }
