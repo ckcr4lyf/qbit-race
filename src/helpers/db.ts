@@ -14,11 +14,12 @@ const filename = path.join(__dirname, '../../stats.json');
 const adapter = new JSONFileSync<Schema>(filename);
 const db = new LowSync<Schema>(adapter);
 
+// Initial default setup
+db.read();
 db.data ||= {
     events: [],
     torrents: [],
 };
-
 
 export const addEventToDb = (event: torrentStatusEvent) => {
     db.data.events.push(event);
