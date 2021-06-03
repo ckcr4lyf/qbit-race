@@ -4,6 +4,8 @@ import { completeMessage } from '../discord/messages';
 import { torrentFromApi } from '../interfaces';
 import { getTorrentInfo, getTorrents, setCategory } from "../qbittorrent/api";
 import { login } from "../qbittorrent/auth";
+import { EVENTS } from './constants';
+import { addEventToDb } from './db';
 import { logger } from "./logger";
 import { resume } from './resume';
 
@@ -53,17 +55,27 @@ export const postRaceResume = async (infohash: string, tracker: string) => {
         process.exit(1);
     }
 
-    //Get the stats for this torrent and send to discord
+    let torrent = torrents.find(t => t.hash === infohash);
+    
+    if (torrent === undefined){
+        logger.error(`Unable to find completed torrent (${infohash}) in array. Exiting...`)
+        process.exit(1);
+    }
+
+    // Save to DB
+    addEventToDb({
+        infohash: infohash,
+        timestamp: Date.now(),
+        uploaded: 0,
+        downloaded: 0,
+        ratio: torrent.ratio,
+        eventType: EVENTS.COMPLETED,
+    });
+
     const { enabled } = SETTINGS.DISCORD_NOTIFICATIONS || { enabled: false }
 
+    //Get the stats for this torrent and send to discord
     if (enabled === true){
-        let torrent = torrents.find(t => t.hash === infohash);
-
-        if (torrent === undefined){
-            logger.error(`Unable to find completed torrent (${infohash}) in array. Exiting...`)
-            process.exit(1);
-        }
-
         try {
             logger.info('Sending notification to deluge...');
             await sendMessage(completeMessage(torrent.name, torrent.tags.split(','), torrent.size, torrent.ratio));

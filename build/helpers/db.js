@@ -2,20 +2,22 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addTorrentToDb = exports.addEventToDb = void 0;
 const path = require("path");
-const lowdb = require("lowdb");
-const FileSync = require("lowdb/adapters/FileSync");
-const adapter = new FileSync(path.join(__dirname, '../../stats.json'));
-const db = lowdb(adapter);
-db.defaults({
+const lowdb_1 = require("lowdb");
+const filename = path.join(__dirname, '../../stats.json');
+const adapter = new lowdb_1.JSONFileSync(filename);
+const db = new lowdb_1.LowSync(adapter);
+db.data || (db.data = {
     events: [],
     torrents: [],
 });
 const addEventToDb = (event) => {
-    db.get('events').push(event).write();
+    db.data.events.push(event);
+    db.write();
 };
 exports.addEventToDb = addEventToDb;
 const addTorrentToDb = (torrent) => {
-    db.get('torrents').push(torrent).write();
+    db.data.torrents.push(torrent);
+    db.write();
 };
 exports.addTorrentToDb = addTorrentToDb;
 //# sourceMappingURL=db.js.map
