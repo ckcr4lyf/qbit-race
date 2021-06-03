@@ -6,6 +6,8 @@ const api_1 = require("../discord/api");
 const messages_1 = require("../discord/messages");
 const api_2 = require("../qbittorrent/api");
 const auth_1 = require("../qbittorrent/auth");
+const constants_1 = require("./constants");
+const db_1 = require("./db");
 const logger_1 = require("./logger");
 const resume_1 = require("./resume");
 /**
@@ -49,14 +51,23 @@ const postRaceResume = async (infohash, tracker) => {
         logger_1.logger.error(`Failed to get torrents from qBittorrent`);
         process.exit(1);
     }
-    //Get the stats for this torrent and send to discord
+    let torrent = torrents.find(t => t.hash === infohash);
+    if (torrent === undefined) {
+        logger_1.logger.error(`Unable to find completed torrent (${infohash}) in array. Exiting...`);
+        process.exit(1);
+    }
+    // Save to DB
+    db_1.addEventToDb({
+        infohash: infohash,
+        timestamp: Date.now(),
+        uploaded: 0,
+        downloaded: 0,
+        ratio: torrent.ratio,
+        eventType: constants_1.EVENTS.COMPLETED,
+    });
     const { enabled } = settings_1.SETTINGS.DISCORD_NOTIFICATIONS || { enabled: false };
+    //Get the stats for this torrent and send to discord
     if (enabled === true) {
-        let torrent = torrents.find(t => t.hash === infohash);
-        if (torrent === undefined) {
-            logger_1.logger.error(`Unable to find completed torrent (${infohash}) in array. Exiting...`);
-            process.exit(1);
-        }
         try {
             logger_1.logger.info('Sending notification to deluge...');
             await api_1.sendMessage(messages_1.completeMessage(torrent.name, torrent.tags.split(','), torrent.size, torrent.ratio));
