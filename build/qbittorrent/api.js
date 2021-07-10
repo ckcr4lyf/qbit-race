@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.reannounce = exports.getTrackers = exports.addTorrent = exports.setCategory = exports.addTags = exports.deleteTorrents = exports.resumeTorrents = exports.pauseTorrents = exports.getTorrents = exports.getTorrentInfo = void 0;
+exports.getTransferInfo = exports.reannounce = exports.getTrackers = exports.addTorrent = exports.setCategory = exports.addTags = exports.deleteTorrents = exports.resumeTorrents = exports.pauseTorrents = exports.getTorrents = exports.getTorrentInfo = void 0;
 const axios_1 = require("axios");
 const FormData = require("form-data");
 const fs = require("fs");
@@ -220,4 +220,17 @@ const reannounce = (infohash) => {
     });
 };
 exports.reannounce = reannounce;
+const getTransferInfo = () => {
+    return axios_1.default.get(`${basePath}/api/v2/transfer/info`, {
+        headers: {
+            'Cookie': config_1.COOKIE
+        }
+    }).then(response => {
+        return response.data;
+    }).catch(err => {
+        logger_1.logger.error(`Get transferInfo failed with error code ${err.response.status}`);
+        throw err;
+    });
+};
+exports.getTransferInfo = getTransferInfo;
 //# sourceMappingURL=api.js.map

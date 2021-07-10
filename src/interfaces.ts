@@ -16,3 +16,13 @@ export interface torrentFromApi {
     tags: string; // "" or CSV of multiple tags
     size: number;
 }
+
+
+export type TransferInfo = {
+    connection_status: string;
+    dht_nodes: number;
+    dl_info_data: number;
+    dl_info_speed: number;
+    up_info_data: number;
+    up_info_speed: number;
+}

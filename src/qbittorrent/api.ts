@@ -4,7 +4,7 @@ import * as fs from 'fs';
 
 import { QBIT_HOST, QBIT_PORT, COOKIE, HTTP_SCHEME, URL_PATH } from '../config';
 import { logger } from '../helpers/logger';
-import { torrentFromApi } from '../interfaces';
+import { torrentFromApi, TransferInfo } from '../interfaces';
 
 const basePath = `${HTTP_SCHEME}://${QBIT_HOST}:${QBIT_PORT}${URL_PATH}`
 
@@ -234,5 +234,18 @@ export const reannounce = (infohash: string): Promise<void> => {
             logger.error(`Reannounce API failed with error code ${error.response.status}`)
             reject(error);
         })
+    })
+}
+
+export const getTransferInfo = (): Promise<TransferInfo> => {
+    return axios.get(`${basePath}/api/v2/transfer/info`, {
+        headers: {
+            'Cookie': COOKIE
+        }
+    }).then(response => {
+        return response.data;
+    }).catch(err => {
+        logger.error(`Get transferInfo failed with error code ${err.response.status}`);
+        throw err;
     })
 }
