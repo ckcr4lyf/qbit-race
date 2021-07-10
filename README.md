@@ -13,7 +13,7 @@
 This repository is still in beta. There might be bugs. Feel free to open an issue if you encounter one. 
 You may also open an issue to request a feature, but please mark it with the prefix `[FEATURE REQUEST]`
 
-You need node v12+ to run this, and qbittorrent 4.2.x+
+You need node v14+ to run this, and qbittorrent 4.2.x+
 
 ## Thanks
 
@@ -42,6 +42,9 @@ Massive Thanks to <a href="https://walkerservers.com/">WalkerServers</a> for spo
   - [qBittorrent post race setup](#qbittorrent-post-race-setup)
   - [Other Scripts](#other-scripts)
     - [Tag Errored Torrents](#tag-errored-torrents)
+  - [Prometheus Exporter](#prometheus-exporter)
+    - [Metrics server setup](#metrics-server-setup)
+    - [Example PromQL queries](#example-promql-queries)
 
 ## Node requirement
 This project needs Node.js v12+.
@@ -237,3 +240,44 @@ npm run tag_unreg
 ```
 
 This will tag all torrents which do not have ANY working tracker.
+
+
+## Prometheus Exporter
+
+`qbit-race` now also features a prometheus exporter, which is a lightweight http server (based on fastify) which exports a few stats in a prometheus friendly format.
+
+The stats exposed are: 
+
+* Download this session (bytes)
+* Download rate (instant) (bytes/s)
+* Upload this session (bytes)
+* Upload rate (instant) (bytes/s)
+
+### Metrics server setup
+
+As per sample.env, there are two variables to configure for where the server binds to, `PROM_IP` and `PROM_PORT`. Defaults are `127.0.0.1` and `9999` respectively.
+This address needs to be accessible by yur prometheus instance!
+
+To run the server, it is recommended to use a node process manager, pm2. Install it with:
+
+```sh
+npm i -g pm2
+```
+
+Then you can start the server (from the project root) with:
+
+```sh
+pm2 start ./build/server/app.js --name=qbit-race-prom-exporter
+```
+
+(Replace name with something ele if you wish)
+
+You can monitor the status with 
+
+```sh
+pm2 monit
+```
+
+### Example PromQL queries
+
+TODO

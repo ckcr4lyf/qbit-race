@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.URL_PATH = exports.HTTP_SCHEME = exports.DISCORD_WEBHOOK = exports.setLogfile = exports.LOGFILE = exports.setCookie = exports.COOKIE = exports.QBIT_USERNAME = exports.QBIT_PASSWORD = exports.QBIT_PORT = exports.QBIT_HOST = void 0;
+exports.URL_PATH = exports.HTTP_SCHEME = exports.DISCORD_WEBHOOK = exports.setLogfile = exports.LOGFILE = exports.setCookie = exports.COOKIE = exports.QBIT_USERNAME = exports.QBIT_PASSWORD = exports.QBIT_PORT = exports.QBIT_HOST = exports.PROM_PORT = exports.PROM_IP = void 0;
 const dotenv = require("dotenv");
 const path = require("path");
 const settings_1 = require("../settings");
@@ -26,6 +26,9 @@ const HTTP_SCHEME = process.env.HTTP_SCHEME || 'http'; // Default to http
 exports.HTTP_SCHEME = HTTP_SCHEME;
 const URL_PATH = process.env.URL_PATH || ''; // Empty string, access straight at /api
 exports.URL_PATH = URL_PATH;
+// Address to bind to to serve prometheus metrics
+exports.PROM_IP = process.env.PROM_IP || '127.0.0.1';
+exports.PROM_PORT = process.env.PROM_PORT || '9999';
 if (!QBIT_HOST) {
     console.log("Please define QBIT_HOST in your .env file.");
     process.exit(1);
