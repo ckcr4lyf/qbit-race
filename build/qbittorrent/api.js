@@ -6,9 +6,10 @@ const FormData = require("form-data");
 const fs = require("fs");
 const config_1 = require("../config");
 const logger_1 = require("../helpers/logger");
+const basePath = `${config_1.HTTP_SCHEME}://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}${config_1.URL_PATH}`;
 const getTorrentInfo = (infohash) => {
     return new Promise((resolve, reject) => {
-        axios_1.default.get(`http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/info`, {
+        axios_1.default.get(`${basePath}/api/v2/torrents/info`, {
             params: {
                 hashes: infohash
             },
@@ -24,7 +25,7 @@ const getTorrentInfo = (infohash) => {
 exports.getTorrentInfo = getTorrentInfo;
 const getTorrents = () => {
     return new Promise((resolve, reject) => {
-        axios_1.default.get(`http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/info`, {
+        axios_1.default.get(`${basePath}/api/v2/torrents/info`, {
             headers: { 'Cookie': config_1.COOKIE }
         }).then(response => {
             resolve(response.data);
@@ -42,7 +43,7 @@ const pauseTorrents = (torrents) => {
             return;
         }
         const infohashes = torrents.map(torrent => torrent.hash);
-        axios_1.default.get(`http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/pause`, {
+        axios_1.default.get(`${basePath}/api/v2/torrents/pause`, {
             params: {
                 hashes: infohashes.join('|')
             },
@@ -64,7 +65,7 @@ const resumeTorrents = (torrents) => {
             return;
         }
         const infohashes = torrents.map(torrent => torrent.hash);
-        axios_1.default.get(`http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/resume`, {
+        axios_1.default.get(`${basePath}/api/v2/torrents/resume`, {
             params: {
                 hashes: infohashes.join('|')
             },
@@ -86,7 +87,7 @@ const deleteTorrents = (torrents) => {
             return;
         }
         const infohashes = torrents.map(torrent => torrent.hash);
-        axios_1.default.get(`http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/delete`, {
+        axios_1.default.get(`${basePath}/api/v2/torrents/delete`, {
             params: {
                 hashes: infohashes.join('|'),
                 deleteFiles: true
@@ -116,7 +117,7 @@ const addTags = (torrents, tags) => {
         let payload = `hashes=${infohashes.join('|')}&tags=${tags.join(',')}`;
         axios_1.default.request({
             method: 'POST',
-            url: `http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/addTags`,
+            url: `${basePath}/api/v2/torrents/addTags`,
             data: payload,
             headers: {
                 'Cookie': config_1.COOKIE,
@@ -136,7 +137,7 @@ const setCategory = (infohash, category) => {
         let payload = `hashes=${infohash}&category=${category}`;
         axios_1.default.request({
             method: 'POST',
-            url: `http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/setCategory`,
+            url: `${basePath}/api/v2/torrents/setCategory`,
             data: payload,
             headers: {
                 'Cookie': config_1.COOKIE,
@@ -169,7 +170,7 @@ const addTorrent = (path, category) => {
         }
         axios_1.default.request({
             method: 'POST',
-            url: `http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/add`,
+            url: `${basePath}/api/v2/torrents/add`,
             headers: Object.assign(Object.assign({ 'Cookie': config_1.COOKIE }, formData.getHeaders()), { 'Content-Length': formData.getLengthSync() //Because axios can't handle this. Wasted 2 hours trying to debug. Fuck.
              }),
             data: formData
@@ -185,7 +186,7 @@ const addTorrent = (path, category) => {
 exports.addTorrent = addTorrent;
 const getTrackers = (infohash) => {
     return new Promise((resolve, reject) => {
-        axios_1.default.get(`http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/trackers`, {
+        axios_1.default.get(`${basePath}/api/v2/torrents/trackers`, {
             params: {
                 hash: infohash
             },
@@ -203,7 +204,7 @@ const getTrackers = (infohash) => {
 exports.getTrackers = getTrackers;
 const reannounce = (infohash) => {
     return new Promise((resolve, reject) => {
-        axios_1.default.get(`http://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}/api/v2/torrents/reannounce`, {
+        axios_1.default.get(`${basePath}/api/v2/torrents/reannounce`, {
             params: {
                 hashes: infohash
             },

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DISCORD_WEBHOOK = exports.setLogfile = exports.LOGFILE = exports.setCookie = exports.COOKIE = exports.QBIT_USERNAME = exports.QBIT_PASSWORD = exports.QBIT_PORT = exports.QBIT_HOST = void 0;
+exports.URL_PATH = exports.HTTP_SCHEME = exports.DISCORD_WEBHOOK = exports.setLogfile = exports.LOGFILE = exports.setCookie = exports.COOKIE = exports.QBIT_USERNAME = exports.QBIT_PASSWORD = exports.QBIT_PORT = exports.QBIT_HOST = void 0;
 const dotenv = require("dotenv");
 const path = require("path");
 const settings_1 = require("../settings");
@@ -22,6 +22,10 @@ const QBIT_PASSWORD = process.env.QBIT_PASSWORD;
 exports.QBIT_PASSWORD = QBIT_PASSWORD;
 const DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK;
 exports.DISCORD_WEBHOOK = DISCORD_WEBHOOK;
+const HTTP_SCHEME = process.env.HTTP_SCHEME || 'http'; // Default to http
+exports.HTTP_SCHEME = HTTP_SCHEME;
+const URL_PATH = process.env.URL_PATH || ''; // Empty string, access straight at /api
+exports.URL_PATH = URL_PATH;
 if (!QBIT_HOST) {
     console.log("Please define QBIT_HOST in your .env file.");
     process.exit(1);

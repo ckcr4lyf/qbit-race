@@ -16,6 +16,8 @@ const QBIT_PORT = process.env.QBIT_PORT;
 const QBIT_USERNAME = process.env.QBIT_USERNAME;
 const QBIT_PASSWORD = process.env.QBIT_PASSWORD;
 const DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK;
+const HTTP_SCHEME = process.env.HTTP_SCHEME || 'http'; // Default to http
+const URL_PATH = process.env.URL_PATH || ''; // Empty string, access straight at /api
 
 if (!QBIT_HOST){
     console.log("Please define QBIT_HOST in your .env file.");
@@ -56,4 +58,4 @@ const setLogfile = (logfile: string) => {
     LOGFILE = logfile;
 }
 
-export { QBIT_HOST, QBIT_PORT, QBIT_PASSWORD, QBIT_USERNAME, COOKIE, setCookie, LOGFILE, setLogfile, DISCORD_WEBHOOK }
+export { QBIT_HOST, QBIT_PORT, QBIT_PASSWORD, QBIT_USERNAME, COOKIE, setCookie, LOGFILE, setLogfile, DISCORD_WEBHOOK, HTTP_SCHEME, URL_PATH }
