@@ -1,10 +1,11 @@
 import axios from 'axios';
-import { QBIT_USERNAME, QBIT_HOST, QBIT_PASSWORD, QBIT_PORT, setCookie } from '../config';
+import { QBIT_USERNAME, QBIT_HOST, QBIT_PASSWORD, QBIT_PORT, HTTP_SCHEME, URL_PATH, setCookie } from '../config';
+
+const basePath = `${HTTP_SCHEME}://${QBIT_HOST}:${QBIT_PORT}${URL_PATH}`
 
 export const login = async (): Promise<void> => {
-
     return new Promise((resolve, reject) => {
-        axios.get(`http://${QBIT_HOST}:${QBIT_PORT}/api/v2/auth/login`, {
+        axios.get(`${basePath}/api/v2/auth/login`, {
             params: {
                 username: QBIT_USERNAME,
                 password: QBIT_PASSWORD
