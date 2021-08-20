@@ -1,17 +1,17 @@
-import { login } from './qbittorrent/auth';
-import { addTags, addTorrent, deleteTorrents, getTorrentInfo, getTorrents, getTrackers, reannounce } from './qbittorrent/api'
-import { sleep } from './helpers/utilities';
-import { logger } from './helpers/logger';
-import { preRaceCheck } from './helpers/pre_race';
-import { SETTINGS } from '../settings';
-import { sendMessage } from './discord/api';
-import { addMessage } from './discord/messages';
-import { torrentFromApi } from './interfaces';
-import { resume } from './helpers/resume';
-import { addEventToDb, addTorrentToDb } from './helpers/db';
-import { EVENTS } from './helpers/constants';
+import { login } from './qbittorrent/auth.js';
+import { addTags, addTorrent, deleteTorrents, getTorrentInfo, getTorrents, getTrackers, reannounce } from './qbittorrent/api.js'
+import { sleep } from './helpers/utilities.js';
+import { logger } from './helpers/logger.js';
+import { preRaceCheck } from './helpers/pre_race.js';
+import { SETTINGS } from '../settings.js';
+import { sendMessage } from './discord/api.js';
+import { addMessage } from './discord/messages.js';
+import { torrentFromApi } from './interfaces.js';
+import { resume } from './helpers/resume.js';
+import { addEventToDb, addTorrentToDb } from './helpers/db.js';
+import { EVENTS } from './helpers/constants.js';
 
-module.exports = async (args: string[]) => {
+export default async (args: string[]) => {
 
     const infohash = args[0].toLowerCase();
     const torrentName = args[1];

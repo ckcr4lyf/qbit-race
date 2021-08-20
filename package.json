@@ -2,7 +2,8 @@
   "name": "qbit-race",
   "version": "1.0.0",
   "description": "Qbit utilities for racing",
-  "main": "index.js",
+  "exports": "./index.js",
+  "type": "module",
   "scripts": {
     "build": "tsc -p .",
     "backup": "node bin/backup.js",

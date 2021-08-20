@@ -1,16 +1,15 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLogger = exports.logger = void 0;
-const fs = require("fs");
-const path = require("path");
-const config_1 = require("../config");
+import * as fs from 'fs';
+import { fileURLToPath } from 'node:url';
+import * as path from 'path';
+import { LOGFILE } from '../config.js';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 class Logger {
     constructor() { }
     log(level, msg) {
         const dateString = new Date().toISOString();
         const logString = `[${dateString}] ${level}: ${msg}\n`;
         console.log(logString.trim());
-        const logfile = path.join(__dirname, '../../logs', config_1.LOGFILE);
+        const logfile = path.join(__dirname, '../../logs', LOGFILE);
         fs.appendFileSync(logfile, logString);
     }
     info(msg) {
@@ -20,7 +19,7 @@ class Logger {
         this.log('ERROR', msg);
     }
 }
-exports.logger = new Logger();
+export const logger = new Logger();
 class LoggerV2 {
     constructor(name) {
         this.name = name;
@@ -39,8 +38,7 @@ class LoggerV2 {
         this.log('ERROR', msg);
     }
 }
-const getLogger = (name) => {
+export const getLogger = (name) => {
     return new LoggerV2(name);
 };
-exports.getLogger = getLogger;
 //# sourceMappingURL=logger.js.map

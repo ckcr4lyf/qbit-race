@@ -1,6 +1,6 @@
-import { login } from './qbittorrent/auth';
-import { addTags, getTorrents, getTrackers } from './qbittorrent/api';
-import { logger } from './helpers/logger';
+import { login } from './qbittorrent/auth.js';
+import { addTags, getTorrents, getTrackers } from './qbittorrent/api.js';
+import { logger } from './helpers/logger.js';
 
 /**
  * tagErroredTorrents gets a list of torrents from qBit, and then traverses their tracker.

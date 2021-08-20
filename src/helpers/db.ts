@@ -2,8 +2,11 @@ import * as path from 'path';
 
 import { LowSync, JSONFileSync } from 'lowdb';
 import * as FileSync from 'lowdb/adapters/FileSync';
-import { torrentDbInfo, torrentStatusEvent } from '../interfaces';
-import { EVENTS } from './constants';
+import { torrentDbInfo, torrentStatusEvent } from '../interfaces.js';
+import { EVENTS } from './constants.js';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 type Schema = {
     events: torrentStatusEvent[];

@@ -1,12 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.completeMessage = exports.addMessage = void 0;
 //Prepare message JSONs for different requirements
-const utilities_1 = require("../helpers/utilities");
-const settings_1 = require("../../settings");
-const { botUsername, botAvatar } = settings_1.SETTINGS.DISCORD_NOTIFICATIONS || { botUsername: 'qBittorrent', botAvatar: '' };
-const addMessage = (torrentName, trackers, size, reannounceCount) => {
-    const humanSize = utilities_1.humanFileSize(size, false, 2);
+import { humanFileSize } from '../helpers/utilities.js';
+import { SETTINGS } from '../../settings.js';
+const { botUsername, botAvatar } = SETTINGS.DISCORD_NOTIFICATIONS || { botUsername: 'qBittorrent', botAvatar: '' };
+export const addMessage = (torrentName, trackers, size, reannounceCount) => {
+    const humanSize = humanFileSize(size, false, 2);
     const body = {
         content: `Added ${torrentName} (${humanSize})`,
         username: botUsername,
@@ -37,13 +34,12 @@ const addMessage = (torrentName, trackers, size, reannounceCount) => {
     };
     return body;
 };
-exports.addMessage = addMessage;
-const completeMessage = (torrentName, trackers, size, ratio) => {
+export const completeMessage = (torrentName, trackers, size, ratio) => {
     let trackersMessage = trackers.join('\n');
     if (trackersMessage === '') {
         trackersMessage = 'No trackers set!';
     }
-    const humanSize = utilities_1.humanFileSize(size, false, 2);
+    const humanSize = humanFileSize(size, false, 2);
     const body = {
         content: `Completed ${torrentName}! (Ratio: ${ratio.toFixed(2)})`,
         username: botUsername,
@@ -74,5 +70,4 @@ const completeMessage = (torrentName, trackers, size, ratio) => {
     };
     return body;
 };
-exports.completeMessage = completeMessage;
 //# sourceMappingURL=messages.js.map

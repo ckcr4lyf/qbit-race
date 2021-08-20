@@ -6,8 +6,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { homedir } from 'os';
 
-import { logger } from './logger';
+import { logger } from './logger.js';
+import { fileURLToPath } from 'node:url';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export const backupCurrentConfig = () => {
     const settingsPath = path.join(__dirname, '../../', 'settings.js');

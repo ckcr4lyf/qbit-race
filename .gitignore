@@ -8,3 +8,4 @@ tests/examples.js
 settings.js
 db.json
 stats.json
+sandbox/

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-import { DISCORD_WEBHOOK } from '../config';
-import { logger } from '../helpers/logger';
+import { DISCORD_WEBHOOK } from '../config.js';
+import { logger } from '../helpers/logger.js';
 
 export const sendMessage = (body: any): Promise<void> => {
     return new Promise((resolve, reject) => {

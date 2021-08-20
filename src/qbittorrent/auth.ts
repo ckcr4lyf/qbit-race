@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { QBIT_USERNAME, QBIT_HOST, QBIT_PASSWORD, QBIT_PORT, HTTP_SCHEME, URL_PATH, setCookie } from '../config';
+import { QBIT_USERNAME, QBIT_HOST, QBIT_PASSWORD, QBIT_PORT, HTTP_SCHEME, URL_PATH, setCookie } from '../config.js';
 
 const basePath = `${HTTP_SCHEME}://${QBIT_HOST}:${QBIT_PORT}${URL_PATH}`
 

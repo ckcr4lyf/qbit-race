@@ -1,7 +1,10 @@
 import * as fs from 'fs';
+import { fileURLToPath } from 'node:url';
 import * as path from 'path';
 
-import { LOGFILE } from '../config';
+import { LOGFILE } from '../config.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 class Logger {
 

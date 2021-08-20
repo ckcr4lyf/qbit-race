@@ -1,19 +1,15 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendMessage = void 0;
-const axios_1 = require("axios");
-const config_1 = require("../config");
-const logger_1 = require("../helpers/logger");
-const sendMessage = (body) => {
+import axios from 'axios';
+import { DISCORD_WEBHOOK } from '../config.js';
+import { logger } from '../helpers/logger.js';
+export const sendMessage = (body) => {
     return new Promise((resolve, reject) => {
-        axios_1.default.post(config_1.DISCORD_WEBHOOK, body).then(response => {
-            logger_1.logger.info(`Message sent successfully!`);
+        axios.post(DISCORD_WEBHOOK, body).then(response => {
+            logger.info(`Message sent successfully!`);
             resolve();
         }).catch(error => {
-            logger_1.logger.error(`sendMessage failed with error code ${error.response.status}`);
+            logger.error(`sendMessage failed with error code ${error.response.status}`);
             reject();
         });
     });
 };
-exports.sendMessage = sendMessage;
 //# sourceMappingURL=api.js.map

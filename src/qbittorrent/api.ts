@@ -2,9 +2,9 @@ import axios from 'axios';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 
-import { QBIT_HOST, QBIT_PORT, COOKIE, HTTP_SCHEME, URL_PATH } from '../config';
-import { logger } from '../helpers/logger';
-import { torrentFromApi, TransferInfo } from '../interfaces';
+import { QBIT_HOST, QBIT_PORT, COOKIE, HTTP_SCHEME, URL_PATH } from '../config.js';
+import { logger } from '../helpers/logger.js';
+import { torrentFromApi, TransferInfo } from '../interfaces.js';
 
 const basePath = `${HTTP_SCHEME}://${QBIT_HOST}:${QBIT_PORT}${URL_PATH}`
 

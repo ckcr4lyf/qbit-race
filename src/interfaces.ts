@@ -1,4 +1,4 @@
-import { EVENTS } from "./helpers/constants";
+import { EVENTS } from "./helpers/constants.js";
 
 export interface config_t {
     QBIT_HOST: string,

@@ -1,8 +1,11 @@
 import * as dotenv from 'dotenv'
+import { fileURLToPath } from 'node:url';
 import * as path from 'path';
 
-import { SETTINGS } from '../settings';
-import { logger } from './helpers/logger';
+import { SETTINGS } from '../settings.js';
+import { logger } from './helpers/logger.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 let COOKIE = '';
 let LOGFILE = 'default.log';

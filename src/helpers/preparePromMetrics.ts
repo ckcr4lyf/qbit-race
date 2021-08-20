@@ -1,4 +1,4 @@
-import { TransferInfo } from "../interfaces"
+import { TransferInfo } from "../interfaces.js"
 
 export const makeMetrics = (transferInfo: TransferInfo) => {
     let result = '';
