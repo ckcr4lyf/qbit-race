@@ -15,13 +15,16 @@
   "author": "Raghu Saxena",
   "license": "ISC",
   "dependencies": {
-    "@types/node": "^14.11.2",
     "axios": "^0.21.1",
     "dotenv": "^10.0.0",
     "form-data": "^4.0.0",
-    "lowdb": "github:dankreiger/lowdb#chore/esm-cjs-hybrid-WITH-LIB"
+    "lowdb": "^2.1.0"
   },
   "devDependencies": {
-    "@types/lowdb": "^1.0.9"
+    "@types/lowdb": "^1.0.9",
+    "@types/node": "^16.3.1",
+    "dotenv": "^8.2.0",
+    "fastify": "^3.19.0",
+    "form-data": "^3.0.1"
   }
 }

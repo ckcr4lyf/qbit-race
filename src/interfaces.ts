@@ -34,3 +34,12 @@ export interface torrentDbInfo {
     name: string;
     trackers: string[];
 }
+
+export type TransferInfo = {
+    connection_status: string;
+    dht_nodes: number;
+    dl_info_data: number;
+    dl_info_speed: number;
+    up_info_data: number;
+    up_info_speed: number;
+}

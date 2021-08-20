@@ -2,13 +2,15 @@ import axios from 'axios';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 
-import { QBIT_HOST, QBIT_PORT, COOKIE } from '../config';
+import { QBIT_HOST, QBIT_PORT, COOKIE, HTTP_SCHEME, URL_PATH } from '../config';
 import { logger } from '../helpers/logger';
-import { torrentFromApi } from '../interfaces';
+import { torrentFromApi, TransferInfo } from '../interfaces';
+
+const basePath = `${HTTP_SCHEME}://${QBIT_HOST}:${QBIT_PORT}${URL_PATH}`
 
 export const getTorrentInfo = (infohash: string): Promise<torrentFromApi> => {
     return new Promise((resolve: (value: torrentFromApi) => void, reject) => {
-        axios.get(`http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/info`, {
+        axios.get(`${basePath}/api/v2/torrents/info`, {
             params: {
                 hashes: infohash
             },
@@ -24,7 +26,7 @@ export const getTorrentInfo = (infohash: string): Promise<torrentFromApi> => {
 
 export const getTorrents = (): Promise<torrentFromApi[]> => {
     return new Promise((resolve, reject) => {
-        axios.get(`http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/info`, {
+        axios.get(`${basePath}/api/v2/torrents/info`, {
             headers: {'Cookie': COOKIE}
         }).then(response => {
             resolve(response.data);
@@ -44,7 +46,7 @@ export const pauseTorrents = (torrents: any[]): Promise<void> => {
         }
 
         const infohashes = torrents.map(torrent => torrent.hash);
-        axios.get(`http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/pause`, {
+        axios.get(`${basePath}/api/v2/torrents/pause`, {
             params: {
                 hashes: infohashes.join('|')
             },
@@ -68,7 +70,7 @@ export const resumeTorrents = (torrents: torrentFromApi[]): Promise<void> => {
         }
 
         const infohashes = torrents.map(torrent => torrent.hash);
-        axios.get(`http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/resume`, {
+        axios.get(`${basePath}/api/v2/torrents/resume`, {
             params: {
                 hashes: infohashes.join('|')
             },
@@ -92,7 +94,7 @@ export const deleteTorrents = (torrents: any[]): Promise<void> => {
         }
 
         const infohashes = torrents.map(torrent => torrent.hash);
-        axios.get(`http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/delete`, {
+        axios.get(`${basePath}/api/v2/torrents/delete`, {
             params: {
                 hashes: infohashes.join('|'),
                 deleteFiles: true
@@ -126,7 +128,7 @@ export const addTags = (torrents: any[], tags: string[]): Promise<void> => {
 
         axios.request({
             method: 'POST',
-            url: `http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/addTags`, 
+            url: `${basePath}/api/v2/torrents/addTags`, 
             data: payload,
             headers: {
                 'Cookie': COOKIE,
@@ -147,7 +149,7 @@ export const setCategory = (infohash: string, category: string): Promise<void> =
         let payload = `hashes=${infohash}&category=${category}`;
         axios.request({
             method: 'POST',
-            url: `http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/setCategory`,
+            url: `${basePath}/api/v2/torrents/setCategory`,
             data: payload,
             headers: {
                 'Cookie': COOKIE,
@@ -182,7 +184,7 @@ export const addTorrent = (path: string, category?: string): Promise<void> => {
 
         axios.request({
             method: 'POST',
-            url: `http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/add`,
+            url: `${basePath}/api/v2/torrents/add`,
             headers: {
                 'Cookie': COOKIE,
                 ...formData.getHeaders(),
@@ -201,7 +203,7 @@ export const addTorrent = (path: string, category?: string): Promise<void> => {
 
 export const getTrackers = (infohash: string): Promise<any[]> => {
     return new Promise((resolve, reject) => {
-        axios.get(`http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/trackers`, {
+        axios.get(`${basePath}/api/v2/torrents/trackers`, {
             params: {
                 hash: infohash
             },
@@ -219,7 +221,7 @@ export const getTrackers = (infohash: string): Promise<any[]> => {
 
 export const reannounce = (infohash: string): Promise<void> => {
     return new Promise((resolve, reject) => {
-        axios.get(`http://${QBIT_HOST}:${QBIT_PORT}/api/v2/torrents/reannounce`, {
+        axios.get(`${basePath}/api/v2/torrents/reannounce`, {
             params: {
                 hashes: infohash
             },
@@ -232,5 +234,18 @@ export const reannounce = (infohash: string): Promise<void> => {
             logger.error(`Reannounce API failed with error code ${error.response.status}`)
             reject(error);
         })
+    })
+}
+
+export const getTransferInfo = (): Promise<TransferInfo> => {
+    return axios.get(`${basePath}/api/v2/transfer/info`, {
+        headers: {
+            'Cookie': COOKIE
+        }
+    }).then(response => {
+        return response.data;
+    }).catch(err => {
+        logger.error(`Get transferInfo failed with error code ${err.response.status}`);
+        throw err;
     })
 }
