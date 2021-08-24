@@ -1,6 +1,11 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { setLogfile } from '../build/config.js'
+import { postRaceResume } from '../build/helpers/post_race_resume.js'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 //Create logs folder if it doesnt exist
 const logsDir = path.join(__dirname, '../logs');
@@ -16,7 +21,5 @@ if (process.argv.length === 5){
     tracker = process.argv[4];
 }
 
-const { setLogfile } = require('../build/config');
 setLogfile('post_race.log');
-const { postRaceResume } = require('../build/helpers/post_race_resume');
 postRaceResume(infohash, tracker);
