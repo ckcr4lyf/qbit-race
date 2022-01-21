@@ -17,10 +17,15 @@ export interface torrentFromApi {
     category: string; // "" or single category
     tags: string; // "" or CSV of multiple tags
     size: number;
+    downloaded: number;
+    uploaded: number;
 }
 
 export interface torrentStatusEvent {
     infohash: string;
+    size: number;
+    name: string;
+    trackers: string[];
     timestamp: number;
     uploaded: number;
     downloaded: number;

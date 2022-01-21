@@ -57,6 +57,8 @@ export default async (args: string[]) => {
     try {
         await addTorrent(path, category);
     } catch (error) {
+        logger.error(`Failed to add torrent. ${error}`)
+        console.log(error);
         process.exit(1);
     }
     
@@ -138,6 +140,9 @@ export default async (args: string[]) => {
         // Save event to DB
         addEventToDb({
             infohash: infohash,
+            size: torrent.size,
+            name: torrent.name,
+            trackers: tags,
             timestamp: Date.now(),
             uploaded: 0,
             downloaded: 0,

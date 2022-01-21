@@ -50,6 +50,8 @@ export default async (args) => {
         await addTorrent(path, category);
     }
     catch (error) {
+        logger.error(`Failed to add torrent. ${error}`);
+        console.log(error);
         process.exit(1);
     }
     //Wait for torrent to register in Qbit, initial announce.
@@ -122,6 +124,9 @@ export default async (args) => {
         // Save event to DB
         addEventToDb({
             infohash: infohash,
+            size: torrent.size,
+            name: torrent.name,
+            trackers: tags,
             timestamp: Date.now(),
             uploaded: 0,
             downloaded: 0,

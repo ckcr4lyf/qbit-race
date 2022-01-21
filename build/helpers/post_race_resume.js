@@ -53,15 +53,21 @@ export const postRaceResume = async (infohash, tracker) => {
         logger.error(`Unable to find completed torrent (${infohash}) in array. Exiting...`);
         process.exit(1);
     }
-    // Save to DB
-    addEventToDb({
+    logger.info(`Uploaded: ${torrent.uploaded}. Downloaded: ${torrent.downloaded}`);
+    const torrentCompleteEvent = {
         infohash: infohash,
+        size: torrent.size,
+        name: torrent.name,
+        trackers: torrent.tags.split(',').map(tStr => tStr.trim()),
         timestamp: Date.now(),
-        uploaded: 0,
-        downloaded: 0,
+        uploaded: torrent.uploaded,
+        downloaded: torrent.downloaded,
         ratio: torrent.ratio,
         eventType: EVENTS.COMPLETED,
-    });
+    };
+    logger.info(`Event: ${JSON.stringify(torrentCompleteEvent)}`);
+    // Save to DB
+    addEventToDb(torrentCompleteEvent);
     const { enabled } = SETTINGS.DISCORD_NOTIFICATIONS || { enabled: false };
     //Get the stats for this torrent and send to discord
     if (enabled === true) {

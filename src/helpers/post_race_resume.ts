@@ -1,7 +1,7 @@
 import { SETTINGS } from '../../settings.js';
 import { sendMessage } from '../discord/api.js';
 import { completeMessage } from '../discord/messages.js';
-import { torrentFromApi } from '../interfaces.js';
+import { torrentFromApi, torrentStatusEvent } from '../interfaces.js';
 import { getTorrentInfo, getTorrents, setCategory } from "../qbittorrent/api.js";
 import { login } from "../qbittorrent/auth.js";
 import { EVENTS } from './constants.js';
@@ -62,15 +62,24 @@ export const postRaceResume = async (infohash: string, tracker: string) => {
         process.exit(1);
     }
 
-    // Save to DB
-    addEventToDb({
+    logger.info(`Uploaded: ${torrent.uploaded}. Downloaded: ${torrent.downloaded}`);
+
+    const torrentCompleteEvent: torrentStatusEvent = {
         infohash: infohash,
+        size: torrent.size,
+        name: torrent.name,
+        trackers: torrent.tags.split(',').map(tStr => tStr.trim()),
         timestamp: Date.now(),
-        uploaded: 0,
-        downloaded: 0,
+        uploaded: torrent.uploaded,
+        downloaded: torrent.downloaded,
         ratio: torrent.ratio,
         eventType: EVENTS.COMPLETED,
-    });
+    };
+
+    logger.info(`Event: ${JSON.stringify(torrentCompleteEvent)}`);
+
+    // Save to DB
+    addEventToDb(torrentCompleteEvent);
 
     const { enabled } = SETTINGS.DISCORD_NOTIFICATIONS || { enabled: false }
 
