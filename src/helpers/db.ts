@@ -33,3 +33,14 @@ export const addTorrentToDb = (torrent: torrentDbInfo) => {
     db.data.torrents.push(torrent);
     db.write();
 }
+
+export const useless = () => {
+    let trackers = new Set<string>();
+    db.data.torrents.forEach(tInfo => {
+        for (let t of tInfo.trackers){
+            trackers.add(t);
+        }
+    });
+
+    console.log(trackers);
+}
