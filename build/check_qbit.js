@@ -18,7 +18,7 @@ module.exports = async () => {
         process.exit(1);
     }
     try {
-        await auth_1.login();
+        await (0, auth_1.login)();
     }
     catch (errorCode) {
         if (errorCode === 999) {
@@ -39,7 +39,7 @@ module.exports = async () => {
             //     username: botUsername,
             //     avatar_url: botAvatar
             // });
-            await api_1.sendMessage(messages_1.addMessage('Ubuntu 20.04 LTS', ['ubuntu.com', 'linux.com'], 1024 * 1024 * 1024 * 3.412, 1));
+            await (0, api_1.sendMessage)((0, messages_1.addMessage)('Ubuntu 20.04 LTS', ['ubuntu.com', 'linux.com'], 1024 * 1024 * 1024 * 3.412, 1));
         }
         catch (error) {
             logger_1.logger.error('Failed to validate discord webhook. Either disable discord notifications or fix the webhook.');

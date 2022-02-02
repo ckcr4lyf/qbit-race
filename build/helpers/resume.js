@@ -24,7 +24,7 @@ const resume = async (torrents) => {
     }
     logger_1.logger.info(`No downloading torrents. Resuming ${paused.length} torrents...`);
     try {
-        await api_1.resumeTorrents(paused);
+        await (0, api_1.resumeTorrents)(paused);
     }
     catch (error) {
         logger_1.logger.error(`Failed to resume torrents.`);

@@ -18,7 +18,7 @@ const tagErroredTorrents = async (args) => {
     let torrents;
     let t1 = Date.now();
     try {
-        await auth_1.login();
+        await (0, auth_1.login)();
     }
     catch (error) {
         logger_1.logger.error('Failed to login to qBittorrent');
@@ -26,7 +26,7 @@ const tagErroredTorrents = async (args) => {
     }
     //We logged in. Get the torrents
     try {
-        torrents = await api_1.getTorrents();
+        torrents = await (0, api_1.getTorrents)();
     }
     catch (error) {
         logger_1.logger.error('Failed to get torrents from qBittorrent');
@@ -34,7 +34,7 @@ const tagErroredTorrents = async (args) => {
     }
     let toTag = [];
     for (const torrent of torrents) {
-        let trackers = await api_1.getTrackers(torrent.hash);
+        let trackers = await (0, api_1.getTrackers)(torrent.hash);
         trackers.splice(0, 3);
         let working = trackers.some(tracker => tracker.status === 2);
         if (!working) {
@@ -53,7 +53,7 @@ const tagErroredTorrents = async (args) => {
     }
     logger_1.logger.info(`Tagging ${toTag.length} torrents...`);
     try {
-        await api_1.addTags(toTag, ['error']);
+        await (0, api_1.addTags)(toTag, ['error']);
     }
     catch (error) {
         logger_1.logger.error('Failed to set tags');

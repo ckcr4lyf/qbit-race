@@ -10,7 +10,7 @@ const preRaceCheck = () => {
         logger_1.logger.info(`Getting torrent list`);
         let torrents;
         try {
-            torrents = await api_1.getTorrents();
+            torrents = await (0, api_1.getTorrents)();
         }
         catch (error) {
             logger_1.logger.error(`Failed to get torrents from qBittorrent`);
@@ -74,7 +74,7 @@ const preRaceCheck = () => {
             // Do not pause categories / tags that we have set to skip
             logger_1.logger.info(`Going to pause ${toPause.length} torrents.`);
             try {
-                await api_1.pauseTorrents(toPause);
+                await (0, api_1.pauseTorrents)(toPause);
             }
             catch (error) {
                 logger_1.logger.error(`Failed to pause torrents`);

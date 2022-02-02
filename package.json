@@ -10,7 +10,8 @@
     "start": "node build/index.js",
     "validate": "node tests/validate.js",
     "tag_unreg": "node bin/tag_errored.js",
-    "test-dev": "ts-node src/index.ts"
+    "test-dev": "ts-node src/index.ts",
+    "test": "jest"
   },
   "author": "Raghu Saxena",
   "license": "ISC",
@@ -21,6 +22,11 @@
     "form-data": "^3.0.1"
   },
   "devDependencies": {
-    "@types/node": "^16.3.1"
+    "@swc/core": "^1.2.135",
+    "@swc/jest": "^0.2.17",
+    "@types/jest": "^27.4.0",
+    "@types/node": "^16.3.1",
+    "jest": "^27.4.7",
+    "typescript": "^4.5.5"
   }
 }
