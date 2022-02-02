@@ -31,7 +31,7 @@ module.exports = async (args) => {
     }
     let t1 = Date.now();
     try {
-        await auth_1.login();
+        await (0, auth_1.login)();
     }
     catch (error) {
         logger_1.logger.error(`Failed to login. Exiting...`);
@@ -40,28 +40,28 @@ module.exports = async (args) => {
     let t2 = Date.now();
     logger_1.logger.info(`Login completed in ${((t2 - t1) / 1000).toFixed(2)} seconds.`);
     logger_1.logger.info('Performing Pre Race check...');
-    const okay = await pre_race_1.preRaceCheck();
+    const okay = await (0, pre_race_1.preRaceCheck)();
     if (okay === false) {
         logger_1.logger.info(`Conditions not met. Skipping ${torrentName}`);
         process.exit(0); //it is a soft exit. 
     }
     logger_1.logger.info(`Adding torrent ${torrentName}`);
     try {
-        await api_1.addTorrent(path, category);
+        await (0, api_1.addTorrent)(path, category);
     }
     catch (error) {
         process.exit(1);
     }
     //Wait for torrent to register in Qbit, initial announce.
-    await utilities_1.sleep(5000);
+    await (0, utilities_1.sleep)(5000);
     //Now we get the torrent's trackers, which will let us set the tags.
     let tags = [];
     try {
-        let trackers = await api_1.getTrackers(infohash);
+        let trackers = await (0, api_1.getTrackers)(infohash);
         trackers.splice(0, 3);
         tags = trackers.map(({ url }) => new URL(url).hostname);
         logger_1.logger.info(`Adding ${tags.length} tags.`);
-        await api_1.addTags([{ hash: infohash }], tags);
+        await (0, api_1.addTags)([{ hash: infohash }], tags);
     }
     catch (error) {
         logger_1.logger.error(`Failed to add tags. Error code ${error}`);
@@ -69,7 +69,7 @@ module.exports = async (args) => {
     //We also want to get the size of the torrent, for the notification.
     let torrent;
     try {
-        torrent = await api_1.getTorrentInfo(infohash);
+        torrent = await (0, api_1.getTorrentInfo)(infohash);
     }
     catch (error) {
         process.exit(1);
@@ -81,14 +81,14 @@ module.exports = async (args) => {
     while (attempts < settings_1.SETTINGS.REANNOUNCE_LIMIT) {
         logger_1.logger.info(`Attempt #${attempts + 1}: Querying tracker status...`);
         try {
-            let trackers = await api_1.getTrackers(infohash);
+            let trackers = await (0, api_1.getTrackers)(infohash);
             trackers.splice(0, 3);
             let working = trackers.some(tracker => tracker.status === 2);
             if (!working) {
                 //We need to reannounce
                 logger_1.logger.info('Need to reannounce. Sending request and sleeping...');
-                await api_1.reannounce(infohash);
-                await utilities_1.sleep(settings_1.SETTINGS.REANNOUNCE_INTERVAL);
+                await (0, api_1.reannounce)(infohash);
+                await (0, utilities_1.sleep)(settings_1.SETTINGS.REANNOUNCE_INTERVAL);
                 attempts++;
             }
             else {
@@ -105,18 +105,18 @@ module.exports = async (args) => {
     //We got here but failed reannounce failed. Delete it.
     if (announceOK === false) {
         logger_1.logger.info(`Did not get an OK from tracker even after ${settings_1.SETTINGS.REANNOUNCE_LIMIT} attempts. Deleting...`);
-        await api_1.deleteTorrents([{ hash: infohash }]);
+        await (0, api_1.deleteTorrents)([{ hash: infohash }]);
         // Resume any that were paused
         logger_1.logger.info('Going to resume any paused torrents...');
-        const torrents = await api_1.getTorrents();
-        resume_1.resume(torrents);
+        const torrents = await (0, api_1.getTorrents)();
+        (0, resume_1.resume)(torrents);
     }
     else {
         //Send message to discord (if enabled)
         const { enabled } = settings_1.SETTINGS.DISCORD_NOTIFICATIONS || { enabled: false };
         if (enabled === true) {
             try {
-                await api_2.sendMessage(messages_1.addMessage(torrent.name, tags, torrent.size, attempts));
+                await (0, api_2.sendMessage)((0, messages_1.addMessage)(torrent.name, tags, torrent.size, attempts));
             }
             catch (error) {
                 process.exit(1);

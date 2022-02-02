@@ -13,7 +13,7 @@ const login = async () => {
             }
         }).then(response => {
             if (response.headers['set-cookie']) {
-                config_1.setCookie(response.headers['set-cookie'][0]);
+                (0, config_1.setCookie)(response.headers['set-cookie'][0]);
                 resolve();
             }
             else {

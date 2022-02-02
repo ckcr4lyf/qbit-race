@@ -14,7 +14,7 @@ const backupCurrentConfig = () => {
         logger_1.logger.error(`settings.js not found! Path = ${settingsPath}`);
         return;
     }
-    const backupFolderPath = path.join(os_1.homedir(), '.backup/qbit-race/');
+    const backupFolderPath = path.join((0, os_1.homedir)(), '.backup/qbit-race/');
     try {
         fs.mkdirSync(backupFolderPath, { recursive: true });
     }

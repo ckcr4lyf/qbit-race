@@ -18,7 +18,7 @@ const resume_1 = require("./resume");
 const postRaceResume = async (infohash, tracker) => {
     let torrents;
     try {
-        await auth_1.login();
+        await (0, auth_1.login)();
     }
     catch (error) {
         console.log(`Failed to login. Exiting...`);
@@ -28,12 +28,12 @@ const postRaceResume = async (infohash, tracker) => {
     // Check if this torrent's category is in the rename list
     // In case they are on old settings, skip it
     if (settings_1.SETTINGS.CATEGORY_FINISH_CHANGE !== undefined) {
-        const torrentInfo = await api_2.getTorrentInfo(infohash);
+        const torrentInfo = await (0, api_2.getTorrentInfo)(infohash);
         const newCategoryName = settings_1.SETTINGS.CATEGORY_FINISH_CHANGE[torrentInfo.category];
         // Check if there was a rule for it or not
         if (newCategoryName !== undefined) {
             try {
-                await api_2.setCategory(infohash, newCategoryName);
+                await (0, api_2.setCategory)(infohash, newCategoryName);
                 logger_1.logger.info(`Changed category for ${infohash} from ${torrentInfo.category} to ${newCategoryName}`);
             }
             catch (error) {
@@ -43,7 +43,7 @@ const postRaceResume = async (infohash, tracker) => {
     }
     logger_1.logger.info(`Getting torrent list`);
     try {
-        torrents = await api_2.getTorrents();
+        torrents = await (0, api_2.getTorrents)();
     }
     catch (error) {
         logger_1.logger.error(`Failed to get torrents from qBittorrent`);
@@ -59,14 +59,14 @@ const postRaceResume = async (infohash, tracker) => {
         }
         try {
             logger_1.logger.info('Sending notification to deluge...');
-            await api_1.sendMessage(messages_1.completeMessage(torrent.name, torrent.tags.split(','), torrent.size, torrent.ratio));
+            await (0, api_1.sendMessage)((0, messages_1.completeMessage)(torrent.name, torrent.tags.split(','), torrent.size, torrent.ratio));
         }
         catch (error) {
             logger_1.logger.error('Failed to send notification to Discord');
         }
     }
     // handle the resume part
-    await resume_1.resume(torrents);
+    await (0, resume_1.resume)(torrents);
 };
 exports.postRaceResume = postRaceResume;
 //# sourceMappingURL=post_race_resume.js.map
