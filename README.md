@@ -157,7 +157,9 @@ You will see a line like
 This is the path to the script. Now in AutoDL, change the Action for your filter (or Global action) to:
 1. Choose .torrent action - `Run Program`
 2. Comamnd - `/home/username/scripts/qbit-race/bin/autodl_feed.js`
-3. Arguments - `"$(InfoHash)" "$(InfoName)" "$(Tracker)" "$(TorrentPathName)"`
+3. Arguments - `"$(TorrentPathName)"`
+
+** NOTE: THIS IS DIFFERENT THAN PREVIOUS VERSION WHICH NEEDED 4 ARGUMENTS!!! **
 
 Click OK, and that should be it!
 
