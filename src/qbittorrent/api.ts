@@ -165,6 +165,7 @@ export const setCategory = (infohash: string, category: string): Promise<void> =
     })
 }
 
+// TODO: Feed the buffer here directly
 export const addTorrent = (path: string, category?: string): Promise<void> => {
     return new Promise((resolve, reject) => {
         let formData = new FormData();
