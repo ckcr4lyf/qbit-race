@@ -8,17 +8,40 @@ import { sendMessage } from './discord/api';
 import { addMessage } from './discord/messages';
 import { torrentFromApi } from './interfaces';
 import { resume } from './helpers/resume';
+import { getTorrentMetainfo, torrentMetainfo } from './helpers/torrent';
+import * as fs from 'fs';
 
 module.exports = async (args: string[]) => {
 
-    const infohash = args[0].toLowerCase();
-    const torrentName = args[1];
-    const tracker = args[2];
-    const path = args[3];
+    // Arguments:
+    // previous: [infohash] [torrentname] [tracker] [path]
+    // new: [path]
+
+    // const infohash = args[0].toLowerCase();
+    // const torrentName = args[1];
+    // const tracker = args[2];
+    // const path = args[3];
+
+    //TODO: Check if first param is infohash or path? Or no bw compatibility?...
+    // Assume none at first.
+    const path = args[0];
+
     let category = null;
 
+    // We need to read the torrent file and get the metainfo
+    let torrentFile: Buffer;
+    let metainfo: torrentMetainfo;
+    
+    try {
+        torrentFile = fs.readFileSync(path);
+        metainfo = getTorrentMetainfo(torrentFile);
+    } catch (e){
+        logger.error(`Failed to read/parse torrent from file`);
+        throw new Error("TORRENT_READ_FAIL");
+    }
+
     //Check if `--category` is present. Then the next argument is the category to set.
-    for (let index = 4; index < args.length; index++){
+    for (let index = 1; index < args.length; index++){
         if (args[index] === '--category'){
             //The next one should be the actual category
             if (index + 1 < args.length){
@@ -46,14 +69,15 @@ module.exports = async (args: string[]) => {
     const okay = await preRaceCheck();
 
     if (okay === false){
-        logger.info(`Conditions not met. Skipping ${torrentName}`);
+        logger.info(`Conditions not met. Skipping ${metainfo.name}`);
         process.exit(0); //it is a soft exit. 
     }
 
-    logger.info(`Adding torrent ${torrentName}`);
+    logger.info(`Adding torrent ${metainfo.name}`);
+
 
     try {
-        await addTorrent(path, category);
+        await addTorrent(torrentFile, category);
     } catch (error) {
         process.exit(1);
     }
@@ -65,11 +89,11 @@ module.exports = async (args: string[]) => {
     let tags: string[] = []
 
     try {
-        let trackers: any[] = await getTrackers(infohash);
+        let trackers: any[] = await getTrackers(metainfo.infohash);
         trackers.splice(0, 3);
         tags = trackers.map(({ url }) => new URL(url).hostname);
         logger.info(`Adding ${tags.length} tags.`);
-        await addTags([{ hash: infohash }], tags);
+        await addTags([{ hash: metainfo.infohash }], tags);
     } catch (error) {
         logger.error(`Failed to add tags. Error code ${error}`);
     }
@@ -78,7 +102,7 @@ module.exports = async (args: string[]) => {
     let torrent: torrentFromApi;
 
     try {
-        torrent = await getTorrentInfo(infohash);
+        torrent = await getTorrentInfo(metainfo.infohash);
     } catch (error){
         process.exit(1);
     }
@@ -93,14 +117,14 @@ module.exports = async (args: string[]) => {
         logger.info(`Attempt #${attempts + 1}: Querying tracker status...`);
         
         try {
-            let trackers: any[] = await getTrackers(infohash);
+            let trackers: any[] = await getTrackers(metainfo.infohash);
             trackers.splice(0, 3);
             let working = trackers.some(tracker => tracker.status === 2);
 
             if (!working) {
                 //We need to reannounce
                 logger.info('Need to reannounce. Sending request and sleeping...');
-                await reannounce(infohash);
+                await reannounce(metainfo.infohash);
                 await sleep(SETTINGS.REANNOUNCE_INTERVAL);
                 attempts++;
             } else {
@@ -117,7 +141,7 @@ module.exports = async (args: string[]) => {
     //We got here but failed reannounce failed. Delete it.
     if (announceOK === false){
         logger.info(`Did not get an OK from tracker even after ${SETTINGS.REANNOUNCE_LIMIT} attempts. Deleting...`);
-        await deleteTorrents([{ hash: infohash }]);
+        await deleteTorrents([{ hash: metainfo.infohash }]);
 
         // Resume any that were paused
         logger.info('Going to resume any paused torrents...');
