@@ -13,7 +13,7 @@
 This repository is still in beta. There might be bugs. Feel free to open an issue if you encounter one. 
 You may also open an issue to request a feature, but please mark it with the prefix `[FEATURE REQUEST]`
 
-You need node v14+ to run this, and qbittorrent 4.2.x+
+**I would recommend you to use Node.JS latest LTS release, currently v16.14.0 and qBittorrent should be v4.2.x+**
 
 ## Thanks
 
@@ -47,7 +47,7 @@ Massive Thanks to <a href="https://walkerservers.com/">WalkerServers</a> for spo
     - [Example PromQL queries](#example-promql-queries)
 
 ## Node requirement
-This project needs Node.js v12+.
+This project needs Node.js v16+ (LTS recommended)
 ### Important! 
 If you have installed Node.js with nvm, you will need to symlink it to your `bin` directory. Usually local bin will do, otherwise you may need to symlink it to `/usr/bin`
 

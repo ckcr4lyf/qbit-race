@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTransferInfo = exports.reannounce = exports.getTrackers = exports.addTorrent = exports.setCategory = exports.addTags = exports.deleteTorrents = exports.resumeTorrents = exports.pauseTorrents = exports.getTorrents = exports.getTorrentInfo = void 0;
 const axios_1 = require("axios");
 const FormData = require("form-data");
-const fs = require("fs");
 const config_1 = require("../config");
 const logger_1 = require("../helpers/logger");
 const basePath = `${config_1.HTTP_SCHEME}://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}${config_1.URL_PATH}`;
@@ -153,17 +152,10 @@ const setCategory = (infohash, category) => {
     });
 };
 exports.setCategory = setCategory;
-const addTorrent = (path, category) => {
+const addTorrent = (torrentFile, category) => {
     return new Promise((resolve, reject) => {
         let formData = new FormData();
-        try {
-            const torrentData = fs.readFileSync(path);
-            formData.append("torrents", torrentData, 'dummy.torrent');
-        }
-        catch (error) {
-            logger_1.logger.error(`Unable to read file ${path}`);
-            reject();
-        }
+        formData.append("torrents", torrentFile, 'dummy.torrent');
         if (category !== null) {
             logger_1.logger.info(`Setting category to ${category}`);
             formData.append('category', category);
