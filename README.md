@@ -39,6 +39,7 @@ Massive Thanks to <a href="https://walkerservers.com/">WalkerServers</a> for spo
   - [AutoDL setup (Advanced)](#autodl-setup-advanced)
     - [Torrent Category](#torrent-category)
     - [Change Category on torrent completion](#change-category-on-torrent-completion)
+  - [Autobrr Setup](#autobrr-setup-beta)
   - [qBittorrent post race setup](#qbittorrent-post-race-setup)
   - [Other Scripts](#other-scripts)
     - [Tag Errored Torrents](#tag-errored-torrents)
@@ -159,7 +160,7 @@ This is the path to the script. Now in AutoDL, change the Action for your filter
 2. Comamnd - `/home/username/scripts/qbit-race/bin/autodl_feed.js`
 3. Arguments - `"$(TorrentPathName)"`
 
-** NOTE: THIS IS DIFFERENT THAN PREVIOUS VERSION WHICH NEEDED 4 ARGUMENTS!!! **
+**NOTE: THIS IS DIFFERENT THAN PREVIOUS VERSION WHICH NEEDED 4 ARGUMENTS!!!**
 
 Click OK, and that should be it!
 
@@ -205,6 +206,10 @@ CATEGORY_FINISH_CHANGE: {
      'ANOTHER_ONE': 'YET_ANOTHER_ONE'
  }
 ```
+
+## autobrr setup (BETA)
+
+It should work with [autobrr](https://github.com/autobrr/autobrr) as well, for the arguments in autobrr, just put `{{ .TorrentPathName }}` , and the command to execute same as that for AutoDL (path to `autodl_feed.js`). Advanced instructions for category etc. are similar.
 
 ## qBittorrent post race setup
 
