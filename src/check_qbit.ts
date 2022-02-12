@@ -23,7 +23,7 @@ export const checkQbit = async () => {
     }
 
     try {
-        await login();
+        await login(LOG_FILE);
     } catch (errorCode) {
 
         if (errorCode === 999){

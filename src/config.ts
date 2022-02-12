@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import * as path from 'path';
 
 import { SETTINGS } from '../settings.js';
-import { logger } from './helpers/logger.js';
+import { getLogger, logger } from './helpers/logger.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -51,7 +51,8 @@ if (!DISCORD_WEBHOOK && SETTINGS.DISCORD_NOTIFICATIONS.enabled === true){
     process.exit(1);
 }
 
-const setCookie = (cookie: string) => {
+const setCookie = (cookie: string, logFile?: string) => {
+    const logger = getLogger(logFile || 'COOKIE');
     COOKIE = cookie;
     logger.info(`Updated COOKIE!`);
 }

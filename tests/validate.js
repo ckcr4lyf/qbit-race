@@ -12,5 +12,4 @@ if (!fs.existsSync(logsDir) || !fs.lstatSync(logsDir).isDirectory()){
     fs.mkdirSync(logsDir);
 }
 
-
 await checkQbit();

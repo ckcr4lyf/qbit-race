@@ -18,7 +18,7 @@ export const checkQbit = async () => {
         process.exit(1);
     }
     try {
-        await login();
+        await login(LOG_FILE);
     }
     catch (errorCode) {
         if (errorCode === 999) {

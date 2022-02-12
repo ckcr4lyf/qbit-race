@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 import { fileURLToPath } from 'node:url';
 import * as path from 'path';
 import { SETTINGS } from '../settings.js';
-import { logger } from './helpers/logger.js';
+import { getLogger } from './helpers/logger.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 let COOKIE = '';
 let LOGFILE = 'default.log';
@@ -39,7 +39,8 @@ if (!DISCORD_WEBHOOK && SETTINGS.DISCORD_NOTIFICATIONS.enabled === true) {
     console.log("Please define DISCORD_WEBHOOK in your .env file. (Discord notifications are enabled but a webhook is not defined)\n");
     process.exit(1);
 }
-const setCookie = (cookie) => {
+const setCookie = (cookie, logFile) => {
+    const logger = getLogger(logFile || 'COOKIE');
     COOKIE = cookie;
     logger.info(`Updated COOKIE!`);
 };
