@@ -74,7 +74,7 @@ mkdir -p ~/scripts
 cd ~/scripts
 git clone https://github.com/ckcr4lyf/qbit-race.git
 cd qbit-race
-npm install
+npm install --production
 cp sample.env .env
 cp sample.settings.js settings.js
 ```
