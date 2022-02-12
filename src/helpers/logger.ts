@@ -45,12 +45,20 @@ class LoggerV2 {
         fs.appendFileSync(logfile, logString);
     }
 
+    public debug(msg: string){
+        this.log('DBG', msg);
+    }
+
     public info(msg: string){
-        this.log('INFO', msg);
+        this.log('INF', msg);
+    }
+
+    public warn(msg: string){
+        this.log('WRN', msg);
     }
 
     public error(msg: string){
-        this.log('ERROR', msg);
+        this.log('ERR', msg);
     }
 }
 

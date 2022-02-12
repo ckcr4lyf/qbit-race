@@ -1,7 +1,7 @@
 import { login } from './qbittorrent/auth.js';
 import { addTags, addTorrent, deleteTorrents, getTorrentInfo, getTorrents, getTrackers, reannounce } from './qbittorrent/api.js'
 import { sleep } from './helpers/utilities.js';
-import { logger } from './helpers/logger.js';
+import { getLogger } from './helpers/logger.js';
 import { preRaceCheck } from './helpers/pre_race.js';
 import { SETTINGS } from '../settings.js';
 import { sendMessage } from './discord/api.js';
@@ -15,6 +15,8 @@ import fs from 'fs';
 
 export default async (args: string[]) => {
 
+    const LOG_FILE = `PRE_RACE`;
+    const logger = getLogger(LOG_FILE);
     // Arguments:
     // previous: [infohash] [torrentname] [tracker] [path]
     // new: [path]
@@ -50,7 +52,7 @@ export default async (args: string[]) => {
                 category = args[index + 1];
             } else {
                 //They fucked up. Let them know, but dont error out (act as if not set).
-                logger.error('--category set but the category is missing.');
+                logger.warn('--category set but the category is missing.');
                 break;
             }
         }
@@ -66,7 +68,7 @@ export default async (args: string[]) => {
     }
 
     let t2 = Date.now();
-    logger.info(`Login completed in ${((t2 - t1) / 1000).toFixed(2)} seconds.`);
+    logger.debug(`Login completed in ${((t2 - t1) / 1000).toFixed(2)} seconds.`);
     logger.info('Performing Pre Race check...');
     const okay = await preRaceCheck();
 
@@ -76,7 +78,6 @@ export default async (args: string[]) => {
     }
 
     logger.info(`Adding torrent ${metainfo.name}`);
-
 
     try {
         await addTorrent(torrentFile, category);
@@ -96,7 +97,7 @@ export default async (args: string[]) => {
         let trackers: any[] = await getTrackers(metainfo.infohash);
         trackers.splice(0, 3);
         tags = trackers.map(({ url }) => new URL(url).hostname);
-        logger.info(`Adding ${tags.length} tags.`);
+        logger.debug(`Adding ${tags.length} tags.`);
         await addTags([{ hash: metainfo.infohash }], tags);
     } catch (error) {
         logger.error(`Failed to add tags. Error code ${error}`);
@@ -144,7 +145,7 @@ export default async (args: string[]) => {
     
     //We got here but failed reannounce failed. Delete it.
     if (announceOK === false){
-        logger.info(`Did not get an OK from tracker even after ${SETTINGS.REANNOUNCE_LIMIT} attempts. Deleting...`);
+        logger.warn(`Did not get an OK from tracker even after ${SETTINGS.REANNOUNCE_LIMIT} attempts. Deleting...`);
         await deleteTorrents([{ hash: metainfo.infohash }]);
 
         // Resume any that were paused
@@ -178,7 +179,7 @@ export default async (args: string[]) => {
         const { enabled } = SETTINGS.DISCORD_NOTIFICATIONS || { enabled: false }
         if (enabled === true) {
             try {
-                await sendMessage(addMessage(torrent.name, tags, torrent.size, attempts))
+                await sendMessage(addMessage(torrent.name, tags, torrent.size, attempts), LOG_FILE)
             } catch (error){
                 process.exit(1);   
             }

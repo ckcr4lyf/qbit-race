@@ -2,7 +2,6 @@ import * as path from 'path';
 
 import { LowSync, JSONFileSync } from 'lowdb';
 import { torrentDbInfo, torrentStatusEvent } from '../interfaces.js';
-import { EVENTS } from './constants.js';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

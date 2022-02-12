@@ -66,7 +66,8 @@ echo "ln -s $(which node) /usr/bin/node"
 
 ## Repo Setup
 
-First, you need to download this repository, install some dependencies, and setup your enivronment variables file. 
+First, you need to download this repository, install some dependencies, and setup your enivronment variables file. The following commands will also make some directories for you, if you are a "power user" I guess you know what you're doing and you can change them as you'd like.
+
 You may run the following commands:
 
 ```sh
@@ -116,7 +117,7 @@ There are additional parameters you can tweak in `settings.js`. These settings c
 |`CONCURRENT_RACES`|`1`|How many torrents can be "raced" at once. If autodl grabs a torrent, but these many races are already in progress, the torrent will be silently skipped. While less parallel races give better performance, if you want to download everything autoDL grabs, set this to `-1`|
 |`COUNT_STALLED_DOWNLOADS`|`false`|If a seeder abandons the torrent midway, the download may be stalled. This option controlls whether such torrents should be counted when checking for `CONCURRENT_RACES`. It is advisable to keep this as false|
 |`DISCORD_NOTIFICATIONS`|`object`|See below for descripton|
-`CATEGORY_FINISH_CHANGE`|`object`|Check [this section](#change-category-on-torrent-completion) for details|
+|`CATEGORY_FINISH_CHANGE`|`object`|Check [this section](#change-category-on-torrent-completion) for details|
 
 <br><br>
 If you would like to receive discord notifications, so you can enable this option. **REMEMBER TO SET YOUR WEBHOOK URL IN THE .env FILE!**. The description of the options is as follows:
@@ -145,6 +146,7 @@ The file will be saved as `currenttimestamp_settings.js` in the path `~/.backup/
 ## AutoDL setup (Basic)
 
 To get the path to the script which will feed qBittorrent, run the following commands:
+
 ```sh
 cd ~/scripts/qbit-race/bin
 echo "$(pwd)/autodl_feed.js"

@@ -16,4 +16,4 @@ if (!fs.existsSync(logsDir) || !fs.lstatSync(logsDir).isDirectory()){
 setLogfile('pre_race.log');
 
 let args = process.argv.slice(2);
-add_torrent(args);
+await add_torrent(args);

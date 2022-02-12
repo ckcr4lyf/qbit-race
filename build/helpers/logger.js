@@ -31,11 +31,17 @@ class LoggerV2 {
         const logfile = path.join(__dirname, '../../logs', `${this.name}.log`);
         fs.appendFileSync(logfile, logString);
     }
+    debug(msg) {
+        this.log('DBG', msg);
+    }
     info(msg) {
-        this.log('INFO', msg);
+        this.log('INF', msg);
+    }
+    warn(msg) {
+        this.log('WRN', msg);
     }
     error(msg) {
-        this.log('ERROR', msg);
+        this.log('ERR', msg);
     }
 }
 export const getLogger = (name) => {
