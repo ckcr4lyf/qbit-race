@@ -11,11 +11,13 @@
     "start": "node build/index.js",
     "validate": "node tests/validate.js",
     "tag_unreg": "node bin/tag_errored.js",
-    "test-dev": "ts-node src/index.ts"
+    "test-dev": "ts-node src/index.ts",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest --logHeapUsage"
   },
   "author": "Raghu Saxena",
   "license": "ISC",
   "dependencies": {
+    "@types/bencode": "^2.0.1",
     "axios": "^0.21.1",
     "dotenv": "^10.0.0",
     "form-data": "^4.0.0",
@@ -24,8 +26,14 @@
   "devDependencies": {
     "@types/lowdb": "^1.0.9",
     "@types/node": "^16.7.1",
+    "form-data": "^3.0.1",
+    "bencode": "^2.0.2",
     "dotenv": "^8.2.0",
     "fastify": "^3.19.0",
-    "form-data": "^3.0.1"
+    "@swc/core": "^1.2.135",
+    "@swc/jest": "^0.2.17",
+    "@types/jest": "^27.4.0",
+    "jest": "^27.4.7",
+    "typescript": "^4.5.5"
   }
 }

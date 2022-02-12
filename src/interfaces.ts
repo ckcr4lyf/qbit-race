@@ -7,11 +7,33 @@ export interface config_t {
     QBIT_PASSWORD: string
 }
 
+export enum TorrentState {
+    error = 'error',
+    missingFiles = 'missingFiles',
+    uploading = 'uploading',
+    pausedUP = 'pausedUP',
+    queuedUP = 'queuedUP',
+    stalledUP = 'stalledUP',
+    checkingUP = 'checkingUP',
+    forcedUP = 'forcedUP',
+    allocating = 'allocating',
+    downloading = 'downloading',
+    metaDL = 'metaDL',
+    pausedDL = 'pausedDL',
+    queuedDL = 'queuedDL',
+    stalledDL = 'stalledDL',
+    checkingDL = 'checkingDL',
+    forcedDL = 'forcedDL',
+    checkingResumeData = 'checkingResumeData',
+    moving = 'moving',
+    unknown = 'unknown',
+}
+
 // Just type the important fields
 export interface torrentFromApi {
     name: string;
     hash: string;
-    state: string;
+    state: TorrentState;
     added_on: number; //Unix timestamp
     ratio: number;
     category: string; // "" or single category

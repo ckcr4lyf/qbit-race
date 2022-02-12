@@ -1,6 +1,5 @@
 import axios from 'axios';
 import FormData from 'form-data';
-import * as fs from 'fs';
 import { QBIT_HOST, QBIT_PORT, COOKIE, HTTP_SCHEME, URL_PATH } from '../config.js';
 import { logger } from '../helpers/logger.js';
 const basePath = `${HTTP_SCHEME}://${QBIT_HOST}:${QBIT_PORT}${URL_PATH}`;
@@ -143,17 +142,10 @@ export const setCategory = (infohash, category) => {
         });
     });
 };
-export const addTorrent = (path, category) => {
+export const addTorrent = (torrentFile, category) => {
     return new Promise((resolve, reject) => {
         let formData = new FormData();
-        try {
-            const torrentData = fs.readFileSync(path);
-            formData.append("torrents", torrentData, 'dummy.torrent');
-        }
-        catch (error) {
-            logger.error(`Unable to read file ${path}`);
-            reject();
-        }
+        formData.append("torrents", torrentFile, 'dummy.torrent');
         if (category !== null) {
             logger.info(`Setting category to ${category}`);
             formData.append('category', category);

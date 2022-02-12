@@ -165,18 +165,12 @@ export const setCategory = (infohash: string, category: string): Promise<void> =
     })
 }
 
-export const addTorrent = (path: string, category?: string): Promise<void> => {
+export const addTorrent = (torrentFile: Buffer, category?: string): Promise<void> => {
     return new Promise((resolve, reject) => {
+        
         let formData = new FormData();
-
-        try {
-            const torrentData = fs.readFileSync(path);
-            formData.append("torrents", torrentData, 'dummy.torrent');
-        } catch (error) {
-            logger.error(`Unable to read file ${path}`);
-            reject();
-        }
-
+        formData.append("torrents", torrentFile, 'dummy.torrent');
+            
         if (category !== null){
             logger.info(`Setting category to ${category}`);
             formData.append('category', category);

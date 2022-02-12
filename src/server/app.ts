@@ -1,10 +1,10 @@
 // The server for serving prometheus metrics
 import fastify from 'fastify';
-import { PROM_IP, PROM_PORT, setLogfile } from '../config.js';
-import { getLogger } from '../helpers/logger.js';
-import { makeMetrics } from '../helpers/preparePromMetrics.js';
-import { getTransferInfo } from '../qbittorrent/api.js';
-import { login } from '../qbittorrent/auth.js';
+import { PROM_IP, PROM_PORT, setLogfile } from '../config';
+import { getLogger } from '../helpers/logger';
+import { makeMetrics, stateMetrics } from '../helpers/preparePromMetrics';
+import { getTorrents, getTransferInfo } from '../qbittorrent/api';
+import { login } from '../qbittorrent/auth';
 
 const server = fastify();
 const logger = getLogger(`prom-exporter`);
@@ -13,11 +13,19 @@ const logger = getLogger(`prom-exporter`);
 setLogfile('prom-exporter.log');
 
 server.get('/metrics', async (request, reply) => {
+
     await login();
     const transferInfo = await getTransferInfo();
+    const torrents = await getTorrents();
+
+    let finalMetrics = '';
+
+    finalMetrics += makeMetrics(transferInfo);
+    finalMetrics += stateMetrics(torrents);
+
     reply.status(200).headers({
         'Content-Type': 'text/plain'
-    }).send(makeMetrics(transferInfo));
+    }).send(finalMetrics);
 });
 
 server.listen(PROM_PORT, PROM_IP, (err, address) => {
