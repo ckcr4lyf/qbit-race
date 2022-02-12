@@ -1,10 +1,12 @@
 import { QBIT_HOST, QBIT_PORT } from './config.js';
 import { login } from './qbittorrent/auth.js';
-import { logger } from './helpers/logger.js';
+import { getLogger } from './helpers/logger.js';
 import { sendMessage } from './discord/api.js';
 import { SETTINGS } from '../settings.js';
 import { addMessage } from './discord/messages.js';
-module.exports = async () => {
+export const checkQbit = async () => {
+    const LOG_FILE = `VALIDATE`;
+    const logger = getLogger(LOG_FILE);
     let t1 = Date.now();
     // Check settings
     if (!Array.isArray(SETTINGS.PAUSE_SKIP_CATEGORIES)) {
@@ -32,12 +34,7 @@ module.exports = async () => {
     const { enabled, botUsername, botAvatar } = SETTINGS.DISCORD_NOTIFICATIONS || { enabled: false };
     if (enabled === true) {
         try {
-            // await sendMessage({
-            //     content: 'qbit-race validation test',
-            //     username: botUsername,
-            //     avatar_url: botAvatar
-            // });
-            await sendMessage(addMessage('Ubuntu 20.04 LTS', ['ubuntu.com', 'linux.com'], 1024 * 1024 * 1024 * 3.412, 1));
+            await sendMessage(addMessage('[VALIDATE TEST] Ubuntu 20.04 LTS', ['ubuntu.com', 'linux.com'], 1024 * 1024 * 1024 * 3.412, 1));
         }
         catch (error) {
             logger.error('Failed to validate discord webhook. Either disable discord notifications or fix the webhook.');
