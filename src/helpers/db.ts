@@ -1,7 +1,6 @@
 import * as path from 'path';
 
 import { LowSync, JSONFileSync } from 'lowdb';
-import * as FileSync from 'lowdb/adapters/FileSync';
 import { torrentDbInfo, torrentStatusEvent } from '../interfaces.js';
 import { EVENTS } from './constants.js';
 import { fileURLToPath } from 'node:url';
