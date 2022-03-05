@@ -13,5 +13,6 @@ export const SETTINGS = {
     },
     CATEGORY_FINISH_CHANGE: {
         'OLD CAT': 'NEW CAT',
-    }
+    },
+    DB_ENABLED: false, // Experimental: Logging torrents on add / complete to a local JSON database, potentially for tracking statistics
 }

@@ -3,33 +3,47 @@ import * as path from 'path';
 import { LowSync, JSONFileSync } from 'lowdb';
 import { torrentDbInfo, torrentStatusEvent } from '../interfaces.js';
 import { fileURLToPath } from 'node:url';
+import { EVENTS } from './constants.js';
+import { SETTINGS } from '../../settings.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-type Schema = {
-    events: torrentStatusEvent[];
+export type QbitStatsSchema = {
+    added: torrentStatusEvent[];
+    completed: torrentStatusEvent[];
     torrents: torrentDbInfo[];
 };
 
 const filename = path.join(__dirname, '../../stats.json');
-const adapter = new JSONFileSync<Schema>(filename);
-const db = new LowSync<Schema>(adapter);
+const adapter = new JSONFileSync<QbitStatsSchema>(filename);
+const db = new LowSync<QbitStatsSchema>(adapter);
 
 // Initial default setup
 db.read();
 db.data ||= {
-    events: [],
+    added: [],
+    completed: [],
     torrents: [],
 };
 
 export const addEventToDb = (event: torrentStatusEvent) => {
-    db.data.events.push(event);
-    db.write();
+    if (event.eventType === EVENTS.ADDED){
+        db.data.added.push(event);    
+    } else if (event.eventType === EVENTS.COMPLETED){
+        db.data.completed.push(event);
+    }
+
+    if (SETTINGS.DB_ENABLED === true){
+        db.write();
+    }
 }
 
 export const addTorrentToDb = (torrent: torrentDbInfo) => {
     db.data.torrents.push(torrent);
-    db.write();
+
+    if (SETTINGS.DB_ENABLED === true){
+        db.write();
+    }
 }
 
 export const useless = () => {

@@ -10,7 +10,9 @@
 * Pause seeding torrents when a new race is about to begin
 * Skip torrents with certain tags / category from being paused prior to a race
 
-This repository is still in beta. There might be bugs. Feel free to open an issue if you encounter one. 
+The current master branch has some internal changes to the previous release, to move from CommonJS to ESM.
+It should work the same, but if you prefer, you can use the [stable release 1.0.0 from here](https://github.com/ckcr4lyf/qbit-race/releases/tag/v1.0.0)
+
 You may also open an issue to request a feature, but please mark it with the prefix `[FEATURE REQUEST]`
 
 **I would recommend you to use Node.JS latest LTS release, currently v16.14.0 and qBittorrent should be v4.2.x+**
@@ -48,25 +50,17 @@ Massive Thanks to <a href="https://walkerservers.com/">WalkerServers</a> for spo
     - [Example PromQL queries](#example-promql-queries)
 
 ## Node requirement
-This project needs Node.js v16+ (LTS recommended)
-### Important! 
-If you have installed Node.js with nvm, you will need to symlink it to your `bin` directory. Usually local bin will do, otherwise you may need to symlink it to `/usr/bin`
+This project needs Node.js v16+ (LTS recommended). You can use [n](https://github.com/tj/n) to install node.
+### Important!
+If you installed node after having started autoDL (or autobrr), you **need to restart them**. 
 
-You can get the correct command to symlink nvm's node by running these commands (The following commands print the symlink to execute, but doesn't actually run them). 
+This is because usually node helpers will install node into a new directory and add it to path, but the existing applications won't have their local path updated unless they are restarted.
 
-For shared seedboxes:
-```sh
-echo "ln -s $(which node) ${HOME}/node"
-```
-
-or, for deciated seedboxes: (this might need a sudo)
-```sh
-echo "ln -s $(which node) /usr/bin/node"
-```
+(Alternatively you can try and symlink / copy node to a `bin` folder already in path, but I wouldn't recommend this)
 
 ## Repo Setup
 
-First, you need to download this repository, install some dependencies, and setup your enivronment variables file. The following commands will also make some directories for you, if you are a "power user" I guess you know what you're doing and you can change them as you'd like.
+First, you need to clone this repository, install some dependencies, and setup your enivronment variables file. The following commands will also make some directories for you, if you are a "power user" I guess you know what you're doing and you can change them as you'd like.
 
 You may run the following commands:
 
@@ -162,7 +156,7 @@ This is the path to the script. Now in AutoDL, change the Action for your filter
 2. Comamnd - `/home/username/scripts/qbit-race/bin/autodl_feed.js`
 3. Arguments - `"$(TorrentPathName)"`
 
-**NOTE: THIS IS DIFFERENT THAN PREVIOUS VERSION WHICH NEEDED 4 ARGUMENTS!!!**
+**NOTE: THIS IS DIFFERENT THAN THE 1.0.0 VERSION WHICH NEEDED 4 ARGUMENTS!!!**
 
 Click OK, and that should be it!
 
@@ -253,7 +247,7 @@ This will tag all torrents which do not have ANY working tracker.
 
 ## Prometheus Exporter
 
-`qbit-race` now also features a prometheus exporter, which is a lightweight http server (based on fastify) which exports a few stats in a prometheus friendly format.
+`qbit-race` now also features a prometheus exporter, which is a lightweight http server (based on fastify) that exports a few stats in a prometheus friendly format.
 
 The stats exposed are: 
 
@@ -261,6 +255,7 @@ The stats exposed are:
 * Download rate (instant) (bytes/s)
 * Upload this session (bytes)
 * Upload rate (instant) (bytes/s)
+* Torrents count in various states (`uploading`, `downloading`... all the possible ones)
 
 ### Metrics server setup
 
