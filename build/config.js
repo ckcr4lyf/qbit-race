@@ -49,6 +49,7 @@ const setCookie = (cookie, logFile) => {
 //Then the next time something is logged, it will be done so to the new file. 
 //This was, for feeder we can set one log, for post race another. 
 //Potentially more logs for testing and shit.
+// This should be deprecated its a bad way to do it :ded:
 const setLogfile = (logfile) => {
     LOGFILE = logfile;
 };
