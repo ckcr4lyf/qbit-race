@@ -21,7 +21,7 @@
     "axios": "^0.21.1",
     "bencode": "^2.0.2",
     "fastify": "^3.19.0",
-    "dotenv": "^10.0.0",
+    "dotenv": "git+https://github.com/ckcr4lyf/dotenv",
     "form-data": "^4.0.0",
     "lowdb": "~3.0.0"
   },
