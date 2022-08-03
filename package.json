@@ -16,9 +16,8 @@
   "author": "Raghu Saxena",
   "license": "ISC",
   "dependencies": {
-    "@types/bencode": "^2.0.1",
+    "@ckcr4lyf/bencode-esm": "^0.0.2",
     "axios": "^0.21.1",
-    "bencode": "^2.0.2",
     "dotenv": "^8.2.0",
     "fastify": "^3.19.0",
     "form-data": "^3.0.1"
