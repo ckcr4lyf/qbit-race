@@ -11,7 +11,7 @@ import { resume } from './helpers/resume.js';
 import { getTorrentMetainfo, torrentMetainfo } from './helpers/torrent.js';
 import * as fs from 'fs';
 
-module.exports = async (args: string[]) => {
+export const add_torrent = async (args: string[]) => {
 
     // Arguments:
     // previous: [infohash] [torrentname] [tracker] [path]

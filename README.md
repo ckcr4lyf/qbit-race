@@ -151,17 +151,17 @@ The file will be saved as `currenttimestamp_settings.js` in the path `~/.backup/
 To get the path to the script which will feed qBittorrent, run the following commands:
 ```sh
 cd ~/scripts/qbit-race/bin
-echo "$(pwd)/autodl_feed.js"
+echo "$(pwd)/autodl_feed.mjs"
 ```
 
 You will see a line like
 ```
-/home/username/scripts/qbit-race/bin/autodl_feed.js
+/home/username/scripts/qbit-race/bin/autodl_feed.mjs
 ```
 
 This is the path to the script. Now in AutoDL, change the Action for your filter (or Global action) to:
 1. Choose .torrent action - `Run Program`
-2. Comamnd - `/home/username/scripts/qbit-race/bin/autodl_feed.js`
+2. Comamnd - `/home/username/scripts/qbit-race/bin/autodl_feed.mjs`
 3. Arguments - `"$(TorrentPathName)"`
 
 **NOTE: THIS IS DIFFERENT THAN PREVIOUS VERSION WHICH NEEDED 4 ARGUMENTS!!!**
@@ -213,7 +213,7 @@ CATEGORY_FINISH_CHANGE: {
 
 ## autobrr setup (BETA)
 
-It should work with [autobrr](https://github.com/autobrr/autobrr) as well, for the arguments in autobrr, just put `{{ .TorrentPathName }}` , and the command to execute same as that for AutoDL (path to `autodl_feed.js`). Advanced instructions for category etc. are similar.
+It should work with [autobrr](https://github.com/autobrr/autobrr) as well, for the arguments in autobrr, just put `{{ .TorrentPathName }}` , and the command to execute same as that for AutoDL (path to `autodl_feed.mjs`). Advanced instructions for category etc. are similar.
 
 ## qBittorrent post race setup
 
@@ -222,12 +222,12 @@ After the race, the post race script will resume the torrents (if nothing else i
 To get the path to the post race script, run the following commands:
 ```sh
 cd ~/scripts/qbit-race/bin
-echo "$(pwd)/post_race.js"
+echo "$(pwd)/post_race.mjs"
 ```
 
 You will see a line like
 ```
-/home/username/scripts/qbit-race/bin/post_race.js
+/home/username/scripts/qbit-race/bin/post_race.mjs
 ```
 
 This is the path to the script. Now open qBittorrent, and in that open settings. At the bottom of "Downloads", check "Run external program on torrent completion". 

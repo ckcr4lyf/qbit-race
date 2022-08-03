@@ -9,7 +9,7 @@ import { addMessage } from './discord/messages.js';
 import { resume } from './helpers/resume.js';
 import { getTorrentMetainfo } from './helpers/torrent.js';
 import * as fs from 'fs';
-module.exports = async (args) => {
+export const add_torrent = async (args) => {
     // Arguments:
     // previous: [infohash] [torrentname] [tracker] [path]
     // new: [path]

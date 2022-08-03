@@ -1,5 +1,8 @@
 import * as fs from 'fs';
-import * as path from 'path';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 import { LOGFILE } from '../config.js';
 

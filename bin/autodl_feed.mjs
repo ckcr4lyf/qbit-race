@@ -1,6 +1,9 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 //Create logs folder if it doesnt exist
 const logsDir = path.join(__dirname, '../logs');
@@ -18,8 +21,8 @@ if (!fs.existsSync(logsDir) || !fs.lstatSync(logsDir).isDirectory()){
 //     fs.appendFileSync(autodlLogPath, `GOOD AUTODL CALL - ${process.argv.join(',')}\n`);
 // }
 
-const { setLogfile } = require('../build/config');
+import { setLogfile } from '../build/config.js';
 setLogfile('pre_race.log');
-const add_torrent = require('../build/add_torrent');
+import { add_torrent } from '../build/add_torrent.js';
 let args = process.argv.slice(2);
 add_torrent(args);
