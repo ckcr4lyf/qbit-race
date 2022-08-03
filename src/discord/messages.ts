@@ -1,6 +1,6 @@
 //Prepare message JSONs for different requirements
-import { humanFileSize } from '../helpers/utilities';
-import { SETTINGS } from '../../settings';
+import { humanFileSize } from '../helpers/utilities.js';
+import { SETTINGS } from '../../settings.js';
 
 const { botUsername, botAvatar } = SETTINGS.DISCORD_NOTIFICATIONS || { botUsername: 'qBittorrent', botAvatar: '' }
 

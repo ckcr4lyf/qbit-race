@@ -1,3 +1,3 @@
-import * as CONFIG from './config';
+import * as CONFIG from './config.js';
 
 console.log(CONFIG);

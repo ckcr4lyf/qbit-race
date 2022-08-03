@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { LOGFILE } from '../config';
+import { LOGFILE } from '../config.js';
 
 class Logger {
 

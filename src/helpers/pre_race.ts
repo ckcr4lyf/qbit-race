@@ -1,8 +1,8 @@
-import { getTorrents, pauseTorrents } from '../qbittorrent/api'
-import { logger } from './logger';
-import { SEEDING_STATES } from './constants';
-import { SETTINGS } from '../../settings';
-import { torrentFromApi } from '../interfaces';
+import { getTorrents, pauseTorrents } from '../qbittorrent/api.js'
+import { logger } from './logger.js';
+import { SEEDING_STATES } from './constants.js';
+import { SETTINGS } from '../../settings.js';
+import { torrentFromApi } from '../interfaces.js';
 
 export const preRaceCheck = () => {
     return new Promise( async (resolve, reject) => {

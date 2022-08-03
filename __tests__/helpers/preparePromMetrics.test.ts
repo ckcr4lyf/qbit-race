@@ -1,8 +1,8 @@
-import { countTorrentStates } from '../../src/helpers/preparePromMetrics';
-import { torrentFromApi } from '../../src/interfaces';
+import test from 'ava';
+import { countTorrentStates } from '../../src/helpers/preparePromMetrics.js';
+import { torrentFromApi } from '../../src/interfaces.js';
 
-describe('countTorrentStates', () => {
-    it('Should count states correctly', () => {
+test('countTorrentStates', t => {
         let torrents = [
             {
                 state: 'error'
@@ -28,10 +28,11 @@ describe('countTorrentStates', () => {
         ] as unknown as torrentFromApi[];
 
         const counted = countTorrentStates(torrents);
-        expect(counted.error).toEqual(2);
-        expect(counted.uploading).toEqual(1);
-        expect(counted.downloading).toEqual(3);
-        expect(counted.pausedUP).toEqual(1);
-        expect(counted.stalledDL).toEqual(0);
-    })
+
+        t.deepEqual(counted.error, 2);
+        // expect(counted.error).toEqual(2);
+        // expect(counted.uploading).toEqual(1);
+        // expect(counted.downloading).toEqual(3);
+        // expect(counted.pausedUP).toEqual(1);
+        // expect(counted.stalledDL).toEqual(0);
 })

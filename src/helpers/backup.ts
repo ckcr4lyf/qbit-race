@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { homedir } from 'os';
 
-import { logger } from './logger';
+import { logger } from './logger.js';
 
 
 export const backupCurrentConfig = () => {

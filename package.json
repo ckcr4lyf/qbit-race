@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Qbit utilities for racing",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "build": "tsc -p .",
     "backup": "node bin/backup.js",
@@ -11,7 +12,7 @@
     "validate": "node tests/validate.js",
     "tag_unreg": "node bin/tag_errored.js",
     "test-dev": "ts-node src/index.ts",
-    "test": "jest"
+    "test": "ava"
   },
   "author": "Raghu Saxena",
   "license": "ISC",
@@ -25,9 +26,17 @@
   "devDependencies": {
     "@swc/core": "^1.2.135",
     "@swc/jest": "^0.2.17",
-    "@types/jest": "^27.4.0",
     "@types/node": "^16.3.1",
-    "jest": "^27.4.7",
+    "ava": "^4.3.1",
+    "ts-node": "^10.9.1",
     "typescript": "^4.5.5"
+  },
+  "ava": {
+    "extensions": {
+      "ts": "module"
+    },
+    "nodeArguments": [
+      "--loader=ts-node/esm"
+    ]
   }
 }

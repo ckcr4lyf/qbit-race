@@ -1,7 +1,7 @@
-import { SETTINGS } from '../../settings';
-import { torrentFromApi } from '../interfaces';
-import { resumeTorrents } from "../qbittorrent/api";
-import { logger } from "./logger";
+import { SETTINGS } from '../../settings.js';
+import { torrentFromApi } from '../interfaces.js';
+import { resumeTorrents } from "../qbittorrent/api.js";
+import { logger } from "./logger.js";
 
 export const resume = async (torrents: torrentFromApi[]) => {
 

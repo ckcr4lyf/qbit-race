@@ -1,8 +1,8 @@
 import * as dotenv from 'dotenv'
 import * as path from 'path';
 
-import { SETTINGS } from '../settings';
-import { logger } from './helpers/logger';
+import { SETTINGS } from '../settings.js';
+import { logger } from './helpers/logger.js';
 
 let COOKIE = '';
 let LOGFILE = 'default.log';

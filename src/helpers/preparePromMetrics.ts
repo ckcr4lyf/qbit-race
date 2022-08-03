@@ -1,4 +1,4 @@
-import { torrentFromApi, TransferInfo, TorrentState } from "../interfaces"
+import { torrentFromApi, TransferInfo, TorrentState } from "../interfaces.js"
 
 export const makeMetrics = (transferInfo: TransferInfo) => {
     let result = '';

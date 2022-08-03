@@ -1,11 +1,11 @@
-import { SETTINGS } from '../../settings';
-import { sendMessage } from '../discord/api';
-import { completeMessage } from '../discord/messages';
-import { torrentFromApi } from '../interfaces';
-import { getTorrentInfo, getTorrents, setCategory } from "../qbittorrent/api";
-import { login } from "../qbittorrent/auth";
-import { logger } from "./logger";
-import { resume } from './resume';
+import { SETTINGS } from '../../settings.js';
+import { sendMessage } from '../discord/api.js';
+import { completeMessage } from '../discord/messages.js';
+import { torrentFromApi } from '../interfaces.js';
+import { getTorrentInfo, getTorrents, setCategory } from "../qbittorrent/api.js";
+import { login } from "../qbittorrent/auth.js";
+import { logger } from "./logger.js";
+import { resume } from './resume.js';
 
 /**
  * postRaceResume runs after a race completes and resumes torrents.

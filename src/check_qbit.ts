@@ -1,9 +1,9 @@
-import { QBIT_HOST, QBIT_PORT } from './config';
-import { login } from './qbittorrent/auth';
-import { logger } from './helpers/logger';
-import { sendMessage } from './discord/api';
-import { SETTINGS } from '../settings';
-import { addMessage } from './discord/messages';
+import { QBIT_HOST, QBIT_PORT } from './config.js';
+import { login } from './qbittorrent/auth.js';
+import { logger } from './helpers/logger.js';
+import { sendMessage } from './discord/api.js';
+import { SETTINGS } from '../settings.js';
+import { addMessage } from './discord/messages.js';
 
 module.exports = async () => {
 
