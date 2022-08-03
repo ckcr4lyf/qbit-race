@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const CONFIG = require("./config");
+import * as CONFIG from './config.js';
 console.log(CONFIG);
 //# sourceMappingURL=index.js.map

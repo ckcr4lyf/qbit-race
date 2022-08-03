@@ -1,108 +1,100 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTransferInfo = exports.reannounce = exports.getTrackers = exports.addTorrent = exports.setCategory = exports.addTags = exports.deleteTorrents = exports.resumeTorrents = exports.pauseTorrents = exports.getTorrents = exports.getTorrentInfo = void 0;
-const axios_1 = require("axios");
-const FormData = require("form-data");
-const config_1 = require("../config");
-const logger_1 = require("../helpers/logger");
-const basePath = `${config_1.HTTP_SCHEME}://${config_1.QBIT_HOST}:${config_1.QBIT_PORT}${config_1.URL_PATH}`;
-const getTorrentInfo = (infohash) => {
+import axios from 'axios';
+import FormData from 'form-data';
+import { QBIT_HOST, QBIT_PORT, COOKIE, HTTP_SCHEME, URL_PATH } from '../config.js';
+import { logger } from '../helpers/logger.js';
+const basePath = `${HTTP_SCHEME}://${QBIT_HOST}:${QBIT_PORT}${URL_PATH}`;
+export const getTorrentInfo = (infohash) => {
     return new Promise((resolve, reject) => {
-        axios_1.default.get(`${basePath}/api/v2/torrents/info`, {
+        axios.get(`${basePath}/api/v2/torrents/info`, {
             params: {
                 hashes: infohash
             },
-            headers: { 'Cookie': config_1.COOKIE }
+            headers: { 'Cookie': COOKIE }
         }).then(response => {
             resolve(response.data[0]);
         }).catch(error => {
-            logger_1.logger.error(`Get torrent info API failed with error code ${error.response.status}`);
+            logger.error(`Get torrent info API failed with error code ${error.response.status}`);
             reject(error.response.status);
         });
     });
 };
-exports.getTorrentInfo = getTorrentInfo;
-const getTorrents = () => {
+export const getTorrents = () => {
     return new Promise((resolve, reject) => {
-        axios_1.default.get(`${basePath}/api/v2/torrents/info`, {
-            headers: { 'Cookie': config_1.COOKIE }
+        axios.get(`${basePath}/api/v2/torrents/info`, {
+            headers: { 'Cookie': COOKIE }
         }).then(response => {
             resolve(response.data);
         }).catch(error => {
-            logger_1.logger.error(`Get torrents API failed with error code ${error.response.status}`);
+            logger.error(`Get torrents API failed with error code ${error.response.status}`);
             reject(error.response.status);
         });
     });
 };
-exports.getTorrents = getTorrents;
-const pauseTorrents = (torrents) => {
+export const pauseTorrents = (torrents) => {
     return new Promise((resolve, reject) => {
         if (torrents.length === 0) {
             resolve();
             return;
         }
         const infohashes = torrents.map(torrent => torrent.hash);
-        axios_1.default.get(`${basePath}/api/v2/torrents/pause`, {
+        axios.get(`${basePath}/api/v2/torrents/pause`, {
             params: {
                 hashes: infohashes.join('|')
             },
-            headers: { 'Cookie': config_1.COOKIE }
+            headers: { 'Cookie': COOKIE }
         }).then(response => {
-            logger_1.logger.info(`Successfully paused ${infohashes.length} torrents!`);
+            logger.info(`Successfully paused ${infohashes.length} torrents!`);
             resolve();
         }).catch(error => {
-            logger_1.logger.error(`Pause torrents API failed with error code ${error.response.status}`);
+            logger.error(`Pause torrents API failed with error code ${error.response.status}`);
             reject();
         });
     });
 };
-exports.pauseTorrents = pauseTorrents;
-const resumeTorrents = (torrents) => {
+export const resumeTorrents = (torrents) => {
     return new Promise((resolve, reject) => {
         if (torrents.length === 0) {
             resolve();
             return;
         }
         const infohashes = torrents.map(torrent => torrent.hash);
-        axios_1.default.get(`${basePath}/api/v2/torrents/resume`, {
+        axios.get(`${basePath}/api/v2/torrents/resume`, {
             params: {
                 hashes: infohashes.join('|')
             },
-            headers: { 'Cookie': config_1.COOKIE }
+            headers: { 'Cookie': COOKIE }
         }).then(response => {
-            logger_1.logger.info(`Successfully resumed ${infohashes.length} torrents!`);
+            logger.info(`Successfully resumed ${infohashes.length} torrents!`);
             resolve();
         }).catch(error => {
-            logger_1.logger.error(`Resume torrents API failed with error code ${error.response.status}`);
+            logger.error(`Resume torrents API failed with error code ${error.response.status}`);
             reject();
         });
     });
 };
-exports.resumeTorrents = resumeTorrents;
-const deleteTorrents = (torrents) => {
+export const deleteTorrents = (torrents) => {
     return new Promise((resolve, reject) => {
         if (torrents.length === 0) {
             resolve();
             return;
         }
         const infohashes = torrents.map(torrent => torrent.hash);
-        axios_1.default.get(`${basePath}/api/v2/torrents/delete`, {
+        axios.get(`${basePath}/api/v2/torrents/delete`, {
             params: {
                 hashes: infohashes.join('|'),
                 deleteFiles: true
             },
-            headers: { 'Cookie': config_1.COOKIE }
+            headers: { 'Cookie': COOKIE }
         }).then(response => {
-            logger_1.logger.info(`Successfully deleted ${torrents.length} torrents.`);
+            logger.info(`Successfully deleted ${torrents.length} torrents.`);
             resolve();
         }).catch(error => {
-            logger_1.logger.error(`Delete torrents API failed with error code ${error.response.status}`);
+            logger.error(`Delete torrents API failed with error code ${error.response.status}`);
             reject();
         });
     });
 };
-exports.deleteTorrents = deleteTorrents;
-const addTags = (torrents, tags) => {
+export const addTags = (torrents, tags) => {
     return new Promise((resolve, reject) => {
         if (torrents.length === 0) {
             resolve();
@@ -114,115 +106,112 @@ const addTags = (torrents, tags) => {
         }
         const infohashes = torrents.map(torrent => torrent.hash);
         let payload = `hashes=${infohashes.join('|')}&tags=${tags.join(',')}`;
-        axios_1.default.request({
+        axios.request({
             method: 'POST',
             url: `${basePath}/api/v2/torrents/addTags`,
             data: payload,
             headers: {
-                'Cookie': config_1.COOKIE,
+                'Cookie': COOKIE,
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         }).then(response => {
-            logger_1.logger.info(`Successfully added ${tags.length} tags to ${torrents.length} torrents.`);
+            logger.info(`Successfully added ${tags.length} tags to ${torrents.length} torrents.`);
             resolve();
         }).catch(error => {
-            logger_1.logger.error(`Add tags API failed with error code ${error.response.status}`);
+            logger.error(`Add tags API failed with error code ${error.response.status}`);
         });
     });
 };
-exports.addTags = addTags;
-const setCategory = (infohash, category) => {
+export const setCategory = (infohash, category) => {
     return new Promise((resolve, reject) => {
         let payload = `hashes=${infohash}&category=${category}`;
-        axios_1.default.request({
+        axios.request({
             method: 'POST',
             url: `${basePath}/api/v2/torrents/setCategory`,
             data: payload,
             headers: {
-                'Cookie': config_1.COOKIE,
+                'Cookie': COOKIE,
                 'Content-Type': 'application/x-www-form-urlencoded',
             }
         }).then(response => {
-            logger_1.logger.info(`Successfully set category for ${infohash} to ${category}`);
+            logger.info(`Successfully set category for ${infohash} to ${category}`);
             resolve();
         }).catch(error => {
-            logger_1.logger.error(`Set category API failed with error code ${error.response.status}. Make sure the category exists!`);
+            logger.error(`Set category API failed with error code ${error.response.status}. Make sure the category exists!`);
             reject(error.response.status);
         });
     });
 };
-exports.setCategory = setCategory;
-const addTorrent = (torrentFile, category) => {
+export const addTorrent = (torrentFile, category) => {
     return new Promise((resolve, reject) => {
         let formData = new FormData();
         formData.append("torrents", torrentFile, 'dummy.torrent');
         if (category !== null) {
-            logger_1.logger.info(`Setting category to ${category}`);
+            logger.info(`Setting category to ${category}`);
             formData.append('category', category);
         }
-        axios_1.default.request({
+        axios.request({
             method: 'POST',
             url: `${basePath}/api/v2/torrents/add`,
-            headers: Object.assign(Object.assign({ 'Cookie': config_1.COOKIE }, formData.getHeaders()), { 'Content-Length': formData.getLengthSync() //Because axios can't handle this. Wasted 2 hours trying to debug. Fuck.
-             }),
+            headers: {
+                'Cookie': COOKIE,
+                ...formData.getHeaders(),
+                'Content-Length': formData.getLengthSync() //Because axios can't handle this. Wasted 2 hours trying to debug. Fuck.
+            },
             data: formData
         }).then(response => {
-            logger_1.logger.info(`Successfully added to qBittorrent!`);
+            logger.info(`Successfully added to qBittorrent!`);
             resolve();
         }).catch(error => {
-            logger_1.logger.error(`Add torrent API failed with error code ${error.response.status}`);
+            logger.error(`Add torrent API failed with error code ${error.response.status}`);
             reject();
         });
     });
 };
-exports.addTorrent = addTorrent;
-const getTrackers = (infohash) => {
+export const getTrackers = (infohash) => {
     return new Promise((resolve, reject) => {
-        axios_1.default.get(`${basePath}/api/v2/torrents/trackers`, {
+        axios.get(`${basePath}/api/v2/torrents/trackers`, {
             params: {
                 hash: infohash
             },
             headers: {
-                'Cookie': config_1.COOKIE
+                'Cookie': COOKIE
             }
         }).then(response => {
             resolve(response.data);
         }).catch(error => {
-            logger_1.logger.error(`Get trackers API failed with error code ${error.response.status}`);
+            logger.error(`Get trackers API failed with error code ${error.response.status}`);
             reject(error);
         });
     });
 };
-exports.getTrackers = getTrackers;
-const reannounce = (infohash) => {
+export const reannounce = (infohash) => {
     return new Promise((resolve, reject) => {
-        axios_1.default.get(`${basePath}/api/v2/torrents/reannounce`, {
+        axios.get(`${basePath}/api/v2/torrents/reannounce`, {
             params: {
                 hashes: infohash
             },
             headers: {
-                'Cookie': config_1.COOKIE
+                'Cookie': COOKIE
             }
         }).then(response => {
             resolve();
         }).catch(error => {
-            logger_1.logger.error(`Reannounce API failed with error code ${error.response.status}`);
+            logger.error(`Reannounce API failed with error code ${error.response.status}`);
             reject(error);
         });
     });
 };
-exports.reannounce = reannounce;
-const getTransferInfo = () => {
-    return axios_1.default.get(`${basePath}/api/v2/transfer/info`, {
+export const getTransferInfo = () => {
+    return axios.get(`${basePath}/api/v2/transfer/info`, {
         headers: {
-            'Cookie': config_1.COOKIE
+            'Cookie': COOKIE
         }
     }).then(response => {
         return response.data;
     }).catch(err => {
-        logger_1.logger.error(`Get transferInfo failed with error code ${err.response.status}`);
+        logger.error(`Get transferInfo failed with error code ${err.response.status}`);
         throw err;
     });
 };
-exports.getTransferInfo = getTransferInfo;
 //# sourceMappingURL=api.js.map

@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.TorrentState = void 0;
-var TorrentState;
+export var TorrentState;
 (function (TorrentState) {
     TorrentState["error"] = "error";
     TorrentState["missingFiles"] = "missingFiles";
@@ -22,5 +19,5 @@ var TorrentState;
     TorrentState["checkingResumeData"] = "checkingResumeData";
     TorrentState["moving"] = "moving";
     TorrentState["unknown"] = "unknown";
-})(TorrentState = exports.TorrentState || (exports.TorrentState = {}));
+})(TorrentState || (TorrentState = {}));
 //# sourceMappingURL=interfaces.js.map

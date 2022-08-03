@@ -66,13 +66,17 @@ echo "ln -s $(which node) /usr/bin/node"
 
 ## Repo Setup
 
-First, you need to download this repository, install some dependencies, and setup your enivronment variables file. 
+Please download / install from [one of the releases!](https://github.com/ckcr4lyf/qbit-race/releases) The master branch is the bleeding edge version, and may include breaking changes. You have been warned.
+
+First, you need to download the release, install some dependencies, and setup your enivronment variables file. 
 You may run the following commands:
 
 ```sh
 mkdir -p ~/scripts
 cd ~/scripts
-git clone https://github.com/ckcr4lyf/qbit-race.git
+wget https://github.com/ckcr4lyf/qbit-race/archive/refs/tags/v1.1.0.tar.gz -O qbit-race.tar.gz
+tar -xzf qbit-race.tar.gz
+mv qbit-race-1.1.0 qbit-race
 cd qbit-race
 npm install
 cp sample.env .env
