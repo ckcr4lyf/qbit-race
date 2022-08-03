@@ -1,4 +1,4 @@
-import b from 'bencode';
+import bencode from '@ckcr4lyf/bencode-esm';
 import * as crypto from 'crypto';
 
 /**
@@ -14,7 +14,7 @@ import * as crypto from 'crypto';
  * @returns Metainfo about the torrent
  */
 export const getTorrentMetainfo = (torrentData: Buffer): torrentMetainfo => {    
-    const decodedData = b.decode(torrentData);
+    const decodedData = bencode.decode(torrentData);
 
     if (typeof decodedData.info !== 'object'){
         throw new Error("NO_INFO");
@@ -29,7 +29,7 @@ export const getTorrentMetainfo = (torrentData: Buffer): torrentMetainfo => {
     }
 
     const info = decodedData.info; 
-    const reEncodedInfo = b.encode(info);
+    const reEncodedInfo = bencode.encode(info);
 
     const torrentHash = crypto.createHash('sha1').update(reEncodedInfo).digest('hex');
     const torrentName = info.name.toString();

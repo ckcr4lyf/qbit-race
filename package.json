@@ -17,19 +17,18 @@
   "author": "Raghu Saxena",
   "license": "ISC",
   "dependencies": {
-    "@types/bencode": "^2.0.1",
+    "@ckcr4lyf/bencode-esm": "^0.0.2",
     "axios": "^0.21.1",
-    "bencode": "^2.0.2",
-    "fastify": "^3.19.0",
     "dotenv": "^10.0.0",
+    "fastify": "^3.19.0",
     "form-data": "^4.0.0",
     "lowdb": "~3.0.0"
   },
   "devDependencies": {
-    "@types/node": "^16.7.1",
     "@swc/core": "^1.2.135",
     "@swc/jest": "^0.2.17",
     "@types/jest": "^27.4.0",
+    "@types/node": "^16.7.1",
     "jest": "^27.4.7",
     "typescript": "^4.5.5"
   }
