@@ -20,6 +20,7 @@
     "@ckcr4lyf/bencode-esm": "^0.0.2",
     "axios": "^0.21.1",
     "dotenv": "^10.0.0",
+    "bencode": "^2.0.2",
     "fastify": "^3.19.0",
     "form-data": "^4.0.0",
     "lowdb": "~3.0.0"
