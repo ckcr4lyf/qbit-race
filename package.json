@@ -2,7 +2,7 @@
   "name": "qbit-race",
   "version": "1.0.0",
   "description": "Qbit utilities for racing",
-  "main": "index.js",
+  "main": "./bin/index.js",
   "type": "module",
   "scripts": {
     "build": "tsc -p .",
@@ -36,5 +36,9 @@
     "nodeArguments": [
       "--loader=ts-node/esm"
     ]
+  },
+  "preferGlobal": true,
+  "bin": {
+    "qbit-race": "./bin/index.js"
   }
 }
