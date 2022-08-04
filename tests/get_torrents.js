@@ -1,8 +1,9 @@
-const { setLogfile } = require('../build/config');
+import { setLogfile } from '../build/config.js';
 setLogfile('tests.log');
-const { login } = require('../build/qbittorrent/auth');
-const { getTorrents, getTrackers, addTags } = require('../build/qbittorrent/api');
-const { preRaceCheck } = require('../build/helpers/pre_race')
+import { login } from '../build/qbittorrent/auth,js'
+import { login } from '../build/qbittorrent/auth.js';
+import { getTorrents, getTrackers, addTags } from '../build/qbittorrent/api.js';
+import { preRaceCheck } from '../build/helpers/pre_race.js'
 
 const SEEDING_STATES = ['uploading', 'stalledUP', 'forcedUP'];
 

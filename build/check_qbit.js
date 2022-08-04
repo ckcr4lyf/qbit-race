@@ -4,7 +4,7 @@ import { logger } from './helpers/logger.js';
 import { sendMessage } from './discord/api.js';
 import { SETTINGS } from '../settings.js';
 import { addMessage } from './discord/messages.js';
-module.exports = async () => {
+export const check_qbit = async () => {
     let t1 = Date.now();
     // Check settings
     if (!Array.isArray(SETTINGS.PAUSE_SKIP_CATEGORIES)) {
