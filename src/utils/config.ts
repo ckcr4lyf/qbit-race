@@ -1,0 +1,79 @@
+type DISCORD_SETTINGS = {
+    /**
+     * Controls whether the webhook is enabled or not
+     */
+    enabled: boolean;
+    /**
+     * The URL of the discord webhook to send notifications to
+     */
+    webhook: string;
+    /**
+     * The username the webhook message will come from
+     */
+    botUsername: string;
+    /**
+     * The discord profile photo of the "webhook user"
+     * Should be a URL path to an image
+     */
+    botAvatar: string;
+}
+
+export type Settings = {
+    /**
+     * Number of seconds to wait between reannounces, in milliseconds
+     */
+    REANNOUNCE_INTERVAL: number;
+    /**
+     * The number of times to attempt reannouncing
+     */
+    REANNOUNCE_LIMIT: number;
+    /**
+     * All torrents with ratio greater than or equal to this will
+     * be paused when a new torrent is added for racing.
+     * Set to -1 to disable pausing of torents
+     */
+    PAUSE_RATIO: number;
+    /**
+     * Torrents with these tags will be skipped from pause logic
+     * when adding a new torrent for racing
+     */
+    PAUSE_SKIP_TAGS: string[];
+    /**
+     * Torrents matching any of these categories will be skipped
+     * from pause logic when adding a new torrent for racing
+     */
+    PAUSE_SKIP_CATEGORIES: string[];
+    /**
+     * The maximum number of active "races". If these many races are
+     * going on, then the download will be skipped
+     */
+    CONCURRENT_RACES: number;
+    /**
+     * Whether stalled downloads (whee)
+     */
+    COUNT_STALLED_DOWNLOADS: boolean;
+    DISCORD_NOTIFICATIONS: DISCORD_SETTINGS;
+    /**
+     * Set of category changes to perform on torrent completion
+     */
+    CATEGORY_FINISH_CHANGE: Record<string, string>;
+}
+
+export const defaultSettings: Settings = {
+    REANNOUNCE_INTERVAL: 5000,
+    REANNOUNCE_LIMIT: 30,
+    PAUSE_RATIO: 1,
+    PAUSE_SKIP_TAGS: ["tracker.linux.org", "some_other_tag"],
+    PAUSE_SKIP_CATEGORIES: ["permaseeding", "some_other_category"],
+    CONCURRENT_RACES: 1,
+    COUNT_STALLED_DOWNLOADS: false,
+    DISCORD_NOTIFICATIONS: {
+        enabled: false,
+        webhook: '',
+        botUsername: 'qBittorrent',
+        botAvatar: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/New_qBittorrent_Logo.svg/600px-New_qBittorrent_Logo.svg.png'
+    },
+    CATEGORY_FINISH_CHANGE: {
+        'OLD_CATEGORY': 'NEW_CATEORY'
+    }
+}

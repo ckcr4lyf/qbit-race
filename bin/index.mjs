@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
+import { makeConfigIfNotExist } from '../build/utils/directory.js';
+
+makeConfigIfNotExist();
 
 const program = new Command();
 
