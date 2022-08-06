@@ -2,6 +2,10 @@
 
 import { Command } from 'commander';
 import { makeConfigIfNotExist } from '../build/utils/directory.js';
+import { getLoggerV3} from '../build/utils/logger.js'
+
+const logger = getLoggerV3();
+logger.info(`Starting...`);
 
 makeConfigIfNotExist();
 
