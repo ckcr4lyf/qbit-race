@@ -30,16 +30,11 @@ export const login = async () => {
 };
 export const loginV2 = async (qbittorrentSettings) => {
     const logger = getLoggerV3();
-    try {
-        const response = await apiLogin(qbittorrentSettings);
-        if (typeof response.headers['set-cookie'][0] === 'string') {
-            return new QbittorrentApi(qbittorrentSettings.url, response.headers['set-cookie'][0]);
-        }
-        logger.error(`Did not get suth cookie in response!`);
+    const response = await apiLogin(qbittorrentSettings);
+    console.log(response.headers);
+    if (Array.isArray(response.headers['set-cookie']) === false || response.headers['set-cookie'].length === 0) {
+        throw new Error(`Failed to authenticate`);
     }
-    catch (e) {
-        logger.error(`Failed to authenticate with qbittorrent`);
-    }
-    throw new Error("Failed to authenticate");
+    return new QbittorrentApi(qbittorrentSettings.url, response.headers['set-cookie'][0]);
 };
 //# sourceMappingURL=auth.js.map

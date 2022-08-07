@@ -14,14 +14,14 @@ export const login = async (): Promise<void> => {
                 password: QBIT_PASSWORD
             }
         }).then(response => {
-            if (response.headers['set-cookie']){
+            if (response.headers['set-cookie']) {
                 setCookie(response.headers['set-cookie'][0]);
                 resolve();
             } else {
                 reject(response.status);
             }
         }).catch(error => {
-            if (error.response){
+            if (error.response) {
                 reject(error.response.status);
             } else {
                 reject(999);
@@ -33,17 +33,11 @@ export const login = async (): Promise<void> => {
 export const loginV2 = async (qbittorrentSettings: QBITTORRENT_SETTINGS): Promise<QbittorrentApi> => {
     const logger = getLoggerV3();
 
-    try {
-        const response = await apiLogin(qbittorrentSettings);
+    const response = await apiLogin(qbittorrentSettings);
 
-        if (typeof response.headers['set-cookie'][0] === 'string'){
-            return new QbittorrentApi(qbittorrentSettings.url, response.headers['set-cookie'][0]);
-        }
-
-        logger.error(`Did not get suth cookie in response!`);
-    } catch (e){
-        logger.error(`Failed to authenticate with qbittorrent`);
+    if (Array.isArray(response.headers['set-cookie']) === false || response.headers['set-cookie'].length === 0) {
+        throw new Error(`Failed to authenticate`);
     }
 
-    throw new Error("Failed to authenticate");
+    return new QbittorrentApi(qbittorrentSettings.url, response.headers['set-cookie'][0]);
 }
