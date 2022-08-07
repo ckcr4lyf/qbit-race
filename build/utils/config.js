@@ -6,6 +6,11 @@ export const defaultSettings = {
     PAUSE_SKIP_CATEGORIES: ["permaseeding", "some_other_category"],
     CONCURRENT_RACES: 1,
     COUNT_STALLED_DOWNLOADS: false,
+    QBITTORRENT_SETTINGS: {
+        url: 'http://localhost:8080',
+        username: 'admin',
+        password: 'adminadmin',
+    },
     DISCORD_NOTIFICATIONS: {
         enabled: false,
         webhook: '',

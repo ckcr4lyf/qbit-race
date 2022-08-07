@@ -3,6 +3,24 @@ import FormData from 'form-data';
 import { QBIT_HOST, QBIT_PORT, COOKIE, HTTP_SCHEME, URL_PATH } from '../config.js';
 import { logger } from '../helpers/logger.js';
 const basePath = `${HTTP_SCHEME}://${QBIT_HOST}:${QBIT_PORT}${URL_PATH}`;
+export class QbittorrentApi {
+    constructor(basePath, cookie) {
+        this.basePath = basePath;
+        this.cookie = cookie;
+    }
+}
+var ApiEndpoints;
+(function (ApiEndpoints) {
+    ApiEndpoints["login"] = "/api/v2/auth/login";
+})(ApiEndpoints || (ApiEndpoints = {}));
+export const login = (qbittorrentSettings) => {
+    return axios.get(`${qbittorrentSettings.url}${ApiEndpoints.login}`, {
+        params: {
+            username: qbittorrentSettings.username,
+            password: qbittorrentSettings.password,
+        }
+    });
+};
 export const getTorrentInfo = (infohash) => {
     return new Promise((resolve, reject) => {
         axios.get(`${basePath}/api/v2/torrents/info`, {

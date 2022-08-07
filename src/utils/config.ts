@@ -18,6 +18,28 @@ type DISCORD_SETTINGS = {
     botAvatar: string;
 }
 
+export type QBITTORRENT_SETTINGS = {
+    /**
+     * The complete URL to the qBittorrent WEB UI. Should have the port
+     * and url ending path if applicable.
+     * 
+     * @example http://localhost:8080
+     * @example https://domain.com:1337/qbit
+     * 
+     */
+    url: string;
+    /**
+     * Username for qBittorrent web ui
+     * (default is `admin`)
+     */
+    username: string;
+    /**
+     * Password for qBittorrent web ui
+     * (default is `adminadmin` - please change!)
+     */
+    password: string;
+}
+
 export type Settings = {
     /**
      * Number of seconds to wait between reannounces, in milliseconds
@@ -53,6 +75,7 @@ export type Settings = {
      */
     COUNT_STALLED_DOWNLOADS: boolean;
     DISCORD_NOTIFICATIONS: DISCORD_SETTINGS;
+    QBITTORRENT_SETTINGS: QBITTORRENT_SETTINGS;
     /**
      * Set of category changes to perform on torrent completion
      */
@@ -67,6 +90,11 @@ export const defaultSettings: Settings = {
     PAUSE_SKIP_CATEGORIES: ["permaseeding", "some_other_category"],
     CONCURRENT_RACES: 1,
     COUNT_STALLED_DOWNLOADS: false,
+    QBITTORRENT_SETTINGS: {
+       url: 'http://localhost:8080',
+       username: 'admin',
+       password: 'adminadmin',
+    },
     DISCORD_NOTIFICATIONS: {
         enabled: false,
         webhook: '',

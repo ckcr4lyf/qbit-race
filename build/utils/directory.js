@@ -2,19 +2,23 @@ import path from 'node:path';
 import fs from 'node:fs';
 import os from 'node:os';
 import { defaultSettings } from './config.js';
+import { getLoggerV3 } from './logger.js';
 const getConfigDir = () => {
     const homeDir = os.homedir();
     const configDir = path.join(homeDir, '.config/qbit-race/');
     return configDir;
 };
+const getConfigPath = () => {
+    return path.join(getConfigDir(), 'config.json');
+};
 export const makeConfigIfNotExist = () => {
+    const logger = getLoggerV3();
     const configDir = getConfigDir();
-    console.log(`config dir is ${configDir}`);
-    let stats;
+    logger.debug(`config dir is ${configDir}`);
     try {
         const stats = fs.statSync(configDir);
         if (stats.isDirectory() === true) {
-            console.log(`Dir exists, wont do anything`);
+            logger.debug(`Dir exists, wont do anything`);
         }
     }
     catch (e) {
@@ -22,10 +26,10 @@ export const makeConfigIfNotExist = () => {
         // Probably didnt exist. Try to make
         try {
             fs.mkdirSync(configDir, { recursive: true });
-            console.log(`Made dir`);
+            logger.debug(`Made dir`);
         }
         catch (e) {
-            console.log(`Fail to make dir`);
+            logger.error(`Fail to make dir`);
             process.exit(1);
         }
     }
@@ -35,7 +39,7 @@ export const makeConfigIfNotExist = () => {
     try {
         const stats = fs.statSync(configFilePath);
         if (stats.isFile() === true) {
-            console.log(`Config file exists. Will try reading it`);
+            logger.debug(`Config file exists. Will try reading it`);
             const configFile = fs.readFileSync(configFilePath);
             const config = JSON.parse(configFile.toString());
             return config;
@@ -43,9 +47,22 @@ export const makeConfigIfNotExist = () => {
     }
     catch (e) {
         // Probably doesnt exist
-        console.log(`Config does not exsit. Writing it now...`);
+        logger.info(`Config does not exist. Writing it now...`);
         const defaultConfigToWrite = JSON.stringify(defaultSettings, null, 2);
         fs.writeFileSync(configFilePath, defaultConfigToWrite);
     }
+};
+/**
+ * loadConfig will attempt to read and then JSON.parse the file
+ * TODO: Validate its legit config
+ *
+ * If the directory / path to config does not exist it will throw!
+ *
+ * It's assumed makeConfigIfNotExist() has already been called.
+ */
+export const loadConfig = () => {
+    const configPath = getConfigPath();
+    const configData = fs.readFileSync(configPath);
+    return JSON.parse(configData.toString());
 };
 //# sourceMappingURL=directory.js.map

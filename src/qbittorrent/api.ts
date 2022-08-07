@@ -1,12 +1,34 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import FormData from 'form-data';
 import * as fs from 'fs';
 
 import { QBIT_HOST, QBIT_PORT, COOKIE, HTTP_SCHEME, URL_PATH } from '../config.js';
 import { logger } from '../helpers/logger.js';
 import { torrentFromApi, TransferInfo } from '../interfaces.js';
+import { QBITTORRENT_SETTINGS, Settings } from '../utils/config.js';
 
 const basePath = `${HTTP_SCHEME}://${QBIT_HOST}:${QBIT_PORT}${URL_PATH}`
+
+export class QbittorrentApi {
+    
+    constructor(public basePath: string, public cookie: string){
+
+    }
+
+}
+
+enum ApiEndpoints {
+    login = '/api/v2/auth/login',
+}
+
+export const login = (qbittorrentSettings: QBITTORRENT_SETTINGS): Promise<AxiosResponse> => {
+    return axios.get(`${qbittorrentSettings.url}${ApiEndpoints.login}`, {
+        params: {
+            username: qbittorrentSettings.username,
+            password: qbittorrentSettings.password,
+        }
+    });
+}
 
 export const getTorrentInfo = (infohash: string): Promise<torrentFromApi> => {
     return new Promise((resolve: (value: torrentFromApi) => void, reject) => {
