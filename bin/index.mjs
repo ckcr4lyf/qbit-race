@@ -21,9 +21,8 @@ program.command('validate').description(`Validate that you've configured qbit-ra
     try {
         // Try and auth with qbit
         await loginV2(config.QBITTORRENT_SETTINGS);
-        logger.info(`Succesfully validated!`);
 
-        // Discord if applicable
+        // Check discord if applicable
         if (config.DISCORD_NOTIFICATIONS.enabled === true){
             await sendMessageV2(config.DISCORD_NOTIFICATIONS.webhook, buildTorrentAddedBody(config.DISCORD_NOTIFICATIONS, {
                 name: '[qbit-race test] Arch Linux',
@@ -31,14 +30,15 @@ program.command('validate').description(`Validate that you've configured qbit-ra
                 size: 1024 * 1024 * 1024 * 3.412,
                 reannounceCount: 1,
             }))
+        } else {
+            logger.info(`Skipping discord validation as it is not enabled`);
         }
+
+        logger.info(`Succesfully validated!`);
     } catch (e){
         logger.error(`Validation failed!`);
         process.exit(1);
     }
-    // console.log(`TODO: Load config etc.`);
 })
-
-// console.log(`This will be the cli in future!!!`);
 
 program.parse();
