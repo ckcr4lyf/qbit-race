@@ -15,9 +15,13 @@ const program = new Command();
 
 program.command('validate').description(`Validate that you've configured qbit-race correctly`).action(async () => {
     logger.info(`Going to login`);
+
     try {
+        // Try and auth with qbit
         await loginV2(config.QBITTORRENT_SETTINGS);
         logger.info(`Succesfully validated!`);
+
+        // Discord if applicable
     } catch (e){
         logger.error(`Validation failed!`);
         process.exit(1);

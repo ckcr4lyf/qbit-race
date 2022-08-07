@@ -31,7 +31,6 @@ export const login = async () => {
 export const loginV2 = async (qbittorrentSettings) => {
     const logger = getLoggerV3();
     const response = await apiLogin(qbittorrentSettings);
-    console.log(response.headers);
     if (Array.isArray(response.headers['set-cookie']) === false || response.headers['set-cookie'].length === 0) {
         throw new Error(`Failed to authenticate`);
     }

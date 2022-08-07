@@ -8,7 +8,8 @@
         "esModuleInterop": true,
         "outDir": "./build/",
         "sourceMap": true,
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "declaration": true,
     },
     "include": [
         "src/**/*"

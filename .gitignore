@@ -1,8 +1,9 @@
 .env
 node_modules/
-**/*.map
 notes.txt
 logs/
 tests/*.torrent
 tests/examples.js
 settings.js
+/build/**/*.js.map
+/build/**/*.d.ts
