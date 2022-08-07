@@ -6,12 +6,17 @@ import { loginV2 } from '../build/qbittorrent/auth.js';
 import { sendMessageV2 } from '../build/discord/api.js'
 import { buildTorrentAddedBody } from '../build/discord/messages.js'
 import { getLoggerV3 } from '../build/utils/logger.js'
+import { tagErroredTorrents } from '../build/racing/tag.js'
 
 const logger = getLoggerV3();
 logger.info(`Starting...`);
 
+// This should take care of having a base config
 makeConfigIfNotExist();
 const config = loadConfig();
+
+// If credz are wrong, this will throw
+const api = await loginV2(config.QBITTORRENT_SETTINGS);
 
 const program = new Command();
 
@@ -19,9 +24,6 @@ program.command('validate').description(`Validate that you've configured qbit-ra
     logger.info(`Going to login`);
 
     try {
-        // Try and auth with qbit
-        await loginV2(config.QBITTORRENT_SETTINGS);
-
         // Check discord if applicable
         if (config.DISCORD_NOTIFICATIONS.enabled === true){
             await sendMessageV2(config.DISCORD_NOTIFICATIONS.webhook, buildTorrentAddedBody(config.DISCORD_NOTIFICATIONS, {
@@ -39,6 +41,10 @@ program.command('validate').description(`Validate that you've configured qbit-ra
         logger.error(`Validation failed!`);
         process.exit(1);
     }
+})
+
+program.command('tag-error').description(`Tag torrents for which the tracker is errored`).option('--dry-run', 'Just list torrents without actually tagging them').action(async (options) => {
+    await tagErroredTorrents(api, options.dryRun);
 })
 
 program.parse();
