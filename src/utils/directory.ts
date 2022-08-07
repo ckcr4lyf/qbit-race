@@ -73,3 +73,7 @@ export const loadConfig = (): Settings => {
     const configData = fs.readFileSync(configPath);
     return JSON.parse(configData.toString());
 }
+
+// TODO: Future improvement: 
+// If an older config, missing keys, then modify it to add the new stuff
+// 

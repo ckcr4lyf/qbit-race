@@ -27,12 +27,23 @@ test('countTorrentStates', t => {
             },
         ] as unknown as torrentFromApi[];
 
+        // Skip all the possible states
         const counted = countTorrentStates(torrents);
+        const countedPartial = { 
+            error: counted.error,
+            uploading: counted.uploading,
+            downloading: counted.downloading,
+            pausedUP: counted.pausedUP,
+            stalledDL: counted.stalledDL,
+         }
 
-        t.deepEqual(counted.error, 2);
-        // expect(counted.error).toEqual(2);
-        // expect(counted.uploading).toEqual(1);
-        // expect(counted.downloading).toEqual(3);
-        // expect(counted.pausedUP).toEqual(1);
-        // expect(counted.stalledDL).toEqual(0);
+        const expected = {
+            'error': 2,
+            'uploading': 1,
+            'downloading': 3,
+            'pausedUP': 1,
+            'stalledDL': 0,
+        };
+
+        t.deepEqual(countedPartial, expected);
 })
