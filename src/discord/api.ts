@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 import { DISCORD_WEBHOOK } from '../config.js';
 import { logger } from '../helpers/logger.js';
@@ -13,4 +13,8 @@ export const sendMessage = (body: any): Promise<void> => {
             reject();
         })
     })
+}
+
+export const sendMessageV2 = (webnook: string, body: any): Promise<AxiosResponse> => {
+    return axios.post(webnook, body);
 }

@@ -70,4 +70,41 @@ export const completeMessage = (torrentName, trackers, size, ratio) => {
     };
     return body;
 };
+export const buildMessageBody = (discordSettings, partialBody) => {
+    return {
+        ...partialBody,
+        username: discordSettings.botUsername,
+        avatar_url: discordSettings.botAvatar,
+    };
+};
+export const buildTorrentAddedBody = (discordSettings, torrentAddedInfo) => {
+    const humanSize = humanFileSize(torrentAddedInfo.size, false, 2);
+    let partialBody = {
+        content: `Added ${torrentAddedInfo.name} (${humanSize})`,
+        embeds: [
+            {
+                title: torrentAddedInfo.name,
+                description: 'Added to qBittorrent',
+                thumbnail: {
+                    url: discordSettings.botAvatar,
+                },
+                fields: [
+                    {
+                        name: torrentAddedInfo.trackers.length === 1 ? 'Tracker' : 'Trackers',
+                        value: torrentAddedInfo.trackers.join('\n')
+                    },
+                    {
+                        name: 'Size',
+                        value: humanSize
+                    },
+                    {
+                        name: 'Reannounce Count',
+                        value: torrentAddedInfo.reannounceCount.toString()
+                    }
+                ]
+            }
+        ]
+    };
+    return buildMessageBody(discordSettings, partialBody);
+};
 //# sourceMappingURL=messages.js.map

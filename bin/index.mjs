@@ -3,6 +3,8 @@
 import { Command } from 'commander';
 import { loadConfig, makeConfigIfNotExist } from '../build/utils/directory.js';
 import { loginV2 } from '../build/qbittorrent/auth.js';
+import { sendMessageV2 } from '../build/discord/api.js'
+import { buildTorrentAddedBody } from '../build/discord/messages.js'
 import { getLoggerV3 } from '../build/utils/logger.js'
 
 const logger = getLoggerV3();
@@ -22,6 +24,14 @@ program.command('validate').description(`Validate that you've configured qbit-ra
         logger.info(`Succesfully validated!`);
 
         // Discord if applicable
+        if (config.DISCORD_NOTIFICATIONS.enabled === true){
+            await sendMessageV2(config.DISCORD_NOTIFICATIONS.webhook, buildTorrentAddedBody(config.DISCORD_NOTIFICATIONS, {
+                name: '[qbit-race test] Arch Linux',
+                trackers: ['archlinux.org', 'linux.org'],
+                size: 1024 * 1024 * 1024 * 3.412,
+                reannounceCount: 1,
+            }))
+        }
     } catch (e){
         logger.error(`Validation failed!`);
         process.exit(1);
