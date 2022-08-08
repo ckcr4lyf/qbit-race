@@ -36,6 +36,7 @@ import { logger } from './helpers/logger.js';
         process.exit(1);
     }
 
+    // this typing is wrong
     let toTag: string[] = [];
 
     for (const torrent of torrents){

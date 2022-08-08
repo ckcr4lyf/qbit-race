@@ -3,7 +3,6 @@ import { QbittorrentApi } from "../qbittorrent/api.js";
 import { getLoggerV3 } from "../utils/logger.js";
 
 export const tagErroredTorrents = async (api: QbittorrentApi, dryRun: boolean) => {
-
     const logger = getLoggerV3();
     logger.info(`Starting...`);
 
@@ -51,10 +50,9 @@ export const tagErroredTorrents = async (api: QbittorrentApi, dryRun: boolean) =
         try {
             await api.addTags(torrentsToTag, ['error'])
         } catch (e){
-            
+            logger.error(`Failed to tag torrents`);
         }
 
-
+        logger.info(`Sucessfully tagged ${torrentsToTag.length} torrents!`);
     }
-
 }
