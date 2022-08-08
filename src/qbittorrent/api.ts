@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import FormData from 'form-data';
 import * as fs from 'fs';
 
@@ -11,7 +11,16 @@ const basePath = `${HTTP_SCHEME}://${QBIT_HOST}:${QBIT_PORT}${URL_PATH}`
 
 export class QbittorrentApi {
 
+    private client: AxiosInstance;
+
     constructor(public basePath: string, public cookie: string) {
+
+        this.client = axios.create({
+            baseURL: basePath,
+            headers: {
+                'Cookie': cookie,
+            }
+        });
 
     }
 
@@ -22,11 +31,41 @@ export class QbittorrentApi {
             params.hashes = hashes.join('|')
         }
 
-        const response = await axios.get(`${this.basePath}${ApiEndpoints.torrentsInfo}`, {
+        const response = await this.client.get(ApiEndpoints.torrentsInfo, {
             params: params,
         });
 
         return response.data;
+    }
+
+    // TODO: add typing for response
+    async getTrackers(infohash: string): Promise<any[]> {
+        const response = await this.client.get(ApiEndpoints.torrentTrackers, {
+            params: {
+                hash: infohash,
+            }
+        });
+
+        return response.data;
+    }
+
+    async addTags(torrents: torrentFromApi[], tags: string[]){
+        if (torrents.length === 0){
+            return;
+        }
+
+        if (tags.length === 0){
+            return;
+        }
+
+        const infohashes = torrents.map(torrent => torrent.hash);
+        const payload = `hashes=${infohashes.join('|')}&tags=${tags.join(',')}`;
+
+        await this.client.post(ApiEndpoints.addTags, payload, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        });
     }
 
 }
@@ -34,6 +73,8 @@ export class QbittorrentApi {
 enum ApiEndpoints {
     login = '/api/v2/auth/login',
     torrentsInfo = '/api/v2/torrents/info',
+    torrentTrackers = '/api/v2/torrents/trackers',
+    addTags = '/api/v2/torrents/addTags',
 }
 
 export const login = (qbittorrentSettings: QBITTORRENT_SETTINGS): Promise<AxiosResponse> => {
