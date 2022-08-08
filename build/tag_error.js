@@ -29,6 +29,7 @@ export const tagErroredTorrents = async (args) => {
         logger.error('Failed to get torrents from qBittorrent');
         process.exit(1);
     }
+    // this typing is wrong
     let toTag = [];
     for (const torrent of torrents) {
         let trackers = await getTrackers(torrent.hash);

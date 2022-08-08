@@ -7,11 +7,54 @@ export class QbittorrentApi {
     constructor(basePath, cookie) {
         this.basePath = basePath;
         this.cookie = cookie;
+        this.client = axios.create({
+            baseURL: basePath,
+            headers: {
+                'Cookie': cookie,
+            }
+        });
+    }
+    async getTorrents(hashes) {
+        const params = {};
+        if (Array.isArray(hashes)) {
+            params.hashes = hashes.join('|');
+        }
+        const response = await this.client.get(ApiEndpoints.torrentsInfo, {
+            params: params,
+        });
+        return response.data;
+    }
+    // TODO: add typing for response
+    async getTrackers(infohash) {
+        const response = await this.client.get(ApiEndpoints.torrentTrackers, {
+            params: {
+                hash: infohash,
+            }
+        });
+        return response.data;
+    }
+    async addTags(torrents, tags) {
+        if (torrents.length === 0) {
+            return;
+        }
+        if (tags.length === 0) {
+            return;
+        }
+        const infohashes = torrents.map(torrent => torrent.hash);
+        const payload = `hashes=${infohashes.join('|')}&tags=${tags.join(',')}`;
+        await this.client.post(ApiEndpoints.addTags, payload, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        });
     }
 }
 var ApiEndpoints;
 (function (ApiEndpoints) {
     ApiEndpoints["login"] = "/api/v2/auth/login";
+    ApiEndpoints["torrentsInfo"] = "/api/v2/torrents/info";
+    ApiEndpoints["torrentTrackers"] = "/api/v2/torrents/trackers";
+    ApiEndpoints["addTags"] = "/api/v2/torrents/addTags";
 })(ApiEndpoints || (ApiEndpoints = {}));
 export const login = (qbittorrentSettings) => {
     return axios.get(`${qbittorrentSettings.url}${ApiEndpoints.login}`, {
