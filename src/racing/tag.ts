@@ -22,9 +22,6 @@ export const tagErroredTorrents = async (api: QbittorrentApi, dryRun: boolean) =
     let torrentsToTag: torrentFromApi[] = [];
 
     for (const torrent of torrents) {
-
-        console.log(torrent.name);
-
         const trackers: any[] = await api.getTrackers(torrent.hash);
         trackers.splice(0, 3); // Get rid of DHT PEX etc.
 
