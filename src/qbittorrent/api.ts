@@ -10,15 +10,30 @@ import { QBITTORRENT_SETTINGS, Settings } from '../utils/config.js';
 const basePath = `${HTTP_SCHEME}://${QBIT_HOST}:${QBIT_PORT}${URL_PATH}`
 
 export class QbittorrentApi {
-    
-    constructor(public basePath: string, public cookie: string){
 
+    constructor(public basePath: string, public cookie: string) {
+
+    }
+
+    async getTorrents(hashes?: string[]): Promise<torrentFromApi[]> {
+        const params: Record<string, string> = {};
+
+        if (Array.isArray(hashes)){
+            params.hashes = hashes.join('|')
+        }
+
+        const response = await axios.get(`${this.basePath}${ApiEndpoints.torrentsInfo}`, {
+            params: params,
+        });
+
+        return response.data;
     }
 
 }
 
 enum ApiEndpoints {
     login = '/api/v2/auth/login',
+    torrentsInfo = '/api/v2/torrents/info',
 }
 
 export const login = (qbittorrentSettings: QBITTORRENT_SETTINGS): Promise<AxiosResponse> => {
@@ -36,7 +51,7 @@ export const getTorrentInfo = (infohash: string): Promise<torrentFromApi> => {
             params: {
                 hashes: infohash
             },
-            headers: {'Cookie': COOKIE}
+            headers: { 'Cookie': COOKIE }
         }).then(response => {
             resolve(response.data[0]);
         }).catch(error => {
@@ -49,7 +64,7 @@ export const getTorrentInfo = (infohash: string): Promise<torrentFromApi> => {
 export const getTorrents = (): Promise<torrentFromApi[]> => {
     return new Promise((resolve, reject) => {
         axios.get(`${basePath}/api/v2/torrents/info`, {
-            headers: {'Cookie': COOKIE}
+            headers: { 'Cookie': COOKIE }
         }).then(response => {
             resolve(response.data);
         }).catch(error => {
@@ -62,7 +77,7 @@ export const getTorrents = (): Promise<torrentFromApi[]> => {
 export const pauseTorrents = (torrents: any[]): Promise<void> => {
     return new Promise((resolve, reject) => {
 
-        if (torrents.length === 0){
+        if (torrents.length === 0) {
             resolve();
             return;
         }
@@ -72,7 +87,7 @@ export const pauseTorrents = (torrents: any[]): Promise<void> => {
             params: {
                 hashes: infohashes.join('|')
             },
-            headers: {'Cookie': COOKIE}
+            headers: { 'Cookie': COOKIE }
         }).then(response => {
             logger.info(`Successfully paused ${infohashes.length} torrents!`);
             resolve();
@@ -86,7 +101,7 @@ export const pauseTorrents = (torrents: any[]): Promise<void> => {
 export const resumeTorrents = (torrents: torrentFromApi[]): Promise<void> => {
     return new Promise((resolve, reject) => {
 
-        if (torrents.length === 0){
+        if (torrents.length === 0) {
             resolve();
             return;
         }
@@ -96,7 +111,7 @@ export const resumeTorrents = (torrents: torrentFromApi[]): Promise<void> => {
             params: {
                 hashes: infohashes.join('|')
             },
-            headers: {'Cookie': COOKIE}
+            headers: { 'Cookie': COOKIE }
         }).then(response => {
             logger.info(`Successfully resumed ${infohashes.length} torrents!`);
             resolve();
@@ -110,7 +125,7 @@ export const resumeTorrents = (torrents: torrentFromApi[]): Promise<void> => {
 export const deleteTorrents = (torrents: any[]): Promise<void> => {
     return new Promise((resolve, reject) => {
 
-        if (torrents.length === 0){
+        if (torrents.length === 0) {
             resolve();
             return;
         }
@@ -121,7 +136,7 @@ export const deleteTorrents = (torrents: any[]): Promise<void> => {
                 hashes: infohashes.join('|'),
                 deleteFiles: true
             },
-            headers: {'Cookie': COOKIE}
+            headers: { 'Cookie': COOKIE }
         }).then(response => {
             logger.info(`Successfully deleted ${torrents.length} torrents.`);
             resolve();
@@ -135,12 +150,12 @@ export const deleteTorrents = (torrents: any[]): Promise<void> => {
 export const addTags = (torrents: any[], tags: string[]): Promise<void> => {
     return new Promise((resolve, reject) => {
 
-        if (torrents.length === 0){
+        if (torrents.length === 0) {
             resolve();
             return;
         }
 
-        if (tags.length === 0){
+        if (tags.length === 0) {
             resolve();
             return;
         }
@@ -150,7 +165,7 @@ export const addTags = (torrents: any[], tags: string[]): Promise<void> => {
 
         axios.request({
             method: 'POST',
-            url: `${basePath}/api/v2/torrents/addTags`, 
+            url: `${basePath}/api/v2/torrents/addTags`,
             data: payload,
             headers: {
                 'Cookie': COOKIE,
@@ -189,11 +204,11 @@ export const setCategory = (infohash: string, category: string): Promise<void> =
 
 export const addTorrent = (torrentFile: Buffer, category?: string): Promise<void> => {
     return new Promise((resolve, reject) => {
-        
+
         let formData = new FormData();
         formData.append("torrents", torrentFile, 'dummy.torrent');
-            
-        if (category !== null){
+
+        if (category !== null) {
             logger.info(`Setting category to ${category}`);
             formData.append('category', category);
         }
