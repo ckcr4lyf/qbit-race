@@ -11,7 +11,7 @@ const basePath = `${HTTP_SCHEME}://${QBIT_HOST}:${QBIT_PORT}${URL_PATH}`
 
 export class QbittorrentApi {
 
-    private client: AxiosInstance;
+    public client: AxiosInstance;
 
     constructor(public basePath: string, public cookie: string) {
 
