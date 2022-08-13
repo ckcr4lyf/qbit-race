@@ -1,4 +1,4 @@
-exports.SETTINGS = {
+export const SETTINGS = {
     REANNOUNCE_INTERVAL: 5000, //Time to wait between reannounces, milliseconds. 
     REANNOUNCE_LIMIT: 30, //How many times to try to reannounce
     PAUSE_RATIO: 1, //Seeding Torrents with ratio greater than or equal to this will be paused when a torrent is loaded for racing. Set to -1 to disable pause (worse performance)
