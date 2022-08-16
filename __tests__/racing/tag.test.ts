@@ -5,11 +5,13 @@ import { newMockQbitApi } from '../../__mocks__/qbit.js';
 
 import { tagErroredTorrents } from '../../src/racing/tag.js'
 
-test('Sinon', t => {
+test('Sinon', async t => {
 
-    const x = sinon.fake();
+    const mockApi = newMockQbitApi();
+    // Test with no torrents
+    const first = sinon.stub(mockApi, 'getTorrents').resolves([]);
 
-    t.deepEqual(x.called, true);
-
-
+    const result = await tagErroredTorrents(mockApi, true);
+    t.deepEqual(result, undefined);
+    t.deepEqual(first.called, true);
 })
