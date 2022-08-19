@@ -25,4 +25,5 @@ test('loginV2', async t => {
     t.deepEqual(api.client.defaults.headers.Cookie, 'SID=1234');
     //@ts-ignore - client is private but we want to access for testing
     t.deepEqual(api.client.defaults.baseURL, 'http://qbit:8080');
+    t.deepEqual(scope.isDone(), true);
 })
