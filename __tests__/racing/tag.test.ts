@@ -5,7 +5,7 @@ import { newMockQbitApi } from '../../__mocks__/qbit.js';
 
 import { tagErroredTorrents } from '../../src/racing/tag.js'
 
-test('Sinon', async t => {
+test('tagWhenNoTorrents', async t => {
 
     const mockApi = newMockQbitApi();
     // Test with no torrents
