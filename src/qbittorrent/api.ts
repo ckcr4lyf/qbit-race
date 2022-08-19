@@ -4,7 +4,7 @@ import * as fs from 'fs';
 
 import { QBIT_HOST, QBIT_PORT, COOKIE, HTTP_SCHEME, URL_PATH } from '../config.js';
 import { logger } from '../helpers/logger.js';
-import { torrentFromApi, TransferInfo } from '../interfaces.js';
+import { torrentFromApi, TorrentState, TransferInfo } from '../interfaces.js';
 import { QBITTORRENT_SETTINGS, Settings } from '../utils/config.js';
 
 const basePath = `${HTTP_SCHEME}://${QBIT_HOST}:${QBIT_PORT}${URL_PATH}`
@@ -24,7 +24,7 @@ export class QbittorrentApi {
 
     }
 
-    async getTorrents(hashes?: string[]): Promise<torrentFromApi[]> {
+    async getTorrents(hashes?: string[]): Promise<QbittorrentTorrent[]> {
         const params: Record<string, string> = {};
 
         if (Array.isArray(hashes)){
@@ -39,7 +39,7 @@ export class QbittorrentApi {
     }
 
     // TODO: add typing for response
-    async getTrackers(infohash: string): Promise<any[]> {
+    async getTrackers(infohash: string): Promise<QbittorrentTracker[]> {
         const response = await this.client.get(ApiEndpoints.torrentTrackers, {
             params: {
                 hash: infohash,
@@ -49,7 +49,7 @@ export class QbittorrentApi {
         return response.data;
     }
 
-    async addTags(torrents: torrentFromApi[], tags: string[]){
+    async addTags(torrents: QbittorrentTorrent[], tags: string[]){
         if (torrents.length === 0){
             return;
         }
@@ -320,4 +320,20 @@ export const getTransferInfo = (): Promise<TransferInfo> => {
         logger.error(`Get transferInfo failed with error code ${err.response.status}`);
         throw err;
     })
+}
+
+export type QbittorrentTorrent = {
+    name: string;
+    hash: string;
+    state: TorrentState;
+    added_on: number; //Unix timestamp
+    ratio: number;
+    category: string; // "" or single category
+    tags: string; // "" or CSV of multiple tags
+    size: number;
+}
+
+export type QbittorrentTracker = {
+    status: number;
+    url: string;
 }
