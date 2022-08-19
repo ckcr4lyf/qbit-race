@@ -6,3 +6,20 @@ export const newMockQbitApi = (): QbittorrentApi => {
         getTrackers: (): undefined => undefined,
     } as unknown as QbittorrentApi; // dont tell me what to do
 }
+
+export const getMockWorkingTrackers: any = () => {
+    return [
+        {
+            status: 2,
+        },
+        {
+            status: 2,
+        },
+        {
+            status: 2,
+        },
+        {
+            status: 2, // First 3 are DHT , PEX etc.
+        },
+    ]
+}
