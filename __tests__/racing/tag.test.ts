@@ -64,5 +64,5 @@ test('tagWhenNotWorking', async t => {
 
     // Since second has a non working tracker, we expect a tag as well
     t.deepEqual(third.called, true);
-    t.deepEqual(third.calledWith([{ hash: 'ABCD' }] as any, ['error']), true);
+    t.deepEqual(third.calledWith([{ hash: 'GGWP' }] as any, ['error']), true);
 })
