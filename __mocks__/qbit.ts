@@ -23,3 +23,20 @@ export const getMockWorkingTrackers: any = () => {
         },
     ]
 }
+
+export const getMockNotWorkingTrackers: any = () => {
+    return [
+        {
+            status: 2,
+        },
+        {
+            status: 2,
+        },
+        {
+            status: 2,
+        },
+        {
+            status: 0, // First 3 are DHT , PEX etc.
+        },
+    ]
+}
