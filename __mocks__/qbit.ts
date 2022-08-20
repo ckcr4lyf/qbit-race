@@ -4,6 +4,7 @@ export const newMockQbitApi = (): QbittorrentApi => {
     return {
         getTorrents: (): undefined => undefined,
         getTrackers: (): undefined => undefined,
+        addTags: (): undefined => undefined,
     } as unknown as QbittorrentApi; // dont tell me what to do
 }
 
