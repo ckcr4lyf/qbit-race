@@ -38,7 +38,12 @@ export class QbittorrentApi {
         return response.data;
     }
 
-    // TODO: add typing for response
+    // Just wraps getTorrents as a convenience method for single torrent
+    async getTorrent(infohash: string): Promise<QbittorrentTorrent> {
+        const torrents = await this.getTorrents([infohash]);
+        return torrents[0];
+    }
+
     async getTrackers(infohash: string): Promise<QbittorrentTracker[]> {
         const response = await this.client.get(ApiEndpoints.torrentTrackers, {
             params: {
