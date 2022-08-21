@@ -73,6 +73,16 @@ export class QbittorrentApi {
         });
     }
 
+    async setCategory(infohash: string, category: string){
+        const payload = `hashes=${infohash}&category=${category}`;
+        
+        await this.client.post(ApiEndpoints.setCategory, payload, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        })
+    }
+
 }
 
 enum ApiEndpoints {
@@ -80,6 +90,7 @@ enum ApiEndpoints {
     torrentsInfo = '/api/v2/torrents/info',
     torrentTrackers = '/api/v2/torrents/trackers',
     addTags = '/api/v2/torrents/addTags',
+    setCategory = '/api/v2/torrents/setCategory'
 }
 
 export const login = (qbittorrentSettings: QBITTORRENT_SETTINGS): Promise<AxiosResponse> => {
