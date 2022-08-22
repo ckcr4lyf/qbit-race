@@ -30,4 +30,11 @@ export const postRaceResumeV2 = async (api: QbittorrentApi, settings: Settings, 
         process.exit(1);
     }
 
+    // Handle discord part if enabled
+    if (settings.DISCORD_NOTIFICATIONS.enabled === true){
+
+        
+
+    }
+
 }

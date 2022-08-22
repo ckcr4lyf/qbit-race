@@ -1,6 +1,7 @@
 //Prepare message JSONs for different requirements
 import { humanFileSize } from '../helpers/utilities.js';
 import { DISCORD_SETTINGS, SETTINGS } from '../../settings.js';
+import { QbittorrentTorrent } from '../qbittorrent/api.js';
 
 const { botUsername, botAvatar } = SETTINGS.DISCORD_NOTIFICATIONS || { botUsername: 'qBittorrent', botAvatar: '' }
 
@@ -147,6 +148,39 @@ export const buildTorrentAddedBody = (discordSettings: DISCORD_SETTINGS, torrent
                 ]
             }
         ]
+    }
+
+    return buildMessageBody(discordSettings, partialBody);
+}
+
+export const buildTorrentCompletedBody = (discordSettings: DISCORD_SETTINGS, torrent: QbittorrentTorrent): MessageBody => {
+    const humanSize = humanFileSize(torrent.size, false, 2);
+
+    let partialBody: PartialMesssageBody = {
+        content: `Completed ${torrent.name}! (Ratio: ${torrent.ratio.toFixed(2)})`,
+        embeds: [
+            {
+                title: torrent.name,
+                description: 'Completed download',
+                thumbnail: {
+                    url: botAvatar
+                },
+                fields: [
+                    {
+                        name: 'Ratio',
+                        value: torrent.ratio.toFixed(2).toString()
+                    },
+                    {
+                        name: torrent.tags.split(',').length === 1 ? 'Tracker' : 'Trackers',
+                        value: torrent.tags.split(',').join('\n'),
+                    },
+                    {
+                        name: 'Size',
+                        value: humanSize
+                    }
+                ]
+            }
+        ] 
     }
 
     return buildMessageBody(discordSettings, partialBody);
