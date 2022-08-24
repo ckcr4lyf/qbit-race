@@ -107,4 +107,34 @@ export const buildTorrentAddedBody = (discordSettings, torrentAddedInfo) => {
     };
     return buildMessageBody(discordSettings, partialBody);
 };
+export const buildTorrentCompletedBody = (discordSettings, torrent) => {
+    const humanSize = humanFileSize(torrent.size, false, 2);
+    let partialBody = {
+        content: `Completed ${torrent.name}! (Ratio: ${torrent.ratio.toFixed(2)})`,
+        embeds: [
+            {
+                title: torrent.name,
+                description: 'Completed download',
+                thumbnail: {
+                    url: botAvatar
+                },
+                fields: [
+                    {
+                        name: 'Ratio',
+                        value: torrent.ratio.toFixed(2).toString()
+                    },
+                    {
+                        name: torrent.tags.split(',').length === 1 ? 'Tracker' : 'Trackers',
+                        value: torrent.tags.split(',').join('\n'),
+                    },
+                    {
+                        name: 'Size',
+                        value: humanSize
+                    }
+                ]
+            }
+        ]
+    };
+    return buildMessageBody(discordSettings, partialBody);
+};
 //# sourceMappingURL=messages.js.map

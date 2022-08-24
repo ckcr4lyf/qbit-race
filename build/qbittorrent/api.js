@@ -24,7 +24,11 @@ export class QbittorrentApi {
         });
         return response.data;
     }
-    // TODO: add typing for response
+    // Just wraps getTorrents as a convenience method for single torrent
+    async getTorrent(infohash) {
+        const torrents = await this.getTorrents([infohash]);
+        return torrents[0];
+    }
     async getTrackers(infohash) {
         const response = await this.client.get(ApiEndpoints.torrentTrackers, {
             params: {
@@ -48,13 +52,30 @@ export class QbittorrentApi {
             }
         });
     }
+    async setCategory(infohash, category) {
+        const payload = `hashes=${infohash}&category=${category}`;
+        await this.client.post(ApiEndpoints.setCategory, payload, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        });
+    }
+    async resumeTorrents(torrents) {
+        await this.client.get(ApiEndpoints.resumeTorrents, {
+            params: {
+                hashes: torrents.map(torrent => torrent.hash).join('|'),
+            }
+        });
+    }
 }
 var ApiEndpoints;
 (function (ApiEndpoints) {
     ApiEndpoints["login"] = "/api/v2/auth/login";
     ApiEndpoints["torrentsInfo"] = "/api/v2/torrents/info";
     ApiEndpoints["torrentTrackers"] = "/api/v2/torrents/trackers";
+    ApiEndpoints["resumeTorrents"] = "/api/v2/torrents/resume";
     ApiEndpoints["addTags"] = "/api/v2/torrents/addTags";
+    ApiEndpoints["setCategory"] = "/api/v2/torrents/setCategory";
 })(ApiEndpoints || (ApiEndpoints = {}));
 export const login = (qbittorrentSettings) => {
     return axios.get(`${qbittorrentSettings.url}${ApiEndpoints.login}`, {

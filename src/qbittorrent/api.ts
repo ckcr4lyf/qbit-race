@@ -83,12 +83,21 @@ export class QbittorrentApi {
         })
     }
 
+    async resumeTorrents(torrents: QbittorrentTorrent[]){
+        await this.client.get(ApiEndpoints.resumeTorrents, {
+            params: {
+                hashes: torrents.map(torrent => torrent.hash).join('|'),
+            }
+        });
+    }
+
 }
 
 enum ApiEndpoints {
     login = '/api/v2/auth/login',
     torrentsInfo = '/api/v2/torrents/info',
     torrentTrackers = '/api/v2/torrents/trackers',
+    resumeTorrents = '/api/v2/torrents/resume',
     addTags = '/api/v2/torrents/addTags',
     setCategory = '/api/v2/torrents/setCategory'
 }
