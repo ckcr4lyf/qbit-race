@@ -7,6 +7,7 @@ import { sendMessageV2 } from '../build/discord/api.js'
 import { buildTorrentAddedBody } from '../build/discord/messages.js'
 import { getLoggerV3 } from '../build/utils/logger.js'
 import { tagErroredTorrents } from '../build/racing/tag.js'
+import { postRaceResumeV2 } from '../build/racing/completed.js'
 
 const logger = getLoggerV3();
 logger.info(`Starting...`);
@@ -45,6 +46,10 @@ program.command('validate').description(`Validate that you've configured qbit-ra
 
 program.command('tag-error').description(`Tag torrents for which the tracker is errored`).option('--dry-run', 'Just list torrents without actually tagging them').action(async (options) => {
     await tagErroredTorrents(api, options.dryRun);
+})
+
+program.command('completed').description('Run post race procedure on complete of torrent').requiredOption('-i, --infohash <infohash>', 'The infohash of the torrent').action(async(options) => {
+    await postRaceResumeV2(api, config, options.infohash);
 })
 
 program.parse();

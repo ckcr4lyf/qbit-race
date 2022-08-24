@@ -52,8 +52,6 @@ export const postRaceResumeV2 = async (api: QbittorrentApi, settings: Settings, 
         }
     }
 
-    //TODO: Need to resume torrents
-
     // The earliest time, from which there may still be a torrent in the reannounce phase
     // e.g. if interval is 10s, and limit is 6, then from now-60s, any torrents in stalledDL status
     // are still in the re-announce phase (for racing) , so we do not run the resume job
