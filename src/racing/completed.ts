@@ -43,7 +43,6 @@ export const postRaceResumeV2 = async (api: QbittorrentApi, settings: Settings, 
     // Handle discord part if enabled
     if (settings.DISCORD_NOTIFICATIONS.enabled === true){
         const messageBody = buildTorrentCompletedBody(settings.DISCORD_NOTIFICATIONS, torrentInfo);
-
         try {
             await sendMessageV2(settings.DISCORD_NOTIFICATIONS.webhook, messageBody);
             logger.debug(`Sent message to discord`);

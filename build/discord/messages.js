@@ -116,7 +116,7 @@ export const buildTorrentCompletedBody = (discordSettings, torrent) => {
                 title: torrent.name,
                 description: 'Completed download',
                 thumbnail: {
-                    url: botAvatar
+                    url: discordSettings.botAvatar
                 },
                 fields: [
                     {
@@ -125,7 +125,7 @@ export const buildTorrentCompletedBody = (discordSettings, torrent) => {
                     },
                     {
                         name: torrent.tags.split(',').length === 1 ? 'Tracker' : 'Trackers',
-                        value: torrent.tags.split(',').join('\n'),
+                        value: torrent.tags.split(',').join('\n') || 'No trackers set as tags',
                     },
                     {
                         name: 'Size',
