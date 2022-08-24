@@ -80,6 +80,10 @@ export const postRaceResumeV2 = async (api: QbittorrentApi, settings: Settings, 
     }
 
     // Try and resume
-    // TODO: Add into API!
-    // api.resumeTorrents(pausedTorrents);
+    try {
+        await api.resumeTorrents(pausedTorrents);
+    } catch (e){
+        logger.error(`Failed to resume torrents! ${e}`);
+        process.exit(1);
+    }
 }
