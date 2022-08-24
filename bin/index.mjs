@@ -49,6 +49,11 @@ program.command('tag-error').description(`Tag torrents for which the tracker is 
 })
 
 program.command('completed').description('Run post race procedure on complete of torrent').requiredOption('-i, --infohash <infohash>', 'The infohash of the torrent').action(async(options) => {
+    if (options.infohash.length !== 40){
+        logger.error(`Wrong length of infohash. Expected 40, received ${options.infohash.length}. (Provided infohash: ${options.infohash})`);
+        process.exit(1);
+
+    }
     await postRaceResumeV2(api, config, options.infohash);
 })
 
