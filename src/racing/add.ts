@@ -6,9 +6,9 @@ import { getTorrentMetainfo, torrentMetainfo } from "../helpers/torrent.js";
 import { getLoggerV3 } from "../utils/logger.js"
 import * as fs from 'fs';
 import { Settings } from "../utils/config";
-import { QbittorrentApi } from "../qbittorrent/api";
+import { QbittorrentApi, QbittorrentTorrent } from "../qbittorrent/api";
 
-export const addTorrentToRace = (api: QbittorrentApi, settings: Settings, path: string, category?: string) => {
+export const addTorrentToRace = async (api: QbittorrentApi, settings: Settings, path: string, category?: string) => {
 
     const logger = getLoggerV3();
     logger.debug(`Called with path: ${path}, category: ${category}`);
@@ -33,6 +33,13 @@ export const addTorrentToRace = (api: QbittorrentApi, settings: Settings, path: 
         process.exit(1);
     }
 
-    // Do pre race check to determine if we should add this torrent    
+    // Do pre race check to determine if we should add this torrent 
+    let torrents: QbittorrentTorrent[];
+    try {
+        torrents = await api.getTorrents();
+    } catch (e){
+        logger.error(`Failed to get torrents from qbittorrent`);
+        process.exit(1);
+    }
 
 }

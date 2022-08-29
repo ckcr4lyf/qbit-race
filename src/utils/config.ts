@@ -68,10 +68,13 @@ export type Settings = {
     /**
      * The maximum number of active "races". If these many races are
      * going on, then the download will be skipped
+     * Set to -1 to ignore checking for ongoing races
      */
     CONCURRENT_RACES: number;
     /**
-     * Whether stalled downloads (whee)
+     * Whether stalled downloads should be counted as "downloading" (irrespective of age)
+     * when deternining whether a torrent should be added for racing (by comparing against
+     * CONCURRENT_RACES)
      */
     COUNT_STALLED_DOWNLOADS: boolean;
     DISCORD_NOTIFICATIONS: DISCORD_SETTINGS;
