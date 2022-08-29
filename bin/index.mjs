@@ -57,4 +57,8 @@ program.command('completed').description('Run post race procedure on complete of
     await postRaceResumeV2(api, config, options.infohash);
 })
 
+program.command('add').description('Add a new torrent').requiredOption('-p, --path <path>', 'The path to the torrent file (can be in /tmp)').option('-c, --category <category>', 'Category to set in qBittorrent').action(async(options) => {
+    logger.debug(`Going to add torrent from ${options.path}, and set category ${options.category}`);
+})
+
 program.parse();
