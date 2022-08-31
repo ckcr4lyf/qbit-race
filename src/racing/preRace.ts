@@ -8,7 +8,6 @@ import { Settings } from "../utils/config.js";
 import { getLoggerV3 } from "../utils/logger";
 
 export const concurrentRacesCheck = (settings: Settings, torrents: QbittorrentTorrent[]): boolean => {
-
     const logger = getLoggerV3();
 
     if (settings.CONCURRENT_RACES === -1){
@@ -43,10 +42,18 @@ export const concurrentRacesCheck = (settings: Settings, torrents: QbittorrentTo
 
         // If its still in the reannounce phase
         if (torrent.added_on * 1000 > oldestRaceLimit){
-            
+            return true;
         }
 
+        return false;
+    });
 
-    })
+    logger.debug(`Currently ${stalledDownloading.length} stalled downloading torrents`);
 
+    if (downloading.length + stalledDownloading.length >= settings.CONCURRENT_RACES){
+        logger.debug(`Sum of downloading and stalled downloading is ${downloading.length + stalledDownloading.length} and concurrent limit is ${settings.CONCURRENT_RACES}. Wont add`)
+        return false;
+    }
+
+    return true;
 }
