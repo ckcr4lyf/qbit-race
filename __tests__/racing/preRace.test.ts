@@ -52,7 +52,7 @@ test('countStalledVeryOld', t => {
     t.deepEqual(result, false);
 })
 
-test('countStalledReannouncePhase', t => {
+test('dontCountStalledReannouncePhase', t => {
     const settings = { ...defaultSettings };
     settings.CONCURRENT_RACES = 2;
     settings.REANNOUNCE_INTERVAL = 100;
@@ -73,4 +73,27 @@ test('countStalledReannouncePhase', t => {
 
     const result = concurrentRacesCheck(settings, torrents);
     t.deepEqual(result, false);
+})
+
+test('dontCountStalledVeryOld', t => {
+    const settings = { ...defaultSettings };
+    settings.CONCURRENT_RACES = 2;
+    settings.REANNOUNCE_INTERVAL = 100;
+    settings.REANNOUNCE_LIMIT = 10;
+    settings.COUNT_STALLED_DOWNLOADS = false;
+    const torrents: any[] = [
+        {
+            state: TorrentState.downloading
+        },
+        {
+            state: TorrentState.stalledDL,
+            added_on: 0, // This one is old so shouldn't be counted
+        },
+        {
+            state: TorrentState.uploading
+        }
+    ];
+
+    const result = concurrentRacesCheck(settings, torrents);
+    t.deepEqual(result, true);
 })
