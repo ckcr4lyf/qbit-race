@@ -30,3 +30,24 @@ test('concurrentRacesAndDownloading', t => {
     const result = concurrentRacesCheck(settings, torrents);
     t.deepEqual(result, false);
 })
+
+test('countStalledVeryOld', t => {
+    const settings = { ...defaultSettings };
+    settings.CONCURRENT_RACES = 2;
+    settings.COUNT_STALLED_DOWNLOADS = true;
+    const torrents: any[] = [
+        {
+            state: TorrentState.downloading
+        },
+        {
+            state: TorrentState.stalledDL,
+            added_on: 0,
+        },
+        {
+            state: TorrentState.uploading
+        }
+    ];
+
+    const result = concurrentRacesCheck(settings, torrents);
+    t.deepEqual(result, false);
+})
