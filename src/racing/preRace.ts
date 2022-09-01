@@ -2,10 +2,10 @@
  * Functions to do some pre-race checks
  */
 
-import { TorrentState } from "../interfaces";
-import { QbittorrentTorrent } from "../qbittorrent/api";
+import { TorrentState } from "../interfaces.js";
+import { QbittorrentTorrent } from "../qbittorrent/api.js";
 import { Settings } from "../utils/config.js";
-import { getLoggerV3 } from "../utils/logger";
+import { getLoggerV3 } from "../utils/logger.js";
 
 export const concurrentRacesCheck = (settings: Settings, torrents: QbittorrentTorrent[]): boolean => {
     const logger = getLoggerV3();
