@@ -27,6 +27,8 @@ export enum TorrentState {
     unknown = 'unknown',
 }
 
+export const SEEDING_STATES = [TorrentState.uploading, TorrentState.stalledUP, TorrentState.forcedUP];
+
 // Just type the important fields
 export interface torrentFromApi {
     name: string;
