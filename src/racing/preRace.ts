@@ -57,3 +57,17 @@ export const concurrentRacesCheck = (settings: Settings, torrents: QbittorrentTo
 
     return true;
 }
+
+export const torrentsToPause = (settings: Settings, torrents: QbittorrentTorrent[]): QbittorrentTorrent[] => {
+
+    const logger = getLoggerV3();
+    const torrentsToPause: QbittorrentTorrent[] = [];
+
+    if (settings.PAUSE_RATIO === -1){
+        logger.debug(`Pause ratio is -1, wont pause any torrents`);
+        return torrentsToPause;
+    }
+
+    
+}
+
