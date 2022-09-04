@@ -90,7 +90,18 @@ export class QbittorrentApi {
             }
         });
     }
+    
+    async pauseTorrents(torrents: QbittorrentTorrent[]){
+        if (torrents.length === 0){
+            return;
+        }
 
+        await this.client.get(ApiEndpoints.pauseTorrents, {
+            params: {
+                hashes: torrents.map(torrent => torrent.hash).join('|')
+            }
+        });
+    }
 }
 
 enum ApiEndpoints {
@@ -99,7 +110,8 @@ enum ApiEndpoints {
     torrentTrackers = '/api/v2/torrents/trackers',
     resumeTorrents = '/api/v2/torrents/resume',
     addTags = '/api/v2/torrents/addTags',
-    setCategory = '/api/v2/torrents/setCategory'
+    setCategory = '/api/v2/torrents/setCategory',
+    pauseTorrents = '/api/v2/torrents/pause',
 }
 
 export const login = (qbittorrentSettings: QBITTORRENT_SETTINGS): Promise<AxiosResponse> => {
