@@ -54,7 +54,7 @@ export const addTorrentToRace = async (api: QbittorrentApi, settings: Settings, 
 
     try {
         logger.debug(`Going to pause ${torrentsToPause.length} torrents for the race...`);
-        // TODO: Add pausing to qbit api
+        await api.pauseTorrents(torrentsToPause);
     } catch (e){
         logger.error(`Failed to pause torrents: ${e}`)
         process.exit(1);
