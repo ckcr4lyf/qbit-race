@@ -60,5 +60,10 @@ export const addTorrentToRace = async (api: QbittorrentApi, settings: Settings, 
         process.exit(1);
     }
 
-    // TODO: Add adding torrent to qbit api
+    try {
+        await api.addTorrent(torrentFile, category);        
+    } catch (e){
+        logger.error(`Failed to add torrent to qbittorrent: ${e}`);
+        process.exit(1);
+    }
 }
