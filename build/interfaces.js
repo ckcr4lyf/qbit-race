@@ -20,4 +20,5 @@ export var TorrentState;
     TorrentState["moving"] = "moving";
     TorrentState["unknown"] = "unknown";
 })(TorrentState || (TorrentState = {}));
+export const SEEDING_STATES = [TorrentState.uploading, TorrentState.stalledUP, TorrentState.forcedUP];
 //# sourceMappingURL=interfaces.js.map

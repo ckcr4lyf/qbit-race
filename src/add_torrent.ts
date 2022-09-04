@@ -26,7 +26,7 @@ export const add_torrent = async (args: string[]) => {
     // Assume none at first.
     const path = args[0];
 
-    let category = null;
+    let category: string | undefined = undefined;
 
     // We need to read the torrent file and get the metainfo
     let torrentFile: Buffer;
