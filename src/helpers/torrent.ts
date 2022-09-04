@@ -13,7 +13,7 @@ import * as crypto from 'crypto';
  * @param torrentData The raw .torrent contents
  * @returns Metainfo about the torrent
  */
-export const getTorrentMetainfo = (torrentData: Buffer): torrentMetainfo => {
+export const getTorrentMetainfo = (torrentData: Buffer): TorrentMetainfoV2 => {
     const decodedData = bencode.decode(torrentData);
 
     if (typeof decodedData.info !== 'object'){
@@ -37,10 +37,16 @@ export const getTorrentMetainfo = (torrentData: Buffer): torrentMetainfo => {
     const tracker = announce.hostname;
     
     return {
-        infohash: torrentHash,
+        hash: torrentHash,
         name: torrentName,
         tracker: tracker
     }
+}
+
+export type TorrentMetainfoV2 = {
+    hash: string;
+    name: string;
+    tracker: string;
 }
 
 export type torrentMetainfo = {

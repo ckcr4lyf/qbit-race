@@ -79,11 +79,11 @@ export const add_torrent = async (args) => {
     //Now we get the torrent's trackers, which will let us set the tags.
     let tags = [];
     try {
-        let trackers = await getTrackers(metainfo.infohash);
+        let trackers = await getTrackers(metainfo.hash);
         trackers.splice(0, 3);
         tags = trackers.map(({ url }) => new URL(url).hostname);
         logger.info(`Adding ${tags.length} tags.`);
-        await addTags([{ hash: metainfo.infohash }], tags);
+        await addTags([{ hash: metainfo.hash }], tags);
     }
     catch (error) {
         logger.error(`Failed to add tags. Error code ${error}`);
@@ -91,7 +91,7 @@ export const add_torrent = async (args) => {
     //We also want to get the size of the torrent, for the notification.
     let torrent;
     try {
-        torrent = await getTorrentInfo(metainfo.infohash);
+        torrent = await getTorrentInfo(metainfo.hash);
     }
     catch (error) {
         process.exit(1);
@@ -103,13 +103,13 @@ export const add_torrent = async (args) => {
     while (attempts < SETTINGS.REANNOUNCE_LIMIT) {
         logger.info(`Attempt #${attempts + 1}: Querying tracker status...`);
         try {
-            let trackers = await getTrackers(metainfo.infohash);
+            let trackers = await getTrackers(metainfo.hash);
             trackers.splice(0, 3);
             let working = trackers.some(tracker => tracker.status === 2);
             if (!working) {
                 //We need to reannounce
                 logger.info('Need to reannounce. Sending request and sleeping...');
-                await reannounce(metainfo.infohash);
+                await reannounce(metainfo.hash);
                 await sleep(SETTINGS.REANNOUNCE_INTERVAL);
                 attempts++;
             }
@@ -127,7 +127,7 @@ export const add_torrent = async (args) => {
     //We got here but failed reannounce failed. Delete it.
     if (announceOK === false) {
         logger.info(`Did not get an OK from tracker even after ${SETTINGS.REANNOUNCE_LIMIT} attempts. Deleting...`);
-        await deleteTorrents([{ hash: metainfo.infohash }]);
+        await deleteTorrents([{ hash: metainfo.hash }]);
         // Resume any that were paused
         logger.info('Going to resume any paused torrents...');
         const torrents = await getTorrents();

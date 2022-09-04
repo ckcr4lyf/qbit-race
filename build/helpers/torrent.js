@@ -30,7 +30,7 @@ export const getTorrentMetainfo = (torrentData) => {
     const announce = new URL(decodedData.announce.toString());
     const tracker = announce.hostname;
     return {
-        infohash: torrentHash,
+        hash: torrentHash,
         name: torrentName,
         tracker: tracker
     };

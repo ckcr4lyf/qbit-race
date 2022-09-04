@@ -13,7 +13,7 @@ import { sendMessage } from './discord/api.js';
 import { addMessage } from './discord/messages.js';
 import { torrentFromApi } from './interfaces.js';
 import { resume } from './helpers/resume.js';
-import { getTorrentMetainfo, torrentMetainfo } from './helpers/torrent.js';
+import { getTorrentMetainfo, torrentMetainfo, TorrentMetainfoV2 } from './helpers/torrent.js';
 import * as fs from 'fs';
 
 export const add_torrent = async (args: string[]) => {
@@ -35,7 +35,7 @@ export const add_torrent = async (args: string[]) => {
 
     // We need to read the torrent file and get the metainfo
     let torrentFile: Buffer;
-    let metainfo: torrentMetainfo;
+    let metainfo: TorrentMetainfoV2;
     
     try {
         torrentFile = fs.readFileSync(path);
@@ -94,11 +94,11 @@ export const add_torrent = async (args: string[]) => {
     let tags: string[] = []
 
     try {
-        let trackers: any[] = await getTrackers(metainfo.infohash);
+        let trackers: any[] = await getTrackers(metainfo.hash);
         trackers.splice(0, 3);
         tags = trackers.map(({ url }) => new URL(url).hostname);
         logger.info(`Adding ${tags.length} tags.`);
-        await addTags([{ hash: metainfo.infohash }], tags);
+        await addTags([{ hash: metainfo.hash }], tags);
     } catch (error) {
         logger.error(`Failed to add tags. Error code ${error}`);
     }
@@ -107,7 +107,7 @@ export const add_torrent = async (args: string[]) => {
     let torrent: torrentFromApi;
 
     try {
-        torrent = await getTorrentInfo(metainfo.infohash);
+        torrent = await getTorrentInfo(metainfo.hash);
     } catch (error){
         process.exit(1);
     }
@@ -122,14 +122,14 @@ export const add_torrent = async (args: string[]) => {
         logger.info(`Attempt #${attempts + 1}: Querying tracker status...`);
         
         try {
-            let trackers: any[] = await getTrackers(metainfo.infohash);
+            let trackers: any[] = await getTrackers(metainfo.hash);
             trackers.splice(0, 3);
             let working = trackers.some(tracker => tracker.status === 2);
 
             if (!working) {
                 //We need to reannounce
                 logger.info('Need to reannounce. Sending request and sleeping...');
-                await reannounce(metainfo.infohash);
+                await reannounce(metainfo.hash);
                 await sleep(SETTINGS.REANNOUNCE_INTERVAL);
                 attempts++;
             } else {
@@ -146,7 +146,7 @@ export const add_torrent = async (args: string[]) => {
     //We got here but failed reannounce failed. Delete it.
     if (announceOK === false){
         logger.info(`Did not get an OK from tracker even after ${SETTINGS.REANNOUNCE_LIMIT} attempts. Deleting...`);
-        await deleteTorrents([{ hash: metainfo.infohash }]);
+        await deleteTorrents([{ hash: metainfo.hash }]);
 
         // Resume any that were paused
         logger.info('Going to resume any paused torrents...');

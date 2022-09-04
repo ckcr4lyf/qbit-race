@@ -2,12 +2,13 @@
  * To add a new torrent into qbittorrent for racing
  */
 
-import { getTorrentMetainfo, torrentMetainfo } from "../helpers/torrent.js";
+import { getTorrentMetainfo, torrentMetainfo, TorrentMetainfoV2 } from "../helpers/torrent.js";
 import { getLoggerV3 } from "../utils/logger.js"
 import * as fs from 'fs';
 import { Settings } from "../utils/config";
 import { QbittorrentApi, QbittorrentTorrent } from "../qbittorrent/api";
 import { concurrentRacesCheck, getTorrentsToPause } from "./preRace.js";
+import { sleep } from "../helpers/utilities.js";
 
 export const addTorrentToRace = async (api: QbittorrentApi, settings: Settings, path: string, category?: string) => {
 
@@ -25,7 +26,7 @@ export const addTorrentToRace = async (api: QbittorrentApi, settings: Settings, 
         process.exit(1);
     }
 
-    let torrentMetainfo: torrentMetainfo;
+    let torrentMetainfo: TorrentMetainfoV2;
 
     try {
         torrentMetainfo = getTorrentMetainfo(torrentFile);
@@ -66,4 +67,28 @@ export const addTorrentToRace = async (api: QbittorrentApi, settings: Settings, 
         logger.error(`Failed to add torrent to qbittorrent: ${e}`);
         process.exit(1);
     }
+
+    // Wait for torrent to register in qbit, initial announce
+    // TODO: Figure out how we can skip real sleep in CI / test
+    await sleep(5000);
+
+    // Get the torrent's trackers, which we set as tags as well.
+    const tags: string[] = [];
+
+    try {
+        const trackers = await api.getTrackers(torrentMetainfo.hash);
+        trackers.splice(0, 3); // Get rid of DHT, PEX etc.
+        tags.push(...trackers.map(tracker => new URL(tracker.url).hostname));
+    } catch (e){
+        logger.error(`Failed to get tags for torrent: ${e}`);
+        process.exit(1);
+    }
+
+    try {
+        await api.addTags([torrentMetainfo], tags);
+    } catch (e){
+        logger.error(`Failed to add tags to torrent: ${e}`);
+    }   
+
+
 }

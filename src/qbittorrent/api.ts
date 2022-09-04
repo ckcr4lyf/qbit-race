@@ -54,7 +54,7 @@ export class QbittorrentApi {
         return response.data;
     }
 
-    async addTags(torrents: QbittorrentTorrent[], tags: string[]){
+    async addTags(torrents: ApiCompatibleTorrent[], tags: string[]){
         if (torrents.length === 0){
             return;
         }
@@ -376,6 +376,11 @@ export const getTransferInfo = (): Promise<TransferInfo> => {
         logger.error(`Get transferInfo failed with error code ${err.response.status}`);
         throw err;
     })
+}
+
+// We just need the hash for some of the API calls
+export type ApiCompatibleTorrent = {
+    hash: string;
 }
 
 export type QbittorrentTorrent = {
