@@ -20,7 +20,7 @@ export const add_torrent = async (args) => {
     //TODO: Check if first param is infohash or path? Or no bw compatibility?...
     // Assume none at first.
     const path = args[0];
-    let category = null;
+    let category = undefined;
     // We need to read the torrent file and get the metainfo
     let torrentFile;
     let metainfo;
