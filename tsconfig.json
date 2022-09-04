@@ -4,6 +4,7 @@
         "module": "ES2020",
         "noImplicitAny": true,
         "removeComments": false,
+        "strictNullChecks": true,
         "preserveConstEnums": true,
         "esModuleInterop": true,
         "outDir": "./build/",

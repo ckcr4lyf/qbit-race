@@ -2,7 +2,7 @@
  * Functions to do some pre-race checks
  */
 
-import { TorrentState } from "../interfaces.js";
+import { SEEDING_STATES, TorrentState } from "../interfaces.js";
 import { QbittorrentTorrent } from "../qbittorrent/api.js";
 import { Settings } from "../utils/config.js";
 import { getLoggerV3 } from "../utils/logger.js";
@@ -59,15 +59,45 @@ export const concurrentRacesCheck = (settings: Settings, torrents: QbittorrentTo
 }
 
 export const torrentsToPause = (settings: Settings, torrents: QbittorrentTorrent[]): QbittorrentTorrent[] => {
-
     const logger = getLoggerV3();
-    const torrentsToPause: QbittorrentTorrent[] = [];
 
     if (settings.PAUSE_RATIO === -1){
         logger.debug(`Pause ratio is -1, wont pause any torrents`);
-        return torrentsToPause;
+        return [];
     }
 
-    
+    const torrentsToPause = torrents.filter(torrent => {
+
+        // Not seeding - no need to pause
+        if (SEEDING_STATES.some(state => state === torrent.state) === false){
+            return false;
+        }
+
+        // If ratio below pause ratio then dont
+        if (torrent.ratio < settings.PAUSE_RATIO){
+            logger.debug(`Ratio for ${torrent.name} is  ${torrent.ratio} - below pause ratio. Wont pause`);
+            return false;
+        }
+
+        // If the cateogry is set to skip then dont
+        if (settings.PAUSE_SKIP_CATEGORIES.includes(torrent.category)){
+            logger.debug(`Category for ${torrent.name} is ${torrent.category} - included in PAUSE_SKIP_CATEGORIES. Wont pause`);
+            return false;
+        }
+
+        // Lastly - if any tags are to not skip then dont
+        const torrentTags = torrent.tags.split(',');
+        const skipTag = settings.PAUSE_SKIP_TAGS.find(tag => torrentTags.includes(tag));
+
+        if (skipTag !== undefined){
+            logger.debug(`Tags for ${torrent.name} contains ${skipTag} - included in PAUSE_SKIP_TAGS. Wont pause`);
+            return false;
+        }
+        
+        // Otherwise we should pause this guy for the upcoming race
+        return true;
+    });
+
+    return torrentsToPause;    
 }
 
