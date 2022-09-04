@@ -7,6 +7,7 @@ import { getLoggerV3 } from "../utils/logger.js"
 import * as fs from 'fs';
 import { Settings } from "../utils/config";
 import { QbittorrentApi, QbittorrentTorrent } from "../qbittorrent/api";
+import { concurrentRacesCheck, getTorrentsToPause } from "./preRace.js";
 
 export const addTorrentToRace = async (api: QbittorrentApi, settings: Settings, path: string, category?: string) => {
 
@@ -38,8 +39,26 @@ export const addTorrentToRace = async (api: QbittorrentApi, settings: Settings, 
     try {
         torrents = await api.getTorrents();
     } catch (e){
-        logger.error(`Failed to get torrents from qbittorrent`);
+        logger.error(`Failed to get torrents from qbittorrent: ${e}`);
         process.exit(1);
     }
 
+    const goodToRace = concurrentRacesCheck(settings, torrents);
+
+    if (goodToRace === false){
+        logger.info(`Pre race conditions not met. Skipping ${torrentMetainfo.name}`);
+        process.exit(0);
+    }
+
+    const torrentsToPause = getTorrentsToPause(settings, torrents);
+
+    try {
+        logger.debug(`Going to pause ${torrentsToPause.length} torrents for the race...`);
+        // TODO: Add pausing to qbit api
+    } catch (e){
+        logger.error(`Failed to pause torrents: ${e}`)
+        process.exit(1);
+    }
+
+    // TODO: Add adding torrent to qbit api
 }
