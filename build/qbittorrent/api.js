@@ -67,6 +67,30 @@ export class QbittorrentApi {
             }
         });
     }
+    async pauseTorrents(torrents) {
+        if (torrents.length === 0) {
+            return;
+        }
+        await this.client.get(ApiEndpoints.pauseTorrents, {
+            params: {
+                hashes: torrents.map(torrent => torrent.hash).join('|')
+            }
+        });
+    }
+    async addTorrent(torrentData, category) {
+        let formData = new FormData();
+        formData.append("torrents", torrentData, 'dummy.torrent'); // The filename doesn't really matter
+        if (category !== undefined) {
+            formData.append('category', category);
+        }
+        await this.client.post(ApiEndpoints.addTorrent, formData, {
+            headers: {
+                ...formData.getHeaders(),
+                //Because axios can't handle this. Wasted 2 hours trying to debug. Fuck.
+                'Content-Length': formData.getLengthSync(),
+            }
+        });
+    }
 }
 var ApiEndpoints;
 (function (ApiEndpoints) {
@@ -76,6 +100,8 @@ var ApiEndpoints;
     ApiEndpoints["resumeTorrents"] = "/api/v2/torrents/resume";
     ApiEndpoints["addTags"] = "/api/v2/torrents/addTags";
     ApiEndpoints["setCategory"] = "/api/v2/torrents/setCategory";
+    ApiEndpoints["pauseTorrents"] = "/api/v2/torrents/pause";
+    ApiEndpoints["addTorrent"] = "/api/v2/torrents/add";
 })(ApiEndpoints || (ApiEndpoints = {}));
 export const login = (qbittorrentSettings) => {
     return axios.get(`${qbittorrentSettings.url}${ApiEndpoints.login}`, {
@@ -238,7 +264,7 @@ export const addTorrent = (torrentFile, category) => {
             headers: {
                 'Cookie': COOKIE,
                 ...formData.getHeaders(),
-                'Content-Length': formData.getLengthSync() //Because axios can't handle this. Wasted 2 hours trying to debug. Fuck.
+                'Content-Length': formData.getLengthSync()
             },
             data: formData
         }).then(response => {

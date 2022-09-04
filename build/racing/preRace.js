@@ -40,7 +40,7 @@ export const concurrentRacesCheck = (settings, torrents) => {
     }
     return true;
 };
-export const torrentsToPause = (settings, torrents) => {
+export const getTorrentsToPause = (settings, torrents) => {
     const logger = getLoggerV3();
     if (settings.PAUSE_RATIO === -1) {
         logger.debug(`Pause ratio is -1, wont pause any torrents`);

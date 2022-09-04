@@ -1,3 +1,8 @@
+/**
+ * @deprecated
+ *
+ * TODO: Completely remove in v2
+ */
 import { login } from './qbittorrent/auth.js';
 import { addTags, addTorrent, deleteTorrents, getTorrentInfo, getTorrents, getTrackers, reannounce } from './qbittorrent/api.js';
 import { sleep } from './helpers/utilities.js';
