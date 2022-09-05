@@ -10,6 +10,8 @@ import { QbittorrentApi, QbittorrentTorrent } from "../qbittorrent/api";
 import { concurrentRacesCheck, getTorrentsToPause } from "./preRace.js";
 import { sleep } from "../helpers/utilities.js";
 import { TrackerStatus } from "../interfaces.js";
+import { buildTorrentAddedBody } from "../discord/messages.js";
+import { sendMessageV2 } from "../discord/api.js";
 
 export const addTorrentToRace = async (api: QbittorrentApi, settings: Settings, path: string, category?: string) => {
 
@@ -74,25 +76,33 @@ export const addTorrentToRace = async (api: QbittorrentApi, settings: Settings, 
     await sleep(5000);
 
     // Get the torrent's trackers, which we set as tags as well.
-    const tags: string[] = [];
+    const trackersAsTags: string[] = [];
 
     try {
         const trackers = await api.getTrackers(torrentMetainfo.hash);
         trackers.splice(0, 3); // Get rid of DHT, PEX etc.
-        tags.push(...trackers.map(tracker => new URL(tracker.url).hostname));
+        trackersAsTags.push(...trackers.map(tracker => new URL(tracker.url).hostname));
     } catch (e){
         logger.error(`Failed to get tags for torrent: ${e}`);
         process.exit(1);
     }
 
     try {
-        await api.addTags([torrentMetainfo], tags);
+        await api.addTags([torrentMetainfo], trackersAsTags);
     } catch (e){
         logger.error(`Failed to add tags to torrent: ${e}`);
         process.exit(1);
     }
 
     // TODO: Torrent size somehow?
+    let torrent: QbittorrentTorrent;
+
+    try {
+        torrent = await api.getTorrent(torrentMetainfo.hash);
+    } catch (e){
+        logger.error(`Failed to get information of torrent from qbit: ${e}`);
+        process.exit(1);
+    }
 
     logger.debug(`Startng reannounce check`);
 
@@ -152,9 +162,22 @@ export const addTorrentToRace = async (api: QbittorrentApi, settings: Settings, 
 
     if (settings.DISCORD_NOTIFICATIONS.enabled === true){
         // TODO: Send to discord
+        const torrentAddedMessage = buildTorrentAddedBody(settings.DISCORD_NOTIFICATIONS, {
+            name: torrent.name,
+            size: torrent.size,
+            trackers: trackersAsTags,
+            reannounceCount: attempts
+        });
+
+        try {
+            await sendMessageV2(settings.DISCORD_NOTIFICATIONS.webhook, torrentAddedMessage);
+        } catch (e){
+            logger.error(`Failed to send message to discord: ${e}`);
+            // Do not throw for this failure.
+        }
     }
 
     // Clean exit
-    // TOOD: This guy can return to upper caller instead?
+    // TODO: This guy can return to upper caller instead?
     process.exit(0);
 }
