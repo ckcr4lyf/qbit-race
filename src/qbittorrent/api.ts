@@ -1,6 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import FormData from 'form-data';
-import * as fs from 'fs';
 
 import { QBIT_HOST, QBIT_PORT, COOKIE, HTTP_SCHEME, URL_PATH } from '../config.js';
 import { logger } from '../helpers/logger.js';
@@ -102,6 +101,18 @@ export class QbittorrentApi {
             }
         });
     }
+    async deleteTorrentsWithFiles(torrents: QbittorrentTorrent[]){
+        if (torrents.length === 0){
+            return;
+        }
+
+        await this.client.get(ApiEndpoints.deleteTorrents, {
+            params: {
+                hashes: torrents.map(torrent => torrent.hash).join('|'),
+                deleteFiles: true,
+            }
+        });
+    }
 
     async addTorrent(torrentData: Buffer, category?: string){
 
@@ -130,7 +141,8 @@ enum ApiEndpoints {
     addTags = '/api/v2/torrents/addTags',
     setCategory = '/api/v2/torrents/setCategory',
     pauseTorrents = '/api/v2/torrents/pause',
-    addTorrent = '/api/v2/torrents/add'
+    addTorrent = '/api/v2/torrents/add',
+    deleteTorrents = '/api/v2/torrents/delete',
 }
 
 export const login = (qbittorrentSettings: QBITTORRENT_SETTINGS): Promise<AxiosResponse> => {
