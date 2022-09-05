@@ -94,7 +94,6 @@ export const addTorrentToRace = async (api: QbittorrentApi, settings: Settings, 
         process.exit(1);
     }
 
-    // TODO: Torrent size somehow?
     let torrent: QbittorrentTorrent;
 
     try {
@@ -161,7 +160,6 @@ export const addTorrentToRace = async (api: QbittorrentApi, settings: Settings, 
     logger.info(`Successfully added ${torrentMetainfo.name}!`);
 
     if (settings.DISCORD_NOTIFICATIONS.enabled === true){
-        // TODO: Send to discord
         const torrentAddedMessage = buildTorrentAddedBody(settings.DISCORD_NOTIFICATIONS, {
             name: torrent.name,
             size: torrent.size,
