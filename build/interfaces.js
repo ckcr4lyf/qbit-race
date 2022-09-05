@@ -21,4 +21,8 @@ export var TorrentState;
     TorrentState["unknown"] = "unknown";
 })(TorrentState || (TorrentState = {}));
 export const SEEDING_STATES = [TorrentState.uploading, TorrentState.stalledUP, TorrentState.forcedUP];
+export var TrackerStatus;
+(function (TrackerStatus) {
+    TrackerStatus[TrackerStatus["WORKING"] = 2] = "WORKING";
+})(TrackerStatus || (TrackerStatus = {}));
 //# sourceMappingURL=interfaces.js.map

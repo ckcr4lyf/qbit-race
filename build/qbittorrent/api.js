@@ -77,6 +77,17 @@ export class QbittorrentApi {
             }
         });
     }
+    async deleteTorrentsWithFiles(torrents) {
+        if (torrents.length === 0) {
+            return;
+        }
+        await this.client.get(ApiEndpoints.deleteTorrents, {
+            params: {
+                hashes: torrents.map(torrent => torrent.hash).join('|'),
+                deleteFiles: true,
+            }
+        });
+    }
     async addTorrent(torrentData, category) {
         let formData = new FormData();
         formData.append("torrents", torrentData, 'dummy.torrent'); // The filename doesn't really matter
@@ -102,6 +113,7 @@ var ApiEndpoints;
     ApiEndpoints["setCategory"] = "/api/v2/torrents/setCategory";
     ApiEndpoints["pauseTorrents"] = "/api/v2/torrents/pause";
     ApiEndpoints["addTorrent"] = "/api/v2/torrents/add";
+    ApiEndpoints["deleteTorrents"] = "/api/v2/torrents/delete";
 })(ApiEndpoints || (ApiEndpoints = {}));
 export const login = (qbittorrentSettings) => {
     return axios.get(`${qbittorrentSettings.url}${ApiEndpoints.login}`, {
