@@ -101,7 +101,7 @@ export class QbittorrentApi {
             }
         });
     }
-    async deleteTorrentsWithFiles(torrents: QbittorrentTorrent[]){
+    async deleteTorrentsWithFiles(torrents: ApiCompatibleTorrent[]){
         if (torrents.length === 0){
             return;
         }

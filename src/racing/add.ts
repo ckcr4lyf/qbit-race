@@ -126,7 +126,12 @@ export const addTorrentToRace = async (api: QbittorrentApi, settings: Settings, 
 
     if (announceOk === false){
         logger.warn(`Did not get an OK from tracker even after ${settings.REANNOUNCE_LIMIT} re-announces. Deleting torrent...`);
-        // TODO: API delete torrent
+        try {
+            await api.deleteTorrentsWithFiles([torrentMetainfo]);
+        } catch (e){
+            logger.error(`Failed to delete torrent: ${e}`);
+            process.exit(1);
+        }
 
         // Resume any torrents that were paused for the race
         logger.debug(`Going to resume paused torrents since no race`);
