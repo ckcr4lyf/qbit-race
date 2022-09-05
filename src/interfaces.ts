@@ -41,6 +41,9 @@ export interface torrentFromApi {
     size: number;
 }
 
+export enum TrackerStatus {
+    WORKING = 2,
+}
 
 export type TransferInfo = {
     connection_status: string;
