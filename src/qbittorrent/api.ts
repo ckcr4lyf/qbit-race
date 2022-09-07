@@ -131,6 +131,14 @@ export class QbittorrentApi {
             }
         });
     }
+
+    async reannounce(infohash: string){
+        await this.client.get(ApiEndpoints.reannounce, {
+            params: {
+                hashes: infohash,
+            }
+        });
+    }
 }
 
 enum ApiEndpoints {
@@ -143,6 +151,7 @@ enum ApiEndpoints {
     pauseTorrents = '/api/v2/torrents/pause',
     addTorrent = '/api/v2/torrents/add',
     deleteTorrents = '/api/v2/torrents/delete',
+    reannounce = '/api/v2/torrents/reannounce',
 }
 
 export const login = (qbittorrentSettings: QBITTORRENT_SETTINGS): Promise<AxiosResponse> => {
