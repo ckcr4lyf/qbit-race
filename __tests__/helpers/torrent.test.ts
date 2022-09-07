@@ -11,7 +11,7 @@ test('getTorrentMetaInfo', t => {
     const metainfo = getTorrentMetainfo(torrent);
 
     const expected = {
-        infohash: 'c04d04e869f7f53f212b28401b381274f2091d86',
+        hash: 'c04d04e869f7f53f212b28401b381274f2091d86',
         name: '100MB.bin',
         tracker: 'sub.faketracker.com'
     };
