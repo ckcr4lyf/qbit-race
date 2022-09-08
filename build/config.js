@@ -20,19 +20,19 @@ export const PROM_IP = process.env.PROM_IP || '127.0.0.1';
 export const PROM_PORT = process.env.PROM_PORT || '9999';
 if (!QBIT_HOST) {
     console.log("Please define QBIT_HOST in your .env file.");
-    process.exit(1);
+    // process.exit(1);
 }
 if (!QBIT_PORT) {
     console.log("Please define QBIT_PORT in your .env file.");
-    process.exit(1);
+    // process.exit(1);
 }
 if (!QBIT_USERNAME) {
     console.log("Please define QBIT_USERNAME in your .env file.");
-    process.exit(1);
+    // process.exit(1);
 }
 if (!QBIT_PASSWORD) {
     console.log("Please define QBIT_PASSWORD in your .env file.");
-    process.exit(1);
+    // process.exit(1);
 }
 // if (!DISCORD_WEBHOOK && SETTINGS.DISCORD_NOTIFICATIONS.enabled === true){
 //     console.log("Please define DISCORD_WEBHOOK in your .env file. (Discord notifications are enabled but a webhook is not defined)\n");
