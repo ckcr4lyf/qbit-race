@@ -56,7 +56,7 @@ You can get the correct command to symlink nvm's node by running these commands 
 
 For shared seedboxes:
 ```sh
-echo "ln -s $(which node) ${HOME}/node"
+echo "ln -s $(which node) ${HOME}/bin/node"
 ```
 
 or, for deciated seedboxes: (this might need a sudo)
@@ -64,47 +64,23 @@ or, for deciated seedboxes: (this might need a sudo)
 echo "ln -s $(which node) /usr/bin/node"
 ```
 
-## Repo Setup
+## Setup
 
-Please download / install from [one of the releases!](https://github.com/ckcr4lyf/qbit-race/releases) The master branch is the bleeding edge version, and may include breaking changes. You have been warned.
+*PLEASE NOTE : YOU ARE ON THE MASTER BRANCH, FOR V2 (ALPHA) OF QBIT-RACE! THIS RELEASE IS NOT YET STABLE.*
 
-First, you need to download the release, install some dependencies, and setup your enivronment variables file. 
-You may run the following commands:
+If you want to install the latest stable release, please checkout the README of v1.1.0: https://github.com/ckcr4lyf/qbit-race/tree/v1.1.0
 
-```sh
-mkdir -p ~/scripts
-cd ~/scripts
-wget https://github.com/ckcr4lyf/qbit-race/archive/refs/tags/v1.1.0.tar.gz -O qbit-race.tar.gz
-tar -xzf qbit-race.tar.gz
-mv qbit-race-1.1.0 qbit-race
-cd qbit-race
-npm install
-cp sample.env .env
-cp sample.settings.js settings.js
-```
+If you want to try out V2 (alpha), then read ahead...
 
-Now open `.env` in an editor like nano or such, and change the values as per your setup. `QBIT_PORT` is the port the Web UI is listening on, NOT the port for incoming BitTorrent connections. `DISCORD_WEBHOOK` is optional, you should replace it with your chanell's webhook URL if you enable Discord noticiations in `settings.js` (more info below)
+### Install qbit-race
 
-Once you think you've done it correctly, Validate it by running
+Installing now is as simple as `npm i -g qbit-race@2.0.0-alpha.4` . 
 
-```
-npm run validate
-```
+### Post install setup
 
-If all went well, you'll see something like
+Run `qbit-race` once to generate a dummy config file. (TODO: Fix the auth error on first run).
 
-```
-2020-09-27T12:40:10.541Z [CONFIG] - Loaded .env
-2020-09-27T12:40:10.644Z [CONFIG] - Updated COOKIE!
-2020-09-27T12:40:10.656Z [AUTH] - Login completed in 0.07 seconds.
-2020-09-27T12:40:10.656Z [TEST] - SUCCESS!
-```
-
-## Updating
-
-You may run `git pull` in the parent directory to automatically pull updates. If new settings are introduced, you will need to check `sample.settings.js` and manually add them to your `settings.js`.
-
-It is advised to backup your `settings.js` *just in case*.
+Then you can edit the file in `~/.config/qbit-race/config.json` with the values you prefer.
 
 ## Additional Settings
 
@@ -140,13 +116,10 @@ If you enable discord notifications, and set the webhook URL in `.env`, you can 
 2020-09-27T13:32:33.680Z [TEST] - SUCCESS!
 ```
 
-### Backup Settings
-
-You can backup your settings easily by running `npm run backup`, useful if you plan to update just in case.
-
-The file will be saved as `currenttimestamp_settings.js` in the path `~/.backup/qbit-race/`
 
 ## AutoDL setup (Basic)
+
+**TODO: UPDATE FOR V2**
 
 To get the path to the script which will feed qBittorrent, run the following commands:
 ```sh
@@ -174,6 +147,8 @@ You can view the logs under `~/scripts/qbit-race/logs` to try and debug.
 
 ## AutoDL setup (Advanced)
 
+**TODO: UPDATE FOR V2**
+
 These are additional parameters you can specify in autoDL for additional functionality
 
 ### Torrent Category
@@ -190,6 +165,8 @@ Which would set the category of all torrents that match said filter to "never op
 Protip: qBittorrent has a feature that allows you to configure download paths by category. This might be useful to consolidate your downloads.`
 
 ### Change Category on torrent completion
+
+**TODO: UPDATE FOR V2**
 
 Often it may be desirable to change the category of the torrent on completion, often when using with Sonarr / Radarr etc. You can add as many rules as you would like (of course, a single torrent is limited to a single cateogry still, by qbittorrent itself).
 
@@ -213,9 +190,13 @@ CATEGORY_FINISH_CHANGE: {
 
 ## autobrr setup (BETA)
 
+**TODO: UPDATE FOR V2**
+
 It should work with [autobrr](https://github.com/autobrr/autobrr) as well, for the arguments in autobrr, just put `{{ .TorrentPathName }}` , and the command to execute same as that for AutoDL (path to `autodl_feed.mjs`). Advanced instructions for category etc. are similar.
 
 ## qBittorrent post race setup
+
+**TODO: UPDATE FOR V2**
 
 After the race, the post race script will resume the torrents (if nothing else is downloading), and also send you a discord notification with the ratio (if you have enabled it).
 
@@ -242,6 +223,8 @@ So the final entry would look like
 ## Other Scripts
 
 ### Tag Errored Torrents
+
+**TODO: UPDATE FOR V2**
 
 Sometimes torrents may be deleted from the tracker, or just an error in general. qBittorrent provides no easy way of sorting by these errors (Usually tracker responds with an error message).
 
