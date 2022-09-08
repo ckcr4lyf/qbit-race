@@ -5,7 +5,7 @@
   "main": "./bin/index.js",
   "type": "module",
   "scripts": {
-    "build": "tsc -p .",
+    "build": "rm -rf build/ && tsc -p .",
     "backup": "node bin/backup.js",
     "dev": "nodemon src/index.ts",
     "start": "node build/index.js",
