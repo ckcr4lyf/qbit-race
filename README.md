@@ -66,7 +66,7 @@ echo "ln -s $(which node) /usr/bin/node"
 
 ## Setup
 
-*PLEASE NOTE : YOU ARE ON THE MASTER BRANCH, FOR V2 (ALPHA) OF QBIT-RACE! THIS RELEASE IS NOT YET STABLE.*
+**PLEASE NOTE : YOU ARE ON THE MASTER BRANCH, FOR V2 (ALPHA) OF QBIT-RACE! THIS RELEASE IS NOT YET STABLE.**
 
 If you want to install the latest stable release, please checkout the README of v1.1.0: https://github.com/ckcr4lyf/qbit-race/tree/v1.1.0
 
