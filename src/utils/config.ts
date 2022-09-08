@@ -1,4 +1,4 @@
-type DISCORD_SETTINGS = {
+export type DISCORD_SETTINGS = {
     /**
      * Controls whether the webhook is enabled or not
      */

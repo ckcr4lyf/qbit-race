@@ -1,6 +1,6 @@
 {
   "name": "qbit-race",
-  "version": "1.0.0",
+  "version": "2.0.0-alpha.4",
   "description": "Qbit utilities for racing",
   "main": "./bin/index.js",
   "type": "module",

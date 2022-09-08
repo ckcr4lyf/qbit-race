@@ -8,6 +8,7 @@ import { buildTorrentAddedBody } from '../build/discord/messages.js'
 import { getLoggerV3 } from '../build/utils/logger.js'
 import { tagErroredTorrents } from '../build/racing/tag.js'
 import { postRaceResumeV2 } from '../build/racing/completed.js'
+import { addTorrentToRace } from '../build/racing/add.js';
 
 const logger = getLoggerV3();
 logger.info(`Starting...`);
@@ -59,6 +60,8 @@ program.command('completed').description('Run post race procedure on complete of
 
 program.command('add').description('Add a new torrent').requiredOption('-p, --path <path>', 'The path to the torrent file (can be in /tmp)').option('-c, --category <category>', 'Category to set in qBittorrent').action(async(options) => {
     logger.debug(`Going to add torrent from ${options.path}, and set category ${options.category}`);
+
+    await addTorrentToRace(api, config, options.path, options.category);
 })
 
 program.parse();
