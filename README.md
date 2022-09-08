@@ -13,8 +13,6 @@
 This repository is still in beta. There might be bugs. Feel free to open an issue if you encounter one. 
 You may also open an issue to request a feature, but please mark it with the prefix `[FEATURE REQUEST]`
 
-**I would recommend you to use Node.JS latest LTS release, currently v16.14.0 and qBittorrent should be v4.2.x+**
-
 ## Thanks
 
 <center>
@@ -48,11 +46,15 @@ Massive Thanks to <a href="https://walkerservers.com/">WalkerServers</a> for spo
     - [Example PromQL queries](#example-promql-queries)
 
 ## Node requirement
-This project needs Node.js v16+ (LTS recommended)
-### Important! 
-If you have installed Node.js with nvm, you will need to symlink it to your `bin` directory. Usually local bin will do, otherwise you may need to symlink it to `/usr/bin`
 
-You can get the correct command to symlink nvm's node by running these commands (The following commands print the symlink to execute, but doesn't actually run them). 
+Please use Node.JS v18.6.0 or later. LTS v16 should work in most cases, but if you face bugs related to "Out of memory: wasm memory" ([more info](https://github.com/nodejs/node/pull/43612)) , please try Node v18.6.0 before creating an issue.
+
+I would recommend using n for installing Node.JS (https://github.com/tj/n) .
+### Important! 
+
+The node binary needs to be accessible to `autodl-irssi` (or `autobrr`) and `qbittorrent`. On some seedboxes, the `PATH` for these is fixed, and usually includes a directory such as `~/bin` or `~/.local/bin`. In such cases you can symlink node to these, more details are below.
+
+TODO: Collapsible details
 
 For shared seedboxes:
 ```sh
