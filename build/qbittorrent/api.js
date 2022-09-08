@@ -102,6 +102,13 @@ export class QbittorrentApi {
             }
         });
     }
+    async reannounce(infohash) {
+        await this.client.get(ApiEndpoints.reannounce, {
+            params: {
+                hashes: infohash,
+            }
+        });
+    }
 }
 var ApiEndpoints;
 (function (ApiEndpoints) {
@@ -114,6 +121,7 @@ var ApiEndpoints;
     ApiEndpoints["pauseTorrents"] = "/api/v2/torrents/pause";
     ApiEndpoints["addTorrent"] = "/api/v2/torrents/add";
     ApiEndpoints["deleteTorrents"] = "/api/v2/torrents/delete";
+    ApiEndpoints["reannounce"] = "/api/v2/torrents/reannounce";
 })(ApiEndpoints || (ApiEndpoints = {}));
 export const login = (qbittorrentSettings) => {
     return axios.get(`${qbittorrentSettings.url}${ApiEndpoints.login}`, {

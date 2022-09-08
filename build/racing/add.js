@@ -100,7 +100,7 @@ export const addTorrentToRace = async (api, settings, path, category) => {
             // Need to reannounce
             if (working === false) {
                 logger.debug(`No working tracker. Will reannounce and sleep...`);
-                // TODO: API Reannounce
+                await api.reannounce(torrent.hash);
                 await sleep(settings.REANNOUNCE_INTERVAL);
                 attempts++;
             }

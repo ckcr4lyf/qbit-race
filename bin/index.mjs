@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { loadConfig, makeConfigIfNotExist } from '../build/utils/directory.js';
+import { loadConfig, makeConfigIfNotExist } from '../build/utils/configV2.js';
 import { loginV2 } from '../build/qbittorrent/auth.js';
 import { sendMessageV2 } from '../build/discord/api.js'
 import { buildTorrentAddedBody } from '../build/discord/messages.js'
