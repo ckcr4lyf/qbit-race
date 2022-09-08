@@ -74,7 +74,7 @@ If you want to try out V2 (alpha), then read ahead...
 
 ### Install qbit-race
 
-Installing now is as simple as `npm i -g qbit-race@2.0.0-alpha.4` . 
+Installing now is as simple as `npm i -g qbit-race@2.0.0-alpha.4` 
 
 ### Post install setup
 
