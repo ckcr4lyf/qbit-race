@@ -2,7 +2,6 @@ import * as dotenv from 'dotenv';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
-import { SETTINGS } from '../settings.js';
 import { logger } from './helpers/logger.js';
 let COOKIE = '';
 let LOGFILE = 'default.log';
@@ -35,10 +34,10 @@ if (!QBIT_PASSWORD) {
     console.log("Please define QBIT_PASSWORD in your .env file.");
     process.exit(1);
 }
-if (!DISCORD_WEBHOOK && SETTINGS.DISCORD_NOTIFICATIONS.enabled === true) {
-    console.log("Please define DISCORD_WEBHOOK in your .env file. (Discord notifications are enabled but a webhook is not defined)\n");
-    process.exit(1);
-}
+// if (!DISCORD_WEBHOOK && SETTINGS.DISCORD_NOTIFICATIONS.enabled === true){
+//     console.log("Please define DISCORD_WEBHOOK in your .env file. (Discord notifications are enabled but a webhook is not defined)\n");
+//     process.exit(1);
+// }
 const setCookie = (cookie) => {
     COOKIE = cookie;
     logger.info(`Updated COOKIE!`);

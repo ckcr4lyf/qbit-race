@@ -4,7 +4,6 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-import { SETTINGS } from '../settings.js';
 import { logger } from './helpers/logger.js';
 
 let COOKIE = '';
@@ -46,10 +45,10 @@ if (!QBIT_PASSWORD){
     process.exit(1);
 }
 
-if (!DISCORD_WEBHOOK && SETTINGS.DISCORD_NOTIFICATIONS.enabled === true){
-    console.log("Please define DISCORD_WEBHOOK in your .env file. (Discord notifications are enabled but a webhook is not defined)\n");
-    process.exit(1);
-}
+// if (!DISCORD_WEBHOOK && SETTINGS.DISCORD_NOTIFICATIONS.enabled === true){
+//     console.log("Please define DISCORD_WEBHOOK in your .env file. (Discord notifications are enabled but a webhook is not defined)\n");
+//     process.exit(1);
+// }
 
 const setCookie = (cookie: string) => {
     COOKIE = cookie;

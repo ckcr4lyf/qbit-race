@@ -8,4 +8,8 @@ tests/
 sample.env
 sample.settings.js
 settings.d.ts
+settings.js
+.env
 tsconfig.json
+logs/
+node_modules/
