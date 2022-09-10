@@ -1,5 +1,5 @@
 import { Logger, LOGLEVEL } from "@ckcr4lyf/logger";
-import { getFilePathInConfigDir } from "./configV2.js";
+import { getFilePathInConfigDir, makeConfigDirIfNotExist } from "./configV2.js";
 
 type getLoggerOptions = {
     skipFile: boolean,
@@ -18,9 +18,10 @@ export const getLoggerV3 = (options?: getLoggerOptions): Logger => {
         }
     }
 
+    makeConfigDirIfNotExist();
+
     return new Logger({
         loglevel: LOGLEVEL.DEBUG,
         filename: logFilename
     });
-    
 }
