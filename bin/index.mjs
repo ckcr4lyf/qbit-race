@@ -10,13 +10,13 @@ import { tagErroredTorrents } from '../build/racing/tag.js'
 import { postRaceResumeV2 } from '../build/racing/completed.js'
 import { addTorrentToRace } from '../build/racing/add.js';
 
-const logger = getLoggerV3();
-logger.info(`Starting...`);
-
 // This should take care of having a base config
 makeConfigIfNotExist();
 const config = loadConfig();
 const program = new Command();
+
+const logger = getLoggerV3();
+logger.info(`Starting...`);
 
 program.command('validate').description(`Validate that you've configured qbit-race correctly`).action(async () => {
     logger.info(`Going to login`);
