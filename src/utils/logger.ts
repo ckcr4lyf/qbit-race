@@ -1,5 +1,5 @@
 import { Logger, LOGLEVEL } from "@ckcr4lyf/logger";
-import { getFilePathInConfigDir } from "./configV2";
+import { getFilePathInConfigDir } from "./configV2.js";
 
 type getLoggerOptions = {
     skipFile: boolean,
