@@ -16,16 +16,13 @@ logger.info(`Starting...`);
 // This should take care of having a base config
 makeConfigIfNotExist();
 const config = loadConfig();
-
-// If credz are wrong, this will throw
-const api = await loginV2(config.QBITTORRENT_SETTINGS);
-
 const program = new Command();
 
 program.command('validate').description(`Validate that you've configured qbit-race correctly`).action(async () => {
     logger.info(`Going to login`);
 
     try {
+        const api = await loginV2(config.QBITTORRENT_SETTINGS);
         // Check discord if applicable
         if (config.DISCORD_NOTIFICATIONS.enabled === true){
             await sendMessageV2(config.DISCORD_NOTIFICATIONS.webhook, buildTorrentAddedBody(config.DISCORD_NOTIFICATIONS, {
@@ -40,12 +37,13 @@ program.command('validate').description(`Validate that you've configured qbit-ra
 
         logger.info(`Succesfully validated!`);
     } catch (e){
-        logger.error(`Validation failed!`);
+        logger.error(`Validation failed! ${e}`);
         process.exit(1);
     }
 })
 
 program.command('tag-error').description(`Tag torrents for which the tracker is errored`).option('--dry-run', 'Just list torrents without actually tagging them').action(async (options) => {
+    const api = await loginV2(config.QBITTORRENT_SETTINGS);
     await tagErroredTorrents(api, options.dryRun);
 })
 
@@ -55,12 +53,13 @@ program.command('completed').description('Run post race procedure on complete of
         process.exit(1);
 
     }
+    const api = await loginV2(config.QBITTORRENT_SETTINGS);
     await postRaceResumeV2(api, config, options.infohash);
 })
 
 program.command('add').description('Add a new torrent').requiredOption('-p, --path <path>', 'The path to the torrent file (can be in /tmp)').option('-c, --category <category>', 'Category to set in qBittorrent').action(async(options) => {
     logger.debug(`Going to add torrent from ${options.path}, and set category ${options.category}`);
-
+    const api = await loginV2(config.QBITTORRENT_SETTINGS);
     await addTorrentToRace(api, config, options.path, options.category);
 })
 
