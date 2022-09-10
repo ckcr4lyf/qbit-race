@@ -7,7 +7,7 @@ import { getTorrentMetainfo } from '../../src/helpers/torrent.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 test('getTorrentMetaInfo', t => {
-    const torrent = fs.readFileSync(path.join(__dirname, '100MB.bin.torrent'));
+    const torrent = fs.readFileSync(path.join(__dirname, '../../../__fixtures__/100MB.bin.torrent'));
     const metainfo = getTorrentMetainfo(torrent);
 
     const expected = {

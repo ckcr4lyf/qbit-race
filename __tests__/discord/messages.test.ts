@@ -6,7 +6,8 @@ import { buildMessageBody, buildTorrentAddedBody } from '../../src/discord/messa
 const fakeDiscSettings = {
     enabled: true,
     botUsername: 'bot',
-    botAvatar: 'image.png'
+    botAvatar: 'image.png',
+    webhook: 'xd',
 }
 
 test('buildMessageBody', t => {

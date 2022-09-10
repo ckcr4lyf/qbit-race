@@ -7,3 +7,5 @@ tests/examples.js
 settings.js
 /build/**/*.js.map
 /build/**/*.d.ts
+build/__mocks__/
+build/__tests__/

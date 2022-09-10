@@ -13,3 +13,6 @@ settings.js
 tsconfig.json
 logs/
 node_modules/
+__fixtures__/
+build/__mocks__/
+build/__tests__/

@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { loadConfig, makeConfigIfNotExist } from '../build/utils/configV2.js';
-import { loginV2 } from '../build/qbittorrent/auth.js';
-import { sendMessageV2 } from '../build/discord/api.js'
-import { buildTorrentAddedBody } from '../build/discord/messages.js'
-import { getLoggerV3 } from '../build/utils/logger.js'
-import { tagErroredTorrents } from '../build/racing/tag.js'
-import { postRaceResumeV2 } from '../build/racing/completed.js'
-import { addTorrentToRace } from '../build/racing/add.js';
+import { loadConfig, makeConfigIfNotExist } from '../build/src/utils/configV2.js';
+import { loginV2 } from '../build/src/qbittorrent/auth.js';
+import { sendMessageV2 } from '../build/src/discord/api.js'
+import { buildTorrentAddedBody } from '../build/src/discord/messages.js'
+import { getLoggerV3 } from '../build/src/utils/logger.js'
+import { tagErroredTorrents } from '../build/src/racing/tag.js'
+import { postRaceResumeV2 } from '../build/src/racing/completed.js'
+import { addTorrentToRace } from '../build/src/racing/add.js';
 
 // This should take care of having a base config
 makeConfigIfNotExist();
