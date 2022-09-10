@@ -14,31 +14,23 @@ const getConfigPath = () => {
 export const getFilePathInConfigDir = (filename) => {
     return path.join(getConfigDir(), filename);
 };
-export const makeConfigIfNotExist = () => {
-    // At this point we do not know if config dir exists, so we wont log to file...
-    const logger = getLoggerV3({
-        skipFile: true,
-    });
+export const makeConfigDirIfNotExist = () => {
     const configDir = getConfigDir();
-    logger.debug(`config dir is ${configDir}`);
     try {
         const stats = fs.statSync(configDir);
         if (stats.isDirectory() === true) {
-            logger.debug(`Dir exists, wont do anything`);
+            return;
         }
     }
     catch (e) {
-        // console.log(e.code);
         // Probably didnt exist. Try to make
-        try {
-            fs.mkdirSync(configDir, { recursive: true });
-            logger.debug(`Made dir`);
-        }
-        catch (e) {
-            logger.error(`Fail to make dir`);
-            process.exit(1);
-        }
+        fs.mkdirSync(configDir, { recursive: true });
     }
+};
+export const makeConfigIfNotExist = () => {
+    makeConfigDirIfNotExist();
+    const configDir = getConfigDir();
+    const logger = getLoggerV3();
     // Now check config
     const configFilePath = path.join(configDir, 'config.json');
     // Check if config exists
