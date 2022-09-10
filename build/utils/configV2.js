@@ -11,8 +11,14 @@ const getConfigDir = () => {
 const getConfigPath = () => {
     return path.join(getConfigDir(), 'config.json');
 };
+export const getFilePathInConfigDir = (filename) => {
+    return path.join(getConfigDir(), filename);
+};
 export const makeConfigIfNotExist = () => {
-    const logger = getLoggerV3();
+    // At this point we do not know if config dir exists, so we wont log to file...
+    const logger = getLoggerV3({
+        skipFile: true,
+    });
     const configDir = getConfigDir();
     logger.debug(`config dir is ${configDir}`);
     try {
