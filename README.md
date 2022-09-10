@@ -80,7 +80,7 @@ Installing now is as simple as `npm i -g qbit-race@2.0.0-alpha.4`
 
 ### Post install setup
 
-Run `qbit-race` once to generate a dummy config file. (TODO: Fix the auth error on first run).
+Run `qbit-race` once to generate a dummy config file.
 
 Then you can edit the file in `~/.config/qbit-race/config.json` with the values you prefer.
 
