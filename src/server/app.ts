@@ -18,7 +18,7 @@ try {
     api = await loginV2(config.QBITTORRENT_SETTINGS);
 } catch (e){
     logger.error(`Failed to login: ${e}`);
-    process.exit
+    process.exit(1);
 }
 
 server.get('/metrics', async (request, reply) => {

@@ -15,7 +15,7 @@ try {
 }
 catch (e) {
     logger.error(`Failed to login: ${e}`);
-    process.exit;
+    process.exit(1);
 }
 server.get('/metrics', async (request, reply) => {
     const transferInfo = await getTransferInfo();
