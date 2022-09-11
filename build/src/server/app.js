@@ -6,7 +6,7 @@ import { loginV2 } from '../qbittorrent/auth.js';
 import { loadConfig, makeConfigIfNotExist } from '../utils/configV2.js';
 import { getLoggerV3 } from '../utils/logger.js';
 const server = fastify();
-const logger = getLoggerV3({ logfile: 'prometheus-exporter.text ' });
+const logger = getLoggerV3({ logfile: 'prometheus-exporter-logs.txt' });
 makeConfigIfNotExist();
 const config = loadConfig();
 let api;
