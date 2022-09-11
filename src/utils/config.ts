@@ -40,6 +40,17 @@ export type QBITTORRENT_SETTINGS = {
     password: string;
 }
 
+export type PROMETHEUS_SETTINGS = {
+    /**
+     * The ip to bind the metrics server to
+     */
+    ip: string,
+    /**
+     * The port to listen on
+     */
+    port: number,
+}
+
 export type Settings = {
     /**
      * Number of seconds to wait between reannounces, in milliseconds
@@ -79,6 +90,7 @@ export type Settings = {
     COUNT_STALLED_DOWNLOADS: boolean;
     DISCORD_NOTIFICATIONS: DISCORD_SETTINGS;
     QBITTORRENT_SETTINGS: QBITTORRENT_SETTINGS;
+    PROMETHEUS_SETTINGS: PROMETHEUS_SETTINGS;
     /**
      * Set of category changes to perform on torrent completion
      */
@@ -97,6 +109,10 @@ export const defaultSettings: Settings = {
        url: 'http://localhost:8080',
        username: 'admin',
        password: 'adminadmin',
+    },
+    PROMETHEUS_SETTINGS: {
+        ip: '127.0.0.1',
+        port: 9999,
     },
     DISCORD_NOTIFICATIONS: {
         enabled: false,

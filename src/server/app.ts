@@ -39,7 +39,7 @@ server.get('/metrics', async (request, reply) => {
 const PROM_PORT = 3000;
 const PROM_IP = '127.0.0.1';
 
-server.listen(PROM_PORT, PROM_IP, (err, address) => {
+server.listen(config.PROMETHEUS_SETTINGS.port, config.PROMETHEUS_SETTINGS.ip, (err, address) => {
     if (err){
         logger.error(`Failed to bind to ${PROM_IP}:${PROM_PORT}. Exiting...`)
         process.exit(1);

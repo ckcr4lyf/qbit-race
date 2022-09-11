@@ -11,6 +11,10 @@ export const defaultSettings = {
         username: 'admin',
         password: 'adminadmin',
     },
+    PROMETHEUS_SETTINGS: {
+        ip: '127.0.0.1',
+        port: 9999,
+    },
     DISCORD_NOTIFICATIONS: {
         enabled: false,
         webhook: '',
