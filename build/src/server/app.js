@@ -27,10 +27,9 @@ server.get('/metrics', async (request, reply) => {
         'Content-Type': 'text/plain'
     }).send(finalMetrics);
 });
-// TODO: Get from config
-const PROM_PORT = 3000;
-const PROM_IP = '127.0.0.1';
-server.listen(config.PROMETHEUS_SETTINGS.port, config.PROMETHEUS_SETTINGS.ip, (err, address) => {
+const PROM_PORT = config.PROMETHEUS_SETTINGS.port;
+const PROM_IP = config.PROMETHEUS_SETTINGS.ip;
+server.listen(PROM_PORT, PROM_IP, (err, address) => {
     if (err) {
         logger.error(`Failed to bind to ${PROM_IP}:${PROM_PORT}. Exiting...`);
         process.exit(1);

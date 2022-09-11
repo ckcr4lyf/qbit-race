@@ -22,7 +22,7 @@ program.command('validate').description(`Validate that you've configured qbit-ra
     logger.info(`Going to login`);
 
     try {
-        const api = await loginV2(config.QBITTORRENT_SETTINGS);
+        await loginV2(config.QBITTORRENT_SETTINGS);
         // Check discord if applicable
         if (config.DISCORD_NOTIFICATIONS.enabled === true){
             await sendMessageV2(config.DISCORD_NOTIFICATIONS.webhook, buildTorrentAddedBody(config.DISCORD_NOTIFICATIONS, {
