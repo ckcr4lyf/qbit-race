@@ -1,12 +1,9 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import FormData from 'form-data';
 
-import { QBIT_HOST, QBIT_PORT, COOKIE, HTTP_SCHEME, URL_PATH } from '../config.js';
-import { logger } from '../helpers/logger.js';
 import { torrentFromApi, TorrentState, TransferInfo } from '../interfaces.js';
 import { QBITTORRENT_SETTINGS, Settings } from '../utils/config.js';
 
-const basePath = `${HTTP_SCHEME}://${QBIT_HOST}:${QBIT_PORT}${URL_PATH}`
 
 export class QbittorrentApi {
 
@@ -162,6 +159,11 @@ export const login = (qbittorrentSettings: QBITTORRENT_SETTINGS): Promise<AxiosR
         }
     });
 }
+
+// TODO: Get rid of these guys
+const basePath = '';
+const COOKIE = '';
+const logger: any = {};
 
 export const getTorrentInfo = (infohash: string): Promise<torrentFromApi> => {
     return new Promise((resolve: (value: torrentFromApi) => void, reject) => {

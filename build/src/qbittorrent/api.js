@@ -1,8 +1,5 @@
 import axios from 'axios';
 import FormData from 'form-data';
-import { QBIT_HOST, QBIT_PORT, COOKIE, HTTP_SCHEME, URL_PATH } from '../config.js';
-import { logger } from '../helpers/logger.js';
-const basePath = `${HTTP_SCHEME}://${QBIT_HOST}:${QBIT_PORT}${URL_PATH}`;
 export class QbittorrentApi {
     constructor(basePath, cookie) {
         this.basePath = basePath;
@@ -131,6 +128,10 @@ export const login = (qbittorrentSettings) => {
         }
     });
 };
+// TODO: Get rid of these guys
+const basePath = '';
+const COOKIE = '';
+const logger = {};
 export const getTorrentInfo = (infohash) => {
     return new Promise((resolve, reject) => {
         axios.get(`${basePath}/api/v2/torrents/info`, {
