@@ -136,6 +136,11 @@ export class QbittorrentApi {
             }
         });
     }
+
+    async getTransferInfo(): Promise<TransferInfo>{
+        const response = await this.client.get(ApiEndpoints.transferInfo);
+        return response.data;
+    }
 }
 
 enum ApiEndpoints {
@@ -149,6 +154,7 @@ enum ApiEndpoints {
     addTorrent = '/api/v2/torrents/add',
     deleteTorrents = '/api/v2/torrents/delete',
     reannounce = '/api/v2/torrents/reannounce',
+    transferInfo = '/api/v2/transfer/info',
 }
 
 export const login = (qbittorrentSettings: QBITTORRENT_SETTINGS): Promise<AxiosResponse> => {
