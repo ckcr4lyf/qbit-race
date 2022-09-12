@@ -106,6 +106,10 @@ export class QbittorrentApi {
             }
         });
     }
+    async getTransferInfo() {
+        const response = await this.client.get(ApiEndpoints.transferInfo);
+        return response.data;
+    }
 }
 var ApiEndpoints;
 (function (ApiEndpoints) {
@@ -119,6 +123,7 @@ var ApiEndpoints;
     ApiEndpoints["addTorrent"] = "/api/v2/torrents/add";
     ApiEndpoints["deleteTorrents"] = "/api/v2/torrents/delete";
     ApiEndpoints["reannounce"] = "/api/v2/torrents/reannounce";
+    ApiEndpoints["transferInfo"] = "/api/v2/transfer/info";
 })(ApiEndpoints || (ApiEndpoints = {}));
 export const login = (qbittorrentSettings) => {
     return axios.get(`${qbittorrentSettings.url}${ApiEndpoints.login}`, {
@@ -126,22 +131,6 @@ export const login = (qbittorrentSettings) => {
             username: qbittorrentSettings.username,
             password: qbittorrentSettings.password,
         }
-    });
-};
-// TODO: Get rid of these guys
-const basePath = '';
-const COOKIE = '';
-const logger = {};
-export const getTransferInfo = () => {
-    return axios.get(`${basePath}/api/v2/transfer/info`, {
-        headers: {
-            'Cookie': COOKIE
-        }
-    }).then(response => {
-        return response.data;
-    }).catch(err => {
-        logger.error(`Get transferInfo failed with error code ${err.response.status}`);
-        throw err;
     });
 };
 //# sourceMappingURL=api.js.map
