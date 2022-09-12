@@ -166,24 +166,6 @@ export const login = (qbittorrentSettings: QBITTORRENT_SETTINGS): Promise<AxiosR
     });
 }
 
-// TODO: Get rid of these guys
-const basePath = '';
-const COOKIE = '';
-const logger: any = {};
-
-export const getTransferInfo = (): Promise<TransferInfo> => {
-    return axios.get(`${basePath}/api/v2/transfer/info`, {
-        headers: {
-            'Cookie': COOKIE
-        }
-    }).then(response => {
-        return response.data;
-    }).catch(err => {
-        logger.error(`Get transferInfo failed with error code ${err.response.status}`);
-        throw err;
-    })
-}
-
 // We just need the hash for some of the API calls
 export type ApiCompatibleTorrent = {
     hash: string;

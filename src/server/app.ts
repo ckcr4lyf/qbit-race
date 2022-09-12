@@ -1,7 +1,7 @@
 // The server for serving prometheus metrics
 import fastify from 'fastify';
 import { makeMetrics, stateMetrics } from '../helpers/preparePromMetrics.js';
-import { getTransferInfo, QbittorrentApi } from '../qbittorrent/api.js';
+import { QbittorrentApi } from '../qbittorrent/api.js';
 import { loginV2 } from '../qbittorrent/auth.js';
 import { loadConfig, makeConfigIfNotExist } from '../utils/configV2.js';
 import { getLoggerV3 } from '../utils/logger.js';
@@ -22,7 +22,7 @@ try {
 }
 
 server.get('/metrics', async (request, reply) => {
-    const transferInfo = await getTransferInfo();
+    const transferInfo = await api.getTransferInfo();
     const torrents = await api.getTorrents();
 
     let finalMetrics = '';
