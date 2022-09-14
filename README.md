@@ -194,7 +194,7 @@ CATEGORY_FINISH_CHANGE: {
 
 **TODO: UPDATE FOR V2**
 
-It should work with [autobrr](https://github.com/autobrr/autobrr) as well, for the arguments in autobrr, just put `{{ .TorrentPathName }}` , and the command to execute same as that for AutoDL (path to `autodl_feed.mjs`). Advanced instructions for category etc. are similar.
+It should work with [autobrr](https://github.com/autobrr/autobrr) as well, for the arguments in autobrr, just put `{{ .TorrentPathName }}` , and the command to execute same as that for AutoDL (path to `qbit-race`). Advanced instructions for category etc. are similar.
 
 ## qBittorrent post race setup
 
@@ -251,7 +251,8 @@ The stats exposed are:
 
 ### Metrics server setup
 
-As per sample.env, there are two variables to configure for where the server binds to, `PROM_IP` and `PROM_PORT`. Defaults are `127.0.0.1` and `9999` respectively.
+In the config file, there are two keys under `PROMETHEUS_SETTINGS` to configure for where the server binds to, `ip` and `port`. Defaults are `127.0.0.1` and `9999` respectively.
+
 This address needs to be accessible by yur prometheus instance!
 
 To run the server, it is recommended to use a node process manager, pm2. Install it with:
@@ -263,16 +264,18 @@ npm i -g pm2
 Then you can start the server (from the project root) with:
 
 ```sh
-pm2 start ./build/server/app.js --name=qbit-race-prom-exporter
+pm2 start "qbit-race metrics" --name=qbit-race-prom-exporter
 ```
 
-(Replace name with something ele if you wish)
+(Replace name with something else if you wish)
 
-You can monitor the status with 
+You can monitor the status of th emetrics server with 
 
 ```sh
 pm2 monit
 ```
+
+Then add it to your Prometheus config, and should be good to go!
 
 ### Example PromQL queries
 
