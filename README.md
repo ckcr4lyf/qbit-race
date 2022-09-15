@@ -54,17 +54,45 @@ I would recommend using n for installing Node.JS (https://github.com/tj/n) .
 
 The node binary needs to be accessible to `autodl-irssi` (or `autobrr`) and `qbittorrent`. On some seedboxes, the `PATH` for these is fixed, and usually includes a directory such as `~/bin` or `~/.local/bin`. In such cases you can symlink node to these, more details are below.
 
-TODO: Collapsible details
+<details>
 
-For shared seedboxes:
-```sh
-echo "ln -s $(which node) ${HOME}/bin/node"
+<summary> Symlinking Node on shared seedboxes </summary>
+
+You can determine the path to node by running:
+
+```
+$ which node
 ```
 
-or, for deciated seedboxes: (this might need a sudo)
-```sh
-echo "ln -s $(which node) /usr/bin/node"
+For instance, if you install using `n`, it may be `/home/username/n/bin/node`. Then, symlink that into your bin folder:
 ```
+ln -s PATH_TO_NODE ${HOME}/bin/node
+```
+
+For details on specific seedbox vendors, see (TODO).
+
+</details>
+
+<details>
+
+<summary> Symlinking Node on dedicated seedboxes </summary>
+
+Usually on dedicates seedboxes, the path you install node to, even via `n`, should be added to the user's path, and restarting applications (e.g. autodl, qbittorrent) should make this available in their path.
+
+However, if it isn't, then you usually need to symlink it into `/usr/bin`. First determine the path to node:
+
+```
+$ which node
+```
+
+For instance, if you install using `n`, it may be `/home/username/n/bin/node`. Then, symlink that into `/usr/bin` as (this may need sudo):
+```
+ln -s PATH_TO_NODE /usr/bin/node
+```
+
+For details on specific seedbox vendors, see (TODO).
+
+</details>
 
 ## Setup
 
@@ -76,7 +104,7 @@ If you want to try out V2 (alpha), then read ahead...
 
 ### Install qbit-race
 
-Installing now is as simple as `npm i -g qbit-race@2.0.0-alpha.4` 
+Installing is as simple as `npm i -g qbit-race` 
 
 ### Post install setup
 
