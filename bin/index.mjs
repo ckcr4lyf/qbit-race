@@ -69,4 +69,6 @@ program.command('metrics').description('Start a prometheus metrics server').acti
     startMetricsServer(config, api);
 })
 
+// TODO: Add -v / --version
+
 program.parse();
