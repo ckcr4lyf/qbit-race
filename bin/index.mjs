@@ -10,6 +10,7 @@ import { tagErroredTorrents } from '../build/src/racing/tag.js'
 import { postRaceResumeV2 } from '../build/src/racing/completed.js'
 import { startMetricsServer } from '../build/src/server/appFactory.js';
 import { addTorrentToRace } from '../build/src/racing/add.js';
+import data from '../package.json' assert { type: 'json' };
 
 // This should take care of having a base config
 makeConfigIfNotExist();
@@ -69,6 +70,8 @@ program.command('metrics').description('Start a prometheus metrics server').acti
     startMetricsServer(config, api);
 })
 
-// TODO: Add -v / --version
+program.option('-v, --version', 'Display the version').action(() => {
+    console.log(`\n\nqbit-race version ${data.version}\n\n`);
+})
 
 program.parse();
