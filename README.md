@@ -142,6 +142,27 @@ This option allows you to configure a Discord Webhook URL for notifications on a
 
 Once you enable webhooks, you can run `qbit-race validate` to check if it is able to send you a message in the channel.
 
+### Change Category on torrent completion
+
+Often it may be desirable to change the category of the torrent on completion, example when using with Sonarr / Radarr etc. It is also useful to move torrents from SSD to HDD, with qBittorrents category-based download path rules.  You can add as many rules as you would like (of course, a single torrent is limited to a single category still, by qbittorrent itself).
+
+To do so, there are two requirements:
+1. The torrent must be added with a category set ([see this section](#torrent-category))
+2. The category *to be changed to* must already exist in qBittorrent
+
+Then, in the configuration file, you can add a line to the `CATEGORY_FINISH_CHANGE` object, of the form:
+
+```
+'THE_CATEGORY_FROM_AUTODL': 'THE_CATEGORY_AFTER_COMPLETION'
+```
+
+For instance, if you add it with the category "DOWNLOADING_LINUX", and want to change to "SEEDING_LINUX" on completeion, you can set it up as:
+```
+CATEGORY_FINISH_CHANGE: {
+     'DOWNLOADING_LINUX': 'SEEDING_LINUX',
+     'ANOTHER_ONE': 'YET_ANOTHER_ONE'
+}
+```
 
 ## AutoDL setup (Basic)
 
@@ -179,31 +200,7 @@ For instance, a filter for Arch Linux ISOs could have the arguments:
 
 Which would set the category of all torrents that match said filter to "never open". If the category doesn't exist it will be created automatically. 
 
-Protip: qBittorrent has a feature that allows you to configure download paths by category. This might be useful to consolidate your downloads.`
-
-### Change Category on torrent completion
-
-**TODO: UPDATE FOR V2**
-
-Often it may be desirable to change the category of the torrent on completion, often when using with Sonarr / Radarr etc. You can add as many rules as you would like (of course, a single torrent is limited to a single cateogry still, by qbittorrent itself).
-
-To do so, there are two requirements:
-1. The torrent must be added with a category set
-2. The category *to be changed to* must already exist
-
-Then, in `settings.js`, you can add a line to the `CATEGORY_FINISH_CHANGE` object, of the form:
-
-```
-'THE_CATEGORY_FROM_AUTODL': 'THE_CATEGORY_AFTER_COMPLETION'
-```
-
-For instance, if you add it as "DOWNLOADING_LINUX", and want to change to "SEEDING_LINUX", you can set it up as:
-```
-CATEGORY_FINISH_CHANGE: {
-     'DOWNLOADING_LINUX': 'SEEDING_LINUX',
-     'ANOTHER_ONE': 'YET_ANOTHER_ONE'
- }
-```
+Protip: qBittorrent has a feature that allows you to configure download paths by category. This might be useful to consolidate your downloads.
 
 ## autobrr setup (BETA)
 
