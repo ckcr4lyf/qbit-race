@@ -145,31 +145,22 @@ Once you enable webhooks, you can run `qbit-race validate` to check if it is abl
 
 ## AutoDL setup (Basic)
 
-**TODO: UPDATE FOR V2**
+Make sure you followed the steps to symlink node (if required). Detailed vendor-specific seedbox guides can be found here: (TODO)
 
-To get the path to the script which will feed qBittorrent, run the following commands:
-```sh
-cd ~/scripts/qbit-race/bin
-echo "$(pwd)/autodl_feed.mjs"
-```
+To determine the path of `qbit-race`, run `which qbit-race`. You will see the complete path, for example `/home/username/n/bin/qbit-race`. This will be the command in the AutoDL config.
 
-You will see a line like
-```
-/home/username/scripts/qbit-race/bin/autodl_feed.mjs
-```
-
-This is the path to the script. Now in AutoDL, change the Action for your filter (or Global action) to:
+Now in AutoDL, change the Action for your filter (or Global action) to:
 1. Choose .torrent action - `Run Program`
-2. Comamnd - `/home/username/scripts/qbit-race/bin/autodl_feed.mjs`
-3. Arguments - `"$(TorrentPathName)"`
+2. Comamnd - `/home/username/n/bin/qbit-race`
+3. Arguments - `add -p "$(TorrentPathName)"`
 
-**NOTE: THIS IS DIFFERENT THAN PREVIOUS VERSION WHICH NEEDED 4 ARGUMENTS!!!**
+TODO: Screencap
 
 Click OK, and that should be it!
 
-Now, when AutoDL geta a torrent, it will pass it to the script which will feed it to qBittorrent!
+Now, when AutoDL gets a torrent, it will pass it to the script which will feed it to qBittorrent!
 
-You can view the logs under `~/scripts/qbit-race/logs` to try and debug.
+You can view the logs under `~/.config/qbit-race/logs.txt` to try and debug.
 
 ## AutoDL setup (Advanced)
 
