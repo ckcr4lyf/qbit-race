@@ -112,39 +112,35 @@ Run `qbit-race` once to generate a dummy config file.
 
 Then you can edit the file in `~/.config/qbit-race/config.json` with the values you prefer.
 
-## Additional Settings
+## Configuration
 
-There are additional parameters you can tweak in `settings.js`. These settings can be changed anytime by modifying this file, does not need a restart of qBittorrent or AutoDL. Here is a short explanation:
+Once you've initialized the config, you can tweak settings in `~/.config/qbit-race/config.json`. These settings can be changed anytime by modifying this file, and doing so does not need a restart of qBittorrent or AutoDL. Here is a short explanation of the options:
 
 |Parameter|Default|Description|
 |---------|-------|-----------|
-|`REANNOUNCE_INTERVAL`|`5000`|milliseconds to wait before sending reannounce requests|
-|`REANNOUNCE_LIMIT`|`30`|Number of times to reannounce to the tracker before "giving up" (sometimes a torrent may be announced but then deleted by moderation)|
-|`PAUSE_RATIO`|`1`|When a new torrent is added, all seeding torrents above this ratio are paused. `-1` will not pause any torrents, this may lead to worse performance|
+|`REANNOUNCE_INTERVAL`|`5000`|milliseconds to wait before re-sending reannounce requests|
+|`REANNOUNCE_LIMIT`|`30`|Number of times to reannounce to the tracker before "giving up" (sometimes a torrent may be uploaded but then deleted by moderation)|
+|`PAUSE_RATIO`|`1`|When a new torrent is added, all seeding torrents above this ratio are paused. `-1` will not pause any torrents.  (This may lead to worse racing performance)|
 |`PAUSE_SKIP_TAGS`|`["tracker.linux.org", "some_other_tag"]`|Prevent pausing of torrents before a race, if any of the tags match. This parameter is useful for skipping certain trackers where you may want to maintain seedtime|
-|`PAUSE_SKIP_CATEGORIES`|`["permaseeding", "some_other_category"]`|Prevent pausing of torrents before a race, if the category matches any in this list. Useful if you setup autoDL with some filters with the category option, and want to skip them|
+|`PAUSE_SKIP_CATEGORIES`|`["permaseeding", "some_other_category"]`|Prevent pausing of torrents before a race, if the category matches any in this list. Useful if you setup autoDL with some filters with the category option, and want to skip them from being paused|
 |`CONCURRENT_RACES`|`1`|How many torrents can be "raced" at once. If autodl grabs a torrent, but these many races are already in progress, the torrent will be silently skipped. While less parallel races give better performance, if you want to download everything autoDL grabs, set this to `-1`|
-|`COUNT_STALLED_DOWNLOADS`|`false`|If a seeder abandons the torrent midway, the download may be stalled. This option controlls whether such torrents should be counted when checking for `CONCURRENT_RACES`. It is advisable to keep this as false|
-|`DISCORD_NOTIFICATIONS`|`object`|See below for descripton|
-`CATEGORY_FINISH_CHANGE`|`object`|Check [this section](#change-category-on-torrent-completion) for details|
+|`COUNT_STALLED_DOWNLOADS`|`false`|If a seeder abandons the torrent midway, the download may be stalled. This option controls whether such torrents should be counted when checking for `CONCURRENT_RACES`. It is advised to keep this as false|
+|`QBITTORRENT_SETTINGS`|`object`|The connection options for qBittorrent. More details below|
+|`DISCORD_NOTIFICATIONS`|`object`|Configuration for discord notifications. Check [this section](#discord-notifications) for more details|
+|`CATEGORY_FINISH_CHANGE`|`object`|Check [this section](#change-category-on-torrent-completion) for details|
 
+### Discord Notifications
 <br><br>
-If you would like to receive discord notifications, so you can enable this option. **REMEMBER TO SET YOUR WEBHOOK URL IN THE .env FILE!**. The description of the options is as follows:
+This option allows you to configure a Discord Webhook URL for notifications on a torrent being added, as well as torrent completion.
 
 |Parameter|Default|Description|
 |---------|-------|-----------|
 |`enabled`|`false`|Controls whether notifications are sent or not. Set to `true` to enable discord notifications|
+|`webhook`|`""`|The URL for your discord webhook|
 |`botUsername`|`qBittorrent`|The username of the Discord "account" that sends the notification|
 |`botAvatar`|(qBittorrent logo)|The picture of the Discord "account" that sends notification, and thumbnail of the embed|
 
-If you enable discord notifications, and set the webhook URL in `.env`, you can run `npm run validate` again and it should send you a message. The output should look like:
-```
-2020-09-27T13:32:33.337Z [CONFIG] - Loaded .env
-2020-09-27T13:32:33.454Z [CONFIG] - Updated COOKIE!
-2020-09-27T13:32:33.492Z [AUTH] - Login completed in 0.10 seconds.
-2020-09-27T13:32:33.680Z [DISCORD] - Message sent successfully!
-2020-09-27T13:32:33.680Z [TEST] - SUCCESS!
-```
+Once you enable webhooks, you can run `qbit-race validate` to check if it is able to send you a message in the channel.
 
 
 ## AutoDL setup (Basic)
