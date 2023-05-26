@@ -10,7 +10,6 @@ import { tagErroredTorrents } from '../build/src/racing/tag.js'
 import { postRaceResumeV2 } from '../build/src/racing/completed.js'
 import { startMetricsServer } from '../build/src/server/appFactory.js';
 import { addTorrentToRace } from '../build/src/racing/add.js';
-import data from '../package.json' assert { type: 'json' };
 
 // This should take care of having a base config
 makeConfigIfNotExist();
@@ -68,10 +67,6 @@ program.command('add').description('Add a new torrent').requiredOption('-p, --pa
 program.command('metrics').description('Start a prometheus metrics server').action(async () => {
     const api = await loginV2(config.QBITTORRENT_SETTINGS);
     startMetricsServer(config, api);
-})
-
-program.option('-v, --version', 'Display the version').action(() => {
-    console.log(`\n\nqbit-race version ${data.version}\n\n`);
 })
 
 program.parse();

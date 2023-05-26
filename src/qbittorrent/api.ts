@@ -158,10 +158,12 @@ enum ApiEndpoints {
 }
 
 export const login = (qbittorrentSettings: QBITTORRENT_SETTINGS): Promise<AxiosResponse> => {
-    return axios.get(`${qbittorrentSettings.url}${ApiEndpoints.login}`, {
-        params: {
-            username: qbittorrentSettings.username,
-            password: qbittorrentSettings.password,
+    return axios.post(`${qbittorrentSettings.url}${ApiEndpoints.login}`, {
+        username: qbittorrentSettings.username,
+        password: qbittorrentSettings.password
+    }, {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
         }
     });
 }
