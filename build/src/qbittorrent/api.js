@@ -126,9 +126,6 @@ var ApiEndpoints;
     ApiEndpoints["transferInfo"] = "/api/v2/transfer/info";
 })(ApiEndpoints || (ApiEndpoints = {}));
 export const login = (qbittorrentSettings) => {
-    const form = new FormData();
-    form.append('username', qbittorrentSettings.username);
-    form.append('password', qbittorrentSettings.password);
     return axios.post(`${qbittorrentSettings.url}${ApiEndpoints.login}`, {
         username: qbittorrentSettings.username,
         password: qbittorrentSettings.password
