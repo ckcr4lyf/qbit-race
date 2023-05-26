@@ -158,10 +158,14 @@ enum ApiEndpoints {
 }
 
 export const login = (qbittorrentSettings: QBITTORRENT_SETTINGS): Promise<AxiosResponse> => {
-    const form = new FormData();
-    form.append('username', qbittorrentSettings.username);
-    form.append('password', qbittorrentSettings.password);
-    return axios.post(`${qbittorrentSettings.url}${ApiEndpoints.login}`, form);
+    return axios.post(`${qbittorrentSettings.url}${ApiEndpoints.login}`, {
+        username: qbittorrentSettings.username,
+        password: qbittorrentSettings.password
+    }, {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    });
 }
 
 // We just need the hash for some of the API calls

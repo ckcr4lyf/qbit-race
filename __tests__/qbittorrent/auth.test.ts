@@ -12,9 +12,9 @@ test('loginV2', async t => {
         password: 'adminadmin'
     }
 
-    const scope = nock(fakeSettings.url).post('/api/v2/auth/login', (b) => {
-        console.log(b);
-        return true;
+    const scope = nock(fakeSettings.url).post('/api/v2/auth/login', {
+        username: 'admin',
+        password: 'adminadmin'
     }).reply(200, {}, {
         'set-cookie': 'SID=1234'
     });
