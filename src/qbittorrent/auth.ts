@@ -10,7 +10,7 @@ export const loginV2 = async (qbittorrentSettings: QBITTORRENT_SETTINGS): Promis
     const response = await apiLogin(qbittorrentSettings);
 
     // TODO: Differentiate between wrong credentials vs. qbit is not listening (wrong URL / port etc.)
-    if (Array.isArray(response.headers['set-cookie']) === false || response.headers['set-cookie'].length === 0) {
+    if (response.headers['set-cookie'] === undefined || Array.isArray(response.headers['set-cookie']) === false || response.headers['set-cookie'].length === 0) {
         throw new Error(`Failed to authenticate`);
     }
 
