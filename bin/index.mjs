@@ -64,6 +64,9 @@ program.command('add').description('Add a new torrent').requiredOption('-p, --pa
     await addTorrentToRace(api, config, options.path, options.category);
 })
 
+// TODO: Add command `race` , takes in an infohash and treats it as if just added
+// Usecase: If torrent is added via another program (e.g. sonarr / radarr)
+
 program.command('metrics').description('Start a prometheus metrics server').action(async () => {
     const api = await loginV2(config.QBITTORRENT_SETTINGS);
     startMetricsServer(config, api);
