@@ -3,6 +3,7 @@ import FormData from 'form-data';
 
 import { torrentFromApi, TorrentState, TransferInfo } from '../interfaces.js';
 import { QBITTORRENT_SETTINGS, Settings } from '../utils/config.js';
+import { getLoggerV3 } from '../utils/logger.js';
 
 
 export class QbittorrentApi {
@@ -27,27 +28,40 @@ export class QbittorrentApi {
             params.hashes = hashes.join('|')
         }
 
-        const response = await this.client.get(ApiEndpoints.torrentsInfo, {
-            params: params,
-        });
-
-        return response.data;
+        try {
+            const response = await this.client.get(ApiEndpoints.torrentsInfo, {
+                params: params,
+            });
+    
+            return response.data;
+        } catch (e){
+            throw new Error(`Failed to get torrents from qBittorrent API. Error: ${e}`);
+        }        
     }
 
     // Just wraps getTorrents as a convenience method for single torrent
     async getTorrent(infohash: string): Promise<QbittorrentTorrent> {
         const torrents = await this.getTorrents([infohash]);
+
+        if (torrents.length === 0){
+            throw new Error(`Torrent not found! (Infohash = ${infohash})`);
+        }
+        
         return torrents[0];
     }
 
     async getTrackers(infohash: string): Promise<QbittorrentTracker[]> {
-        const response = await this.client.get(ApiEndpoints.torrentTrackers, {
-            params: {
-                hash: infohash,
-            }
-        });
-
-        return response.data;
+        try {
+            const response = await this.client.get(ApiEndpoints.torrentTrackers, {
+                params: {
+                    hash: infohash,
+                }
+            });
+    
+            return response.data;
+        } catch (e){
+            throw new Error(`Failed to get trackers from qBittorrent API for ${infohash}. Error: ${e}`);
+        }        
     }
 
     async addTags(torrents: ApiCompatibleTorrent[], tags: string[]){
@@ -62,11 +76,16 @@ export class QbittorrentApi {
         const infohashes = torrents.map(torrent => torrent.hash);
         const payload = `hashes=${infohashes.join('|')}&tags=${tags.join(',')}`;
 
-        await this.client.post(ApiEndpoints.addTags, payload, {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            }
-        });
+        try {
+            await this.client.post(ApiEndpoints.addTags, payload, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            });
+        } catch (e){
+            throw new Error(`Failed to add tags to torrent: ${e}`);
+        }
+        
     }
 
     async setCategory(infohash: string, category: string){
@@ -80,11 +99,16 @@ export class QbittorrentApi {
     }
 
     async resumeTorrents(torrents: QbittorrentTorrent[]){
-        await this.client.get(ApiEndpoints.resumeTorrents, {
-            params: {
-                hashes: torrents.map(torrent => torrent.hash).join('|'),
-            }
-        });
+        try {
+            await this.client.get(ApiEndpoints.resumeTorrents, {
+                params: {
+                    hashes: torrents.map(torrent => torrent.hash).join('|'),
+                }
+            });
+        } catch (e){
+            throw new Error(`Failed to resume torrents. Error: ${e}`);
+        }
+        
     }
     
     async pauseTorrents(torrents: QbittorrentTorrent[]){
@@ -92,9 +116,11 @@ export class QbittorrentApi {
             return;
         }
 
-        await this.client.get(ApiEndpoints.pauseTorrents, {
-            params: {
-                hashes: torrents.map(torrent => torrent.hash).join('|')
+        const payload = `hashes=${torrents.map(torrent => torrent.hash).join('|')}`
+
+        await this.client.post(ApiEndpoints.pauseTorrents, payload, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
             }
         });
     }
@@ -130,11 +156,17 @@ export class QbittorrentApi {
     }
 
     async reannounce(infohash: string){
-        await this.client.get(ApiEndpoints.reannounce, {
-            params: {
-                hashes: infohash,
-            }
-        });
+        const payload = `hashes=${infohash}`;
+        
+        try {
+            await this.client.post(ApiEndpoints.reannounce, payload, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            });
+        } catch (e){
+            throw new Error(`Failed to reannounce! Error: ${e}`);
+        }
     }
 
     async getTransferInfo(): Promise<TransferInfo>{

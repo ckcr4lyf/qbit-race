@@ -37,6 +37,37 @@ export const buildTorrentAddedBody = (discordSettings, torrentAddedInfo) => {
     };
     return buildMessageBody(discordSettings, partialBody);
 };
+// TODO: generalize with above
+export const buildRacingBody = (discordSettings, torrentAddedInfo) => {
+    const humanSize = humanFileSize(torrentAddedInfo.size, false, 2);
+    let partialBody = {
+        content: `Added ${torrentAddedInfo.name} (${humanSize})`,
+        embeds: [
+            {
+                title: torrentAddedInfo.name,
+                description: 'Racing in qBittorrent',
+                thumbnail: {
+                    url: discordSettings.botAvatar,
+                },
+                fields: [
+                    {
+                        name: torrentAddedInfo.trackers.length === 1 ? 'Tracker' : 'Trackers',
+                        value: torrentAddedInfo.trackers.join('\n')
+                    },
+                    {
+                        name: 'Size',
+                        value: humanSize
+                    },
+                    {
+                        name: 'Reannounce Count',
+                        value: torrentAddedInfo.reannounceCount.toString()
+                    }
+                ]
+            }
+        ]
+    };
+    return buildMessageBody(discordSettings, partialBody);
+};
 export const buildTorrentCompletedBody = (discordSettings, torrent) => {
     const humanSize = humanFileSize(torrent.size, false, 2);
     let partialBody = {

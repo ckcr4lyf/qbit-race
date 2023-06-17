@@ -16,23 +16,36 @@ export class QbittorrentApi {
         if (Array.isArray(hashes)) {
             params.hashes = hashes.join('|');
         }
-        const response = await this.client.get(ApiEndpoints.torrentsInfo, {
-            params: params,
-        });
-        return response.data;
+        try {
+            const response = await this.client.get(ApiEndpoints.torrentsInfo, {
+                params: params,
+            });
+            return response.data;
+        }
+        catch (e) {
+            throw new Error(`Failed to get torrents from qBittorrent API. Error: ${e}`);
+        }
     }
     // Just wraps getTorrents as a convenience method for single torrent
     async getTorrent(infohash) {
         const torrents = await this.getTorrents([infohash]);
+        if (torrents.length === 0) {
+            throw new Error(`Torrent not found! (Infohash = ${infohash})`);
+        }
         return torrents[0];
     }
     async getTrackers(infohash) {
-        const response = await this.client.get(ApiEndpoints.torrentTrackers, {
-            params: {
-                hash: infohash,
-            }
-        });
-        return response.data;
+        try {
+            const response = await this.client.get(ApiEndpoints.torrentTrackers, {
+                params: {
+                    hash: infohash,
+                }
+            });
+            return response.data;
+        }
+        catch (e) {
+            throw new Error(`Failed to get trackers from qBittorrent API for ${infohash}. Error: ${e}`);
+        }
     }
     async addTags(torrents, tags) {
         if (torrents.length === 0) {
@@ -43,11 +56,16 @@ export class QbittorrentApi {
         }
         const infohashes = torrents.map(torrent => torrent.hash);
         const payload = `hashes=${infohashes.join('|')}&tags=${tags.join(',')}`;
-        await this.client.post(ApiEndpoints.addTags, payload, {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            }
-        });
+        try {
+            await this.client.post(ApiEndpoints.addTags, payload, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            });
+        }
+        catch (e) {
+            throw new Error(`Failed to add tags to torrent: ${e}`);
+        }
     }
     async setCategory(infohash, category) {
         const payload = `hashes=${infohash}&category=${category}`;
@@ -58,19 +76,25 @@ export class QbittorrentApi {
         });
     }
     async resumeTorrents(torrents) {
-        await this.client.get(ApiEndpoints.resumeTorrents, {
-            params: {
-                hashes: torrents.map(torrent => torrent.hash).join('|'),
-            }
-        });
+        try {
+            await this.client.get(ApiEndpoints.resumeTorrents, {
+                params: {
+                    hashes: torrents.map(torrent => torrent.hash).join('|'),
+                }
+            });
+        }
+        catch (e) {
+            throw new Error(`Failed to resume torrents. Error: ${e}`);
+        }
     }
     async pauseTorrents(torrents) {
         if (torrents.length === 0) {
             return;
         }
-        await this.client.get(ApiEndpoints.pauseTorrents, {
-            params: {
-                hashes: torrents.map(torrent => torrent.hash).join('|')
+        const payload = `hashes=${torrents.map(torrent => torrent.hash).join('|')}`;
+        await this.client.post(ApiEndpoints.pauseTorrents, payload, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
             }
         });
     }
@@ -100,11 +124,17 @@ export class QbittorrentApi {
         });
     }
     async reannounce(infohash) {
-        await this.client.get(ApiEndpoints.reannounce, {
-            params: {
-                hashes: infohash,
-            }
-        });
+        const payload = `hashes=${infohash}`;
+        try {
+            await this.client.post(ApiEndpoints.reannounce, payload, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            });
+        }
+        catch (e) {
+            throw new Error(`Failed to reannounce! Error: ${e}`);
+        }
     }
     async getTransferInfo() {
         const response = await this.client.get(ApiEndpoints.transferInfo);
