@@ -54,6 +54,7 @@ export const addTorrentToRace = async (api: QbittorrentApi, settings: Settings, 
         process.exit(0);
     }
 
+    // TODO: Move to common race part
     const torrentsToPause = getTorrentsToPause(settings, torrents);
 
     try {
