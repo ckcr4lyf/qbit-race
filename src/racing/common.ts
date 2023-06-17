@@ -50,9 +50,10 @@ import { getTorrentsToPause } from "./preRace.js";
  * @param infohash Infohash of newly added torrent
  */
 export const raceExisting = async (api: QbittorrentApi, settings: Settings, infohash: string) => {
-
     const logger = getLoggerV3();
     logger.debug(`raceExisting called with infohash: ${infohash}`);
+
+    const torrent = await api.getTorrent(infohash);
 
     // Try and pause existing torrents
     const torrents = await (async () => {
@@ -76,9 +77,6 @@ export const raceExisting = async (api: QbittorrentApi, settings: Settings, info
     }
 
     // TODO: Add trackers as tags?
-
-    const torrent = await api.getTorrent(infohash);
-    console.log(torrent);
     const announceOk = await reannounce(api, settings, torrent);
 
     if (announceOk === false){

@@ -16,21 +16,23 @@ export class QbittorrentApi {
         if (Array.isArray(hashes)) {
             params.hashes = hashes.join('|');
         }
-        const response = await this.client.get(ApiEndpoints.torrentsInfo, {
-            params: params,
-        });
-        return response.data;
-    }
-    // Just wraps getTorrents as a convenience method for single torrent
-    async getTorrent(infohash) {
         try {
-            const torrents = await this.getTorrents([infohash]);
-            console.log(torrents);
-            return torrents[0];
+            const response = await this.client.get(ApiEndpoints.torrentsInfo, {
+                params: params,
+            });
+            return response.data;
         }
         catch (e) {
             throw new Error(`Failed to get torrents from qBittorrent API. Error: ${e}`);
         }
+    }
+    // Just wraps getTorrents as a convenience method for single torrent
+    async getTorrent(infohash) {
+        const torrents = await this.getTorrents([infohash]);
+        if (torrents.length === 0) {
+            throw new Error(`Torrent not found! (Infohash = ${infohash})`);
+        }
+        return torrents[0];
     }
     async getTrackers(infohash) {
         try {

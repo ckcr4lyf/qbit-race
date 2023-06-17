@@ -28,22 +28,26 @@ export class QbittorrentApi {
             params.hashes = hashes.join('|')
         }
 
-        const response = await this.client.get(ApiEndpoints.torrentsInfo, {
-            params: params,
-        });
-
-        return response.data;
+        try {
+            const response = await this.client.get(ApiEndpoints.torrentsInfo, {
+                params: params,
+            });
+    
+            return response.data;
+        } catch (e){
+            throw new Error(`Failed to get torrents from qBittorrent API. Error: ${e}`);
+        }        
     }
 
     // Just wraps getTorrents as a convenience method for single torrent
     async getTorrent(infohash: string): Promise<QbittorrentTorrent> {
-        try {
-            const torrents = await this.getTorrents([infohash]);
-            console.log(torrents);
-            return torrents[0];
-        } catch (e){
-            throw new Error(`Failed to get torrents from qBittorrent API. Error: ${e}`);
-        }        
+        const torrents = await this.getTorrents([infohash]);
+
+        if (torrents.length === 0){
+            throw new Error(`Torrent not found! (Infohash = ${infohash})`);
+        }
+        
+        return torrents[0];
     }
 
     async getTrackers(infohash: string): Promise<QbittorrentTracker[]> {

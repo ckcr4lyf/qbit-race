@@ -47,6 +47,7 @@ import { getTorrentsToPause } from "./preRace.js";
 export const raceExisting = async (api, settings, infohash) => {
     const logger = getLoggerV3();
     logger.debug(`raceExisting called with infohash: ${infohash}`);
+    const torrent = await api.getTorrent(infohash);
     // Try and pause existing torrents
     const torrents = await (async () => {
         try {
@@ -68,8 +69,6 @@ export const raceExisting = async (api, settings, infohash) => {
         process.exit(-1);
     }
     // TODO: Add trackers as tags?
-    const torrent = await api.getTorrent(infohash);
-    console.log(torrent);
     const announceOk = await reannounce(api, settings, torrent);
     if (announceOk === false) {
         logger.debug(`Going to resume torrents since failed to race`);
