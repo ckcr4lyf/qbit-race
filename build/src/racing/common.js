@@ -31,6 +31,8 @@
  * [Fail to reannounce]
  * 3b. noop
  */
+import { sendMessageV2 } from "../discord/api.js";
+import { buildRacingBody } from "../discord/messages.js";
 import { sleep } from "../helpers/utilities.js";
 import { TrackerStatus } from "../interfaces.js";
 import { getLoggerV3 } from "../utils/logger.js";
@@ -69,14 +71,28 @@ export const raceExisting = async (api, settings, infohash) => {
         process.exit(-1);
     }
     const trackerNames = await addTrackersAsTags(api, settings, infohash);
-    const announceOk = await reannounce(api, settings, torrent);
-    if (announceOk === false) {
+    const announceSummary = await reannounce(api, settings, torrent);
+    if (announceSummary.ok === false) {
         logger.debug(`Going to resume torrents since failed to race`);
         await api.resumeTorrents(torrentsToPause);
         process.exit(0);
     }
     logger.info(`Successfully racing ${torrent.name}`);
-    // TODO: Discord message
+    if (settings.DISCORD_NOTIFICATIONS.enabled === true) {
+        const torrentAddedMessage = buildRacingBody(settings.DISCORD_NOTIFICATIONS, {
+            name: torrent.name,
+            size: torrent.size,
+            trackers: trackerNames,
+            reannounceCount: announceSummary.count
+        });
+        try {
+            await sendMessageV2(settings.DISCORD_NOTIFICATIONS.webhook, torrentAddedMessage);
+        }
+        catch (e) {
+            logger.error(`Failed to send message to discord: ${e}`);
+            // Do not throw for this failure.
+        }
+    }
     process.exit(0);
 };
 export const reannounce = async (api, settings, torrent) => {
@@ -97,11 +113,17 @@ export const reannounce = async (api, settings, torrent) => {
         }
         else {
             logger.debug(`Tracker is OK!`);
-            return true;
+            return {
+                ok: true,
+                count: attempts
+            };
         }
     }
     logger.debug(`Did not get OK from tracker even after ${settings.REANNOUNCE_LIMIT} re-announces!`);
-    return false;
+    return {
+        ok: false,
+        count: attempts
+    };
 };
 export const addTrackersAsTags = async (api, settings, infohash) => {
     const trackerNames = [];
