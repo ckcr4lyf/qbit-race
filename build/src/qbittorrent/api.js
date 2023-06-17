@@ -23,16 +23,26 @@ export class QbittorrentApi {
     }
     // Just wraps getTorrents as a convenience method for single torrent
     async getTorrent(infohash) {
-        const torrents = await this.getTorrents([infohash]);
-        return torrents[0];
+        try {
+            const torrents = await this.getTorrents([infohash]);
+            return torrents[0];
+        }
+        catch (e) {
+            throw new Error(`Failed to get torrents from qBittorrent API. Error: ${e}`);
+        }
     }
     async getTrackers(infohash) {
-        const response = await this.client.get(ApiEndpoints.torrentTrackers, {
-            params: {
-                hash: infohash,
-            }
-        });
-        return response.data;
+        try {
+            const response = await this.client.get(ApiEndpoints.torrentTrackers, {
+                params: {
+                    hash: infohash,
+                }
+            });
+            return response.data;
+        }
+        catch (e) {
+            throw new Error(`Failed to get trackers from qBittorrent API for ${infohash}. Error: ${e}`);
+        }
     }
     async addTags(torrents, tags) {
         if (torrents.length === 0) {
@@ -58,11 +68,16 @@ export class QbittorrentApi {
         });
     }
     async resumeTorrents(torrents) {
-        await this.client.get(ApiEndpoints.resumeTorrents, {
-            params: {
-                hashes: torrents.map(torrent => torrent.hash).join('|'),
-            }
-        });
+        try {
+            await this.client.get(ApiEndpoints.resumeTorrents, {
+                params: {
+                    hashes: torrents.map(torrent => torrent.hash).join('|'),
+                }
+            });
+        }
+        catch (e) {
+            throw new Error(`Failed to resume torrents. Error: ${e}`);
+        }
     }
     async pauseTorrents(torrents) {
         if (torrents.length === 0) {

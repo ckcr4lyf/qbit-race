@@ -8,6 +8,7 @@ import { buildTorrentAddedBody } from '../build/src/discord/messages.js'
 import { getLoggerV3 } from '../build/src/utils/logger.js'
 import { tagErroredTorrents } from '../build/src/racing/tag.js'
 import { postRaceResumeV2 } from '../build/src/racing/completed.js'
+import { raceExisting } from '../build/src/racing/common.js'
 import { startMetricsServer } from '../build/src/server/appFactory.js';
 import { addTorrentToRace } from '../build/src/racing/add.js';
 
@@ -65,8 +66,15 @@ program.command('add').description('Add a new torrent').requiredOption('-p, --pa
 })
 
 program.command('race').description('Race an existing torrent').requiredOption('-i, --infohash <infohash>', 'The infohash of the torrent already in qBittorrent. Not case sensitive').action(async(options) => {
-    logger.debug(`Called with infohash ${options.infohash}`);    
-    // TODO: New command to race existing infohash
+    logger.debug(`Going to race ${options.infohash}`);
+    logger.info(`Going to login`);
+    const api = await loginV2(config.QBITTORRENT_SETTINGS);
+
+    try {
+        await raceExisting(api, config, options.infohash);
+    } catch (e){
+        logger.error(`Failed to race ${options.infohash}. Error: ${e}. (${e.stack})`);
+    }
 })
 
 program.command('metrics').description('Start a prometheus metrics server').action(async () => {

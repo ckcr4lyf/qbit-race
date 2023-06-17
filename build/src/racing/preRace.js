@@ -46,6 +46,7 @@ export const getTorrentsToPause = (settings, torrents) => {
         logger.debug(`Pause ratio is -1, wont pause any torrents`);
         return [];
     }
+    console.log(settings);
     const torrentsToPause = torrents.filter(torrent => {
         // Not seeding - no need to pause
         if (SEEDING_STATES.some(state => state === torrent.state) === false) {

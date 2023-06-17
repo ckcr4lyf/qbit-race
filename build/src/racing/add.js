@@ -43,6 +43,7 @@ export const addTorrentToRace = async (api, settings, path, category) => {
         logger.info(`Pre race conditions not met. Skipping ${torrentMetainfo.name}`);
         process.exit(0);
     }
+    // TODO: Move to common race part
     const torrentsToPause = getTorrentsToPause(settings, torrents);
     try {
         logger.debug(`Going to pause ${torrentsToPause.length} torrents for the race...`);
