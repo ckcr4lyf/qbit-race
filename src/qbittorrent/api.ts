@@ -3,6 +3,7 @@ import FormData from 'form-data';
 
 import { torrentFromApi, TorrentState, TransferInfo } from '../interfaces.js';
 import { QBITTORRENT_SETTINGS, Settings } from '../utils/config.js';
+import { getLoggerV3 } from '../utils/logger.js';
 
 
 export class QbittorrentApi {
@@ -36,18 +37,26 @@ export class QbittorrentApi {
 
     // Just wraps getTorrents as a convenience method for single torrent
     async getTorrent(infohash: string): Promise<QbittorrentTorrent> {
-        const torrents = await this.getTorrents([infohash]);
-        return torrents[0];
+        try {
+            const torrents = await this.getTorrents([infohash]);
+            return torrents[0];
+        } catch (e){
+            throw new Error(`Failed to get torrents from qBittorrent API. Error: ${e}`);
+        }        
     }
 
     async getTrackers(infohash: string): Promise<QbittorrentTracker[]> {
-        const response = await this.client.get(ApiEndpoints.torrentTrackers, {
-            params: {
-                hash: infohash,
-            }
-        });
-
-        return response.data;
+        try {
+            const response = await this.client.get(ApiEndpoints.torrentTrackers, {
+                params: {
+                    hash: infohash,
+                }
+            });
+    
+            return response.data;
+        } catch (e){
+            throw new Error(`Failed to get trackers from qBittorrent API for ${infohash}. Error: ${e}`);
+        }        
     }
 
     async addTags(torrents: ApiCompatibleTorrent[], tags: string[]){
@@ -80,11 +89,16 @@ export class QbittorrentApi {
     }
 
     async resumeTorrents(torrents: QbittorrentTorrent[]){
-        await this.client.get(ApiEndpoints.resumeTorrents, {
-            params: {
-                hashes: torrents.map(torrent => torrent.hash).join('|'),
-            }
-        });
+        try {
+            await this.client.get(ApiEndpoints.resumeTorrents, {
+                params: {
+                    hashes: torrents.map(torrent => torrent.hash).join('|'),
+                }
+            });
+        } catch (e){
+            throw new Error(`Failed to resume torrents. Error: ${e}`);
+        }
+        
     }
     
     async pauseTorrents(torrents: QbittorrentTorrent[]){

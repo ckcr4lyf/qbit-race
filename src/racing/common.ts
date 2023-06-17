@@ -32,8 +32,12 @@
  * 3b. noop
  */
 
-import { QbittorrentApi } from "../qbittorrent/api.js";
+import { sleep } from "../helpers/utilities.js";
+import { TrackerStatus } from "../interfaces.js";
+import { QbittorrentApi, QbittorrentTorrent } from "../qbittorrent/api.js";
 import { Settings } from "../utils/config.js";
+import { getLoggerV3 } from "../utils/logger.js"
+import { getTorrentsToPause } from "./preRace";
 
 
 /**
@@ -47,4 +51,72 @@ import { Settings } from "../utils/config.js";
  */
 export const raceExisting = async (api: QbittorrentApi, settings: Settings, infohash: string) => {
 
+    const logger = getLoggerV3();
+    logger.debug(`raceExisting called with infohash: ${infohash}`);
+
+    // Try and pause existing torrents
+    const torrents = await (() => {
+        try {
+            return api.getTorrents();
+        } catch (e){
+            logger.error(`Failed to get torrents from qBittorrent API: ${e}`);
+            process.exit(-1);
+        }
+    })();
+
+    const torrentsToPause = getTorrentsToPause(settings, torrents);
+    logger.debug(`Going to pause ${torrentsToPause.length} torrents`);
+
+    try {
+        await api.pauseTorrents(torrentsToPause);
+    } catch (e){
+        logger.error(`Failed to pause torrents: ${e}`);
+        process.exit(-1);
+    }
+
+    // TODO: Add trackers as tags?
+
+    const torrent = await api.getTorrent(infohash);
+    const announceOk = await reannounce(api, settings, torrent);
+
+    if (announceOk === false){
+        logger.debug(`Going to resume torrents since failed to race`);
+        await api.resumeTorrents(torrentsToPause);
+        process.exit(0);
+    }
+
+    logger.info(`Successfully racing ${torrent.name}`);
+
+    // TODO: Discord message
+
+    process.exit(0);
+}
+
+export const reannounce = async (api: QbittorrentApi, settings: Settings, torrent: QbittorrentTorrent): Promise<boolean> => {
+    const logger = getLoggerV3();
+    logger.debug(`Starting reannounce check`);
+
+    let attempts = 0;
+
+    while (attempts < settings.REANNOUNCE_LIMIT){
+        logger.debug(`Reannounce attempt #${attempts+1}`);
+
+        const trackers = await api.getTrackers(torrent.hash);
+        trackers.splice(0, 3); // Get rid of DHT, PEX etc.
+        const working = trackers.some(tracker => tracker.status === TrackerStatus.WORKING);
+
+        // Need to reannounce
+        if (working === false){
+            logger.debug(`No working tracker. Will reannounce and sleep...`)
+            await api.reannounce(torrent.hash);
+            await sleep(settings.REANNOUNCE_INTERVAL);
+            attempts++;
+        } else {
+            logger.debug(`Tracker is OK!`)
+            return true;
+        }
+    }
+
+    logger.debug(`Did not get OK from tracker even after ${settings.REANNOUNCE_LIMIT} re-announces!`);
+    return false;
 }
