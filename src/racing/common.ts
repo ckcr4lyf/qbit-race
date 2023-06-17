@@ -78,6 +78,7 @@ export const raceExisting = async (api: QbittorrentApi, settings: Settings, info
     // TODO: Add trackers as tags?
 
     const torrent = await api.getTorrent(infohash);
+    console.log(torrent);
     const announceOk = await reannounce(api, settings, torrent);
 
     if (announceOk === false){

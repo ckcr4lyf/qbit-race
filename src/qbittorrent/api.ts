@@ -39,6 +39,7 @@ export class QbittorrentApi {
     async getTorrent(infohash: string): Promise<QbittorrentTorrent> {
         try {
             const torrents = await this.getTorrents([infohash]);
+            console.log(torrents);
             return torrents[0];
         } catch (e){
             throw new Error(`Failed to get torrents from qBittorrent API. Error: ${e}`);
@@ -106,9 +107,11 @@ export class QbittorrentApi {
             return;
         }
 
-        await this.client.get(ApiEndpoints.pauseTorrents, {
-            params: {
-                hashes: torrents.map(torrent => torrent.hash).join('|')
+        const payload = `hashes=${torrents.map(torrent => torrent.hash).join('|')}`
+
+        await this.client.post(ApiEndpoints.pauseTorrents, payload, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
             }
         });
     }

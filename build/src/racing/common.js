@@ -69,6 +69,7 @@ export const raceExisting = async (api, settings, infohash) => {
     }
     // TODO: Add trackers as tags?
     const torrent = await api.getTorrent(infohash);
+    console.log(torrent);
     const announceOk = await reannounce(api, settings, torrent);
     if (announceOk === false) {
         logger.debug(`Going to resume torrents since failed to race`);

@@ -25,6 +25,7 @@ export class QbittorrentApi {
     async getTorrent(infohash) {
         try {
             const torrents = await this.getTorrents([infohash]);
+            console.log(torrents);
             return torrents[0];
         }
         catch (e) {
@@ -83,9 +84,10 @@ export class QbittorrentApi {
         if (torrents.length === 0) {
             return;
         }
-        await this.client.get(ApiEndpoints.pauseTorrents, {
-            params: {
-                hashes: torrents.map(torrent => torrent.hash).join('|')
+        const payload = `hashes=${torrents.map(torrent => torrent.hash).join('|')}`;
+        await this.client.post(ApiEndpoints.pauseTorrents, payload, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
             }
         });
     }
