@@ -76,7 +76,7 @@ export const raceExisting = async (api: QbittorrentApi, settings: Settings, info
         process.exit(-1);
     }
 
-    // TODO: Add trackers as tags?
+    const trackerNames = await addTrackersAsTags(api, settings, infohash);
     const announceOk = await reannounce(api, settings, torrent);
 
     if (announceOk === false){
@@ -119,4 +119,18 @@ export const reannounce = async (api: QbittorrentApi, settings: Settings, torren
 
     logger.debug(`Did not get OK from tracker even after ${settings.REANNOUNCE_LIMIT} re-announces!`);
     return false;
+}
+
+export const addTrackersAsTags = async (api: QbittorrentApi, settings: Settings, infohash: string): Promise<string[]> => {
+    const trackerNames: string[] = [];
+
+    // Get the tags, map out hostname
+    const trackers = await api.getTrackers(infohash);
+    trackers.splice(0, 3); // Get rid of DHT, PEX etc.
+    trackerNames.push(...trackers.map(tracker => new URL(tracker.url).hostname));
+
+    // Add the tags
+    await api.addTags([{ hash: infohash }], trackerNames);
+
+    return trackerNames;
 }

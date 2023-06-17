@@ -56,11 +56,16 @@ export class QbittorrentApi {
         }
         const infohashes = torrents.map(torrent => torrent.hash);
         const payload = `hashes=${infohashes.join('|')}&tags=${tags.join(',')}`;
-        await this.client.post(ApiEndpoints.addTags, payload, {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            }
-        });
+        try {
+            await this.client.post(ApiEndpoints.addTags, payload, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            });
+        }
+        catch (e) {
+            throw new Error(`Failed to add tags to torrent: ${e}`);
+        }
     }
     async setCategory(infohash, category) {
         const payload = `hashes=${infohash}&category=${category}`;

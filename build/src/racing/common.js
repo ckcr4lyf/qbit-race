@@ -68,7 +68,7 @@ export const raceExisting = async (api, settings, infohash) => {
         logger.error(`Failed to pause torrents: ${e}`);
         process.exit(-1);
     }
-    // TODO: Add trackers as tags?
+    const trackerNames = await addTrackersAsTags(api, settings, infohash);
     const announceOk = await reannounce(api, settings, torrent);
     if (announceOk === false) {
         logger.debug(`Going to resume torrents since failed to race`);
@@ -102,5 +102,15 @@ export const reannounce = async (api, settings, torrent) => {
     }
     logger.debug(`Did not get OK from tracker even after ${settings.REANNOUNCE_LIMIT} re-announces!`);
     return false;
+};
+export const addTrackersAsTags = async (api, settings, infohash) => {
+    const trackerNames = [];
+    // Get the tags, map out hostname
+    const trackers = await api.getTrackers(infohash);
+    trackers.splice(0, 3); // Get rid of DHT, PEX etc.
+    trackerNames.push(...trackers.map(tracker => new URL(tracker.url).hostname));
+    // Add the tags
+    await api.addTags([{ hash: infohash }], trackerNames);
+    return trackerNames;
 };
 //# sourceMappingURL=common.js.map
