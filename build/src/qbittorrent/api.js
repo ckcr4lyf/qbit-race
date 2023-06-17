@@ -124,11 +124,17 @@ export class QbittorrentApi {
         });
     }
     async reannounce(infohash) {
-        await this.client.get(ApiEndpoints.reannounce, {
-            params: {
-                hashes: infohash,
-            }
-        });
+        const payload = `hashes=${infohash}`;
+        try {
+            await this.client.post(ApiEndpoints.reannounce, payload, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            });
+        }
+        catch (e) {
+            throw new Error(`Failed to reannounce! Error: ${e}`);
+        }
     }
     async getTransferInfo() {
         const response = await this.client.get(ApiEndpoints.transferInfo);
