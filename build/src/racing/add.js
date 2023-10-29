@@ -9,7 +9,7 @@ import { sleep } from "../helpers/utilities.js";
 import { TrackerStatus } from "../interfaces.js";
 import { buildTorrentAddedBody } from "../discord/messages.js";
 import { sendMessageV2 } from "../discord/api.js";
-export const addTorrentToRace = async (api, settings, path, category) => {
+export const addTorrentToRace = async (api, settings, path, options, category) => {
     const logger = getLoggerV3();
     logger.debug(`Called with path: ${path}, category: ${category}`);
     // Read the torrent file and get info
@@ -74,12 +74,19 @@ export const addTorrentToRace = async (api, settings, path, category) => {
         logger.error(`Failed to get tags for torrent: ${e}`);
         process.exit(1);
     }
-    try {
-        await api.addTags([torrentMetainfo], trackersAsTags);
+    // TODO: Also handle CLI flag to add extra tags
+    // See: https://github.com/ckcr4lyf/qbit-race/issues/40
+    if (options.trackerTags === false) {
+        logger.debug(`--no-tracker-tags specified, will skip adding tags to the torrent!`);
     }
-    catch (e) {
-        logger.error(`Failed to add tags to torrent: ${e}`);
-        process.exit(1);
+    else {
+        try {
+            await api.addTags([torrentMetainfo], trackersAsTags);
+        }
+        catch (e) {
+            logger.error(`Failed to add tags to torrent: ${e}`);
+            process.exit(1);
+        }
     }
     let torrent;
     try {

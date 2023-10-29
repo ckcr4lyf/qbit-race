@@ -189,6 +189,12 @@ You can view the logs under `~/.config/qbit-race/logs.txt` to try and debug.
 
 These are additional parameters you can specify in autoDL for additional functionality
 
+### No Tracker Tags
+
+By default, when adding the torrent, `qbit-race` also "tags" the torrent with the hostname of all trackers. This is mostly useful in older version of qBittorrent to be able to sort torrents by trackers.
+
+To disable this, you can pass an extra flag `--no-tracker-tags` to the `qibt-race add` command.
+
 ### Torrent Category
 
 In the autoDL arguments field, you may specify a category (per filter, or global) by adding to the end of arguments `--category "the category name"`
