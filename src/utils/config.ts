@@ -97,6 +97,16 @@ export type Settings = {
     CATEGORY_FINISH_CHANGE: Record<string, string>;
 }
 
+/**
+ * Extra options to be passed via CLI args
+ */
+export type Options = {
+    /**
+     * Whether the trackers should be added as tags to the torrent
+     */
+    trackerTags: boolean;
+}
+
 export const defaultSettings: Settings = {
     REANNOUNCE_INTERVAL: 5000,
     REANNOUNCE_LIMIT: 30,

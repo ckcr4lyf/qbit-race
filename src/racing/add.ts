@@ -5,7 +5,7 @@
 import { getTorrentMetainfo, torrentMetainfo, TorrentMetainfoV2 } from "../helpers/torrent.js";
 import { getLoggerV3 } from "../utils/logger.js"
 import * as fs from 'fs';
-import { Settings } from "../utils/config";
+import { Options, Settings } from "../utils/config";
 import { QbittorrentApi, QbittorrentTorrent } from "../qbittorrent/api";
 import { concurrentRacesCheck, getTorrentsToPause } from "./preRace.js";
 import { sleep } from "../helpers/utilities.js";
@@ -13,7 +13,7 @@ import { TrackerStatus } from "../interfaces.js";
 import { buildTorrentAddedBody } from "../discord/messages.js";
 import { sendMessageV2 } from "../discord/api.js";
 
-export const addTorrentToRace = async (api: QbittorrentApi, settings: Settings, path: string, category?: string) => {
+export const addTorrentToRace = async (api: QbittorrentApi, settings: Settings, path: string, options: Options, category?: string) => {
 
     const logger = getLoggerV3();
     logger.debug(`Called with path: ${path}, category: ${category}`);
@@ -88,11 +88,17 @@ export const addTorrentToRace = async (api: QbittorrentApi, settings: Settings, 
         process.exit(1);
     }
 
-    try {
-        await api.addTags([torrentMetainfo], trackersAsTags);
-    } catch (e){
-        logger.error(`Failed to add tags to torrent: ${e}`);
-        process.exit(1);
+    // TODO: Also handle CLI flag to add extra tags
+    // See: https://github.com/ckcr4lyf/qbit-race/issues/40
+    if (options.trackerTags === false){
+        logger.debug(`--no-tracker-tags specified, will skip adding tags to the torrent!`);
+    } else {
+        try {
+            await api.addTags([torrentMetainfo], trackersAsTags);
+        } catch (e){
+            logger.error(`Failed to add tags to torrent: ${e}`);
+            process.exit(1);
+        }
     }
 
     let torrent: QbittorrentTorrent;

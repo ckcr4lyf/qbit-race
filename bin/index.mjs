@@ -59,10 +59,13 @@ program.command('completed').description('Run post race procedure on complete of
     await postRaceResumeV2(api, config, options.infohash);
 })
 
-program.command('add').description('Add a new torrent').requiredOption('-p, --path <path>', 'The path to the .torrent file. Must be a single file, not a directory!').option('-c, --category <category>', 'Category to set in qBittorrent').action(async(options) => {
+program.command('add').description('Add a new torrent').requiredOption('-p, --path <path>', 'The path to the .torrent file. Must be a single file, not a directory!').option('-c, --category <category>', 'Category to set in qBittorrent').option('--no-tracker-tags', 'Disable auto adding the trackers as tags on the torrent in qBittorrent').action(async(options) => {
     logger.debug(`Going to add torrent from ${options.path}, and set category ${options.category}`);
     const api = await loginV2(config.QBITTORRENT_SETTINGS);
-    await addTorrentToRace(api, config, options.path, options.category);
+
+    await addTorrentToRace(api, config, options.path, {
+        trackerTags: options.trackerTags, // commander is extra smart, if we define with --no , it will default boolean to true and remove `no` from the name...
+    }, options.category);
 })
 
 program.command('race').description('Race an existing torrent').requiredOption('-i, --infohash <infohash>', 'The infohash of the torrent already in qBittorrent. Not case sensitive').action(async(options) => {
