@@ -59,7 +59,7 @@ program.command('completed').description('Run post race procedure on complete of
     await postRaceResumeV2(api, config, options.infohash);
 })
 
-program.command('add').description('Add a new torrent').requiredOption('-p, --path <path>', 'The path to the .torrent file. Must be a single file, not a directory!').option('-c, --category <category>', 'Category to set in qBittorrent').option('--no-tracker-tags', 'Disable auto adding the trackers as tags on the torrent in qBittorrent').action(async(options) => {
+program.command('add').description('Add a new torrent').requiredOption('-p, --path <path>', 'The path to the .torrent file. Must be a single file, not a directory!').option('-c, --category <category>', 'Category to set in qBittorrent').option('--no-tracker-tags', 'Disable auto adding the trackers as tags on the torrent in qBittorrent').option('--extra-tags <tags>', 'Comma-separated list off extra tags to add. E.g. --extra-tags "linux,foss"').action(async(options) => {
     logger.debug(`Going to add torrent from ${options.path}, and set category ${options.category}`);
     const api = await loginV2(config.QBITTORRENT_SETTINGS);
 
