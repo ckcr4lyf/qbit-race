@@ -105,6 +105,10 @@ export type Options = {
      * Whether the trackers should be added as tags to the torrent
      */
     trackerTags: boolean;
+    /**
+     * Comma-separated extra tags to add to the torrent
+     */
+    extraTags?: string;
 }
 
 export const defaultSettings: Settings = {

@@ -74,14 +74,21 @@ export const addTorrentToRace = async (api, settings, path, options, category) =
         logger.error(`Failed to get tags for torrent: ${e}`);
         process.exit(1);
     }
-    // TODO: Also handle CLI flag to add extra tags
-    // See: https://github.com/ckcr4lyf/qbit-race/issues/40
+    const tagsToAdd = [];
     if (options.trackerTags === false) {
-        logger.debug(`--no-tracker-tags specified, will skip adding tags to the torrent!`);
+        logger.debug(`--no-tracker-tags specified, will skip adding them to the torrent!`);
     }
     else {
+        tagsToAdd.push(...trackersAsTags);
+    }
+    if (options.extraTags !== undefined) {
+        const extraTags = options.extraTags.split(',');
+        logger.debug(`Going to add extra tags: ${extraTags}`);
+        tagsToAdd.push(...extraTags);
+    }
+    if (tagsToAdd.length !== 0) {
         try {
-            await api.addTags([torrentMetainfo], trackersAsTags);
+            await api.addTags([torrentMetainfo], tagsToAdd);
         }
         catch (e) {
             logger.error(`Failed to add tags to torrent: ${e}`);
