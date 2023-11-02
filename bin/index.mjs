@@ -65,6 +65,7 @@ program.command('add').description('Add a new torrent').requiredOption('-p, --pa
 
     await addTorrentToRace(api, config, options.path, {
         trackerTags: options.trackerTags, // commander is extra smart, if we define with --no , it will default boolean to true and remove `no` from the name...
+        extraTags: options.extraTags, // The raw csv string. We will split inside the function
     }, options.category);
 })
 
