@@ -193,7 +193,19 @@ These are additional parameters you can specify in autoDL for additional functio
 
 By default, when adding the torrent, `qbit-race` also "tags" the torrent with the hostname of all trackers. This is mostly useful in older version of qBittorrent to be able to sort torrents by trackers.
 
-To disable this, you can pass an extra flag `--no-tracker-tags` to the `qibt-race add` command.
+To disable this, you can pass an extra flag `--no-tracker-tags` to the `qbit-race add` command.
+
+```
+qbit-race add -p "$(TorrentPathName) --no-tracker-tags"
+```
+
+### Extra tags
+
+If you want to add extra tags to the torrent, you can supply them via a comma-separated list using the `--extra-tags` param to the `qbit-race add` command.
+
+```
+qbit-race add -p "$(TorrentPathName) --extra-tags "linux,foss"
+```
 
 ### Torrent Category
 
