@@ -49,6 +49,8 @@ export const postRaceResumeV2 = async (api: QbittorrentApi, settings: Settings, 
         } catch (e){
             logger.error(`Failed to send message to discord ${e}`);
         }
+    } else {
+        logger.debug(`Discord notifications disabled.`)
     }
 
     // The earliest time, from which there may still be a torrent in the reannounce phase
@@ -79,6 +81,7 @@ export const postRaceResumeV2 = async (api: QbittorrentApi, settings: Settings, 
     // Try and resume
     try {
         await api.resumeTorrents(pausedTorrents);
+        logger.debug(`Successfully resumed torrents`);
     } catch (e){
         logger.error(`Failed to resume torrents! ${e}`);
         process.exit(1);
