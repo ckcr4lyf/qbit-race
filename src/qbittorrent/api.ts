@@ -98,17 +98,19 @@ export class QbittorrentApi {
         })
     }
 
-    async resumeTorrents(torrents: QbittorrentTorrent[]){
+    async resumeTorrents(torrents: ApiCompatibleTorrent[]){
+        const infohashes = torrents.map(torrent => torrent.hash);
+        const payload = `hashes=${infohashes.join('|')}`;
+
         try {
-            await this.client.get(ApiEndpoints.resumeTorrents, {
-                params: {
-                    hashes: torrents.map(torrent => torrent.hash).join('|'),
+            await this.client.post(ApiEndpoints.resumeTorrents, payload, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
                 }
             });
         } catch (e){
             throw new Error(`Failed to resume torrents. Error: ${e}`);
         }
-        
     }
     
     async pauseTorrents(torrents: QbittorrentTorrent[]){
