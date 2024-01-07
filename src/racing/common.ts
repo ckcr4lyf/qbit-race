@@ -78,10 +78,11 @@ export const raceExisting = async (api: QbittorrentApi, settings: Settings, info
         process.exit(-1);
     }
 
+    let trackersAsTags: string[] = [];
     if (options.trackerTags === false){
         logger.debug(`--no-tracker-tags specified, will skip adding them to the torrent!`);
     } else {
-        const trackerNames = await addTrackersAsTags(api, settings, infohash);
+        trackersAsTags = await addTrackersAsTags(api, settings, infohash);
     }
 
     if (options.extraTags !== undefined){
@@ -104,7 +105,7 @@ export const raceExisting = async (api: QbittorrentApi, settings: Settings, info
         const torrentAddedMessage = buildRacingBody(settings.DISCORD_NOTIFICATIONS, {
             name: torrent.name,
             size: torrent.size,
-            trackers: trackerNames,
+            trackers: trackersAsTags,
             reannounceCount: announceSummary.count
         });
 

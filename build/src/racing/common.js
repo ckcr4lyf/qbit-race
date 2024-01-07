@@ -46,7 +46,7 @@ import { getTorrentsToPause } from "./preRace.js";
  * @param settings Settings for checking pause ratio etc.
  * @param infohash Infohash of newly added torrent
  */
-export const raceExisting = async (api, settings, infohash) => {
+export const raceExisting = async (api, settings, infohash, options) => {
     const logger = getLoggerV3();
     logger.debug(`raceExisting called with infohash: ${infohash}`);
     const torrent = await api.getTorrent(infohash);
@@ -70,7 +70,18 @@ export const raceExisting = async (api, settings, infohash) => {
         logger.error(`Failed to pause torrents: ${e}`);
         process.exit(-1);
     }
-    const trackerNames = await addTrackersAsTags(api, settings, infohash);
+    let trackersAsTags = [];
+    if (options.trackerTags === false) {
+        logger.debug(`--no-tracker-tags specified, will skip adding them to the torrent!`);
+    }
+    else {
+        trackersAsTags = await addTrackersAsTags(api, settings, infohash);
+    }
+    if (options.extraTags !== undefined) {
+        const extraTags = options.extraTags.split(',');
+        logger.debug(`Adding extra tags: ${extraTags}`);
+        await api.addTags([{ hash: infohash }], extraTags);
+    }
     const announceSummary = await reannounce(api, settings, torrent);
     if (announceSummary.ok === false) {
         logger.debug(`Going to resume torrents since failed to race`);
@@ -82,7 +93,7 @@ export const raceExisting = async (api, settings, infohash) => {
         const torrentAddedMessage = buildRacingBody(settings.DISCORD_NOTIFICATIONS, {
             name: torrent.name,
             size: torrent.size,
-            trackers: trackerNames,
+            trackers: trackersAsTags,
             reannounceCount: announceSummary.count
         });
         try {
