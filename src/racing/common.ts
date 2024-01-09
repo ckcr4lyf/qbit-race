@@ -37,7 +37,7 @@ import { buildRacingBody } from "../discord/messages.js";
 import { sleep } from "../helpers/utilities.js";
 import { TrackerStatus } from "../interfaces.js";
 import { QbittorrentApi, QbittorrentTorrent } from "../qbittorrent/api.js";
-import { Settings } from "../utils/config.js";
+import { Options, Settings } from "../utils/config.js";
 import { getLoggerV3 } from "../utils/logger.js"
 import { getTorrentsToPause } from "./preRace.js";
 
@@ -51,7 +51,7 @@ import { getTorrentsToPause } from "./preRace.js";
  * @param settings Settings for checking pause ratio etc.
  * @param infohash Infohash of newly added torrent
  */
-export const raceExisting = async (api: QbittorrentApi, settings: Settings, infohash: string) => {
+export const raceExisting = async (api: QbittorrentApi, settings: Settings, infohash: string, options: Options) => {
     const logger = getLoggerV3();
     logger.debug(`raceExisting called with infohash: ${infohash}`);
 
@@ -78,7 +78,19 @@ export const raceExisting = async (api: QbittorrentApi, settings: Settings, info
         process.exit(-1);
     }
 
-    const trackerNames = await addTrackersAsTags(api, settings, infohash);
+    let trackersAsTags: string[] = [];
+    if (options.trackerTags === false){
+        logger.debug(`--no-tracker-tags specified, will skip adding them to the torrent!`);
+    } else {
+        trackersAsTags = await addTrackersAsTags(api, settings, infohash);
+    }
+
+    if (options.extraTags !== undefined){
+        const extraTags = options.extraTags.split(',');
+        logger.debug(`Adding extra tags: ${extraTags}`);
+        await api.addTags([{ hash: infohash }], extraTags);
+    }
+    
     const announceSummary = await reannounce(api, settings, torrent);
 
     if (announceSummary.ok === false){
@@ -93,7 +105,7 @@ export const raceExisting = async (api: QbittorrentApi, settings: Settings, info
         const torrentAddedMessage = buildRacingBody(settings.DISCORD_NOTIFICATIONS, {
             name: torrent.name,
             size: torrent.size,
-            trackers: trackerNames,
+            trackers: trackersAsTags,
             reannounceCount: announceSummary.count
         });
 

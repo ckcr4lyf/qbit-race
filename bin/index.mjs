@@ -69,13 +69,16 @@ program.command('add').description('Add a new torrent').requiredOption('-p, --pa
     }, options.category);
 })
 
-program.command('race').description('Race an existing torrent').requiredOption('-i, --infohash <infohash>', 'The infohash of the torrent already in qBittorrent. Not case sensitive').action(async(options) => {
+program.command('race').description('Race an existing torrent').requiredOption('-i, --infohash <infohash>', 'The infohash of the torrent already in qBittorrent. Not case sensitive').option('--no-tracker-tags', 'Disable auto adding the trackers as tags on the torrent in qBittorrent').option('--extra-tags <tags>', 'Comma-separated list off extra tags to add. E.g. --extra-tags "linux,foss"').action(async(options) => {
     logger.debug(`Going to race ${options.infohash}`);
     logger.info(`Going to login`);
     const api = await loginV2(config.QBITTORRENT_SETTINGS);
 
     try {
-        await raceExisting(api, config, options.infohash);
+        await raceExisting(api, config, options.infohash, {
+            trackerTags: options.trackerTags, // commander is extra smart, if we define with --no , it will default boolean to true and remove `no` from the name...
+            extraTags: options.extraTags, // The raw csv string. We will split inside the function
+        });
     } catch (e){
         logger.error(`Failed to race ${options.infohash}. Error: ${e}. (${e.stack})`);
     }
