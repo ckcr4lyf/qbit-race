@@ -47,6 +47,6 @@
   },
   "preferGlobal": true,
   "bin": {
-    "qbit-race": "./bin/index.mjs"
+    "qbit-race": "bin/index.mjs"
   }
 }
