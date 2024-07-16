@@ -95,6 +95,10 @@ export type Settings = {
      * Set of category changes to perform on torrent completion
      */
     CATEGORY_FINISH_CHANGE: Record<string, string>;
+    /**
+     * Whether we should skip resuming paused torrents at the end of a race
+     */
+    SKIP_RESUME: boolean;
 }
 
 /**
@@ -117,6 +121,7 @@ export const defaultSettings: Settings = {
     PAUSE_RATIO: 1,
     PAUSE_SKIP_TAGS: ["tracker.linux.org", "some_other_tag"],
     PAUSE_SKIP_CATEGORIES: ["permaseeding", "some_other_category"],
+    SKIP_RESUME: false,
     CONCURRENT_RACES: 1,
     COUNT_STALLED_DOWNLOADS: false,
     QBITTORRENT_SETTINGS: {

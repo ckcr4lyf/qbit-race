@@ -1,7 +1,7 @@
 __mocks__/
 __tests__/
 .github/
-src/
+/src/
 tests/
 .gitignore
 .npmignore
