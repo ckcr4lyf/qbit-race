@@ -67,6 +67,10 @@ export const postRaceResumeV2 = async (api, settings, infohash) => {
         logger.debug(`Nothing to resume (no paused torrents)`);
         return;
     }
+    if (settings.SKIP_RESUME === true) {
+        logger.debug(`Skip resume is true, not resuming anything...`);
+        return;
+    }
     // Try and resume
     try {
         await api.resumeTorrents(pausedTorrents);
