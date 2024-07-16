@@ -4,6 +4,7 @@ export const defaultSettings = {
     PAUSE_RATIO: 1,
     PAUSE_SKIP_TAGS: ["tracker.linux.org", "some_other_tag"],
     PAUSE_SKIP_CATEGORIES: ["permaseeding", "some_other_category"],
+    SKIP_RESUME: false,
     CONCURRENT_RACES: 1,
     COUNT_STALLED_DOWNLOADS: false,
     QBITTORRENT_SETTINGS: {

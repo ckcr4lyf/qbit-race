@@ -39,7 +39,7 @@ export const makeConfigIfNotExist = () => {
     const logger = getLoggerV3();
 
     // Now check config
-    const configFilePath = path.join(configDir, 'config.json');
+    const configFilePath = getConfigPath();
 
     // Check if config exists
     try {
@@ -69,11 +69,30 @@ export const makeConfigIfNotExist = () => {
  * It's assumed makeConfigIfNotExist() has already been called.
  */
 export const loadConfig = (): Settings => {
+    const logger = getLoggerV3();
     const configPath = getConfigPath();
     const configData = fs.readFileSync(configPath);
-    return JSON.parse(configData.toString());
-}
 
-// TODO: Future improvement: 
-// If an older config, missing keys, then modify it to add the new stuff
-// 
+    const parsedConfig = JSON.parse(configData.toString());
+
+    // Check if any keys are missing
+    const allKeysFromDefault = Object.keys(defaultSettings);
+
+    let overwriteConfig = false;
+
+    for (const key of allKeysFromDefault){
+        if ((key in parsedConfig) === false){
+            const defaultValue  = defaultSettings[key as keyof Settings];
+            logger.warn(`Missing key ${key} from current config! Will update with default value (${defaultValue})`);
+            parsedConfig[key] = defaultValue;
+            overwriteConfig = true;
+        }
+    }
+
+    if (overwriteConfig === true){
+        logger.info(`Overwriting config for missing keys...`);
+        fs.writeFileSync(configPath, JSON.stringify(parsedConfig, null, 2));
+    }
+    
+    return parsedConfig
+}
