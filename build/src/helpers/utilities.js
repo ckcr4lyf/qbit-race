@@ -1,4 +1,7 @@
 export const sleep = (ms) => {
+    if (process.env.CI === 'true') {
+        return;
+    }
     return new Promise((resolve, reject) => {
         setTimeout(resolve, ms);
     });
