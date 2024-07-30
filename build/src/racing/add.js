@@ -9,6 +9,7 @@ import { sleep } from "../helpers/utilities.js";
 import { TrackerStatus } from "../interfaces.js";
 import { buildTorrentAddedBody } from "../discord/messages.js";
 import { sendMessageV2 } from "../discord/api.js";
+import axios from "axios";
 export const addTorrentToRace = async (api, settings, path, options, category) => {
     const logger = getLoggerV3();
     logger.debug(`Called with path: ${path}, category: ${category}`);
@@ -61,17 +62,34 @@ export const addTorrentToRace = async (api, settings, path, options, category) =
         process.exit(1);
     }
     // Wait for torrent to register in qbit, initial announce
-    // TODO: Figure out how we can skip real sleep in CI / test
+    logger.debug(`Going to sleep for 5 seconds to allow torrent to register...`);
     await sleep(5000);
+    logger.debug(`Finished sleeping, going to get trackers`);
     // Get the torrent's trackers, which we set as tags as well.
     const trackersAsTags = [];
-    try {
-        const trackers = await api.getTrackers(torrentMetainfo.hash);
-        trackers.splice(0, 3); // Get rid of DHT, PEX etc.
-        trackersAsTags.push(...trackers.map(tracker => new URL(tracker.url).hostname));
+    let registeredFlag = false;
+    for (let i = 0; i < 25; i++) {
+        logger.debug(`Attempt #${i + 1} to get trackers`);
+        try {
+            const trackers = await api.getTrackers(torrentMetainfo.hash);
+            trackers.splice(0, 3); // Get rid of DHT, PEX etc.
+            trackersAsTags.push(...trackers.map(tracker => new URL(tracker.url).hostname));
+            logger.info(`Successfully got trackers!`);
+            registeredFlag = true;
+            break;
+        }
+        catch (e) {
+            if (axios.isAxiosError(e) && e.status === 404) {
+                logger.warn(`Got 404 from qbittorrent, probably not registered yet... Will sleep for a second and try again. (Error: ${e})`);
+                await sleep(1000);
+                continue;
+            }
+            logger.error(`Failed to get tags for torrent: ${e}`);
+            process.exit(1);
+        }
     }
-    catch (e) {
-        logger.error(`Failed to get tags for torrent: ${e}`);
+    if (registeredFlag === false) {
+        logger.error(`Failed to get torrent from qbit, maybe not registered!`);
         process.exit(1);
     }
     const tagsToAdd = [];

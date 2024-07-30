@@ -35,17 +35,12 @@ export class QbittorrentApi {
         return torrents[0];
     }
     async getTrackers(infohash) {
-        try {
-            const response = await this.client.get(ApiEndpoints.torrentTrackers, {
-                params: {
-                    hash: infohash,
-                }
-            });
-            return response.data;
-        }
-        catch (e) {
-            throw new Error(`Failed to get trackers from qBittorrent API for ${infohash}. Error: ${e}`);
-        }
+        const response = await this.client.get(ApiEndpoints.torrentTrackers, {
+            params: {
+                hash: infohash,
+            }
+        });
+        return response.data;
     }
     async addTags(torrents, tags) {
         if (torrents.length === 0) {
