@@ -79,7 +79,7 @@ export const addTorrentToRace = async (api, settings, path, options, category) =
             break;
         }
         catch (e) {
-            if (axios.isAxiosError(e) && e.status === 404) {
+            if (axios.isAxiosError(e) && e.response?.status === 404) {
                 logger.warn(`Got 404 from qbittorrent, probably not registered yet... Will sleep for a second and try again. (Error: ${e})`);
                 await sleep(1000);
                 continue;
