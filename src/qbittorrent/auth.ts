@@ -23,5 +23,8 @@ export const loginV2 = async (qbittorrentSettings: QBITTORRENT_SETTINGS): Promis
         throw new Error(`Failed to authenticate (UNKNOWN ERROR)`);
     }
 
-    return new QbittorrentApi(qbittorrentSettings.url, response.headers['set-cookie'][0]);
+    const api = new QbittorrentApi(qbittorrentSettings.url, response.headers['set-cookie'][0]);
+    const version = await api.getAndSetVersion();
+    logger.info(`Detected qBitorrent version as: ${version}`);
+    return api;
 }

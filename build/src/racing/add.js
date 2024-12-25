@@ -13,6 +13,12 @@ import axios from "axios";
 export const addTorrentToRace = async (api, settings, path, options, category) => {
     const logger = getLoggerV3();
     logger.debug(`Called with path: ${path}, category: ${category}`);
+    // Get API version
+    const version = await api.getAndSetVersion();
+    console.log(version);
+    console.log(version >= 'v5');
+    // console.log(version < 'v4');
+    // process.exit(-1);
     // Read the torrent file and get info
     let torrentFile;
     try {
