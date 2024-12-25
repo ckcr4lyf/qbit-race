@@ -9,6 +9,7 @@ import { getLoggerV3 } from '../utils/logger.js';
 export class QbittorrentApi {
 
     private client: AxiosInstance;
+    private version: string;
 
     constructor(public basePath: string, public cookie: string) {
 
@@ -19,6 +20,19 @@ export class QbittorrentApi {
             }
         });
 
+        this.version = 'v4'; // default to v4
+    }
+    
+    async getAndSetVersion(): Promise<string> {
+        try {
+            const response = await this.client.get(ApiEndpoints.version);
+
+            console.log(response.data);
+            this.version = response.data;
+            return response.data;
+        } catch (e){
+            throw new Error(`Failed to get qBittorrent version. Error: ${e}`);
+        }
     }
 
     async getTorrents(hashes?: string[]): Promise<QbittorrentTorrent[]> {
@@ -96,10 +110,11 @@ export class QbittorrentApi {
 
     async resumeTorrents(torrents: ApiCompatibleTorrent[]){
         const infohashes = torrents.map(torrent => torrent.hash);
+        const endpoint = this.version >= 'v5' ? ApiEndpoints.resumeTorrentsNew : ApiEndpoints.resumeTorrents;
         const payload = `hashes=${infohashes.join('|')}`;
 
         try {
-            await this.client.post(ApiEndpoints.resumeTorrents, payload, {
+            await this.client.post(endpoint, payload, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 }
@@ -114,9 +129,10 @@ export class QbittorrentApi {
             return;
         }
 
+        const endpoint = this.version >= 'v5' ? ApiEndpoints.pauseTorrentsNew : ApiEndpoints.pauseTorrents;
         const payload = `hashes=${torrents.map(torrent => torrent.hash).join('|')}`
 
-        await this.client.post(ApiEndpoints.pauseTorrents, payload, {
+        await this.client.post(endpoint, payload, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             }
@@ -178,13 +194,16 @@ enum ApiEndpoints {
     torrentsInfo = '/api/v2/torrents/info',
     torrentTrackers = '/api/v2/torrents/trackers',
     resumeTorrents = '/api/v2/torrents/resume',
+    resumeTorrentsNew = '/api/v2/torrents/start',
     addTags = '/api/v2/torrents/addTags',
     setCategory = '/api/v2/torrents/setCategory',
     pauseTorrents = '/api/v2/torrents/pause',
+    pauseTorrentsNew = '/api/v2/torrents/stop',
     addTorrent = '/api/v2/torrents/add',
     deleteTorrents = '/api/v2/torrents/delete',
     reannounce = '/api/v2/torrents/reannounce',
     transferInfo = '/api/v2/transfer/info',
+    version = '/api/v2/app/version',
 }
 
 export const login = (qbittorrentSettings: QBITTORRENT_SETTINGS): Promise<AxiosResponse> => {

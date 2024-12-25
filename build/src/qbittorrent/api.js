@@ -10,6 +10,18 @@ export class QbittorrentApi {
                 'Cookie': cookie,
             }
         });
+        this.version = 'v4'; // default to v4
+    }
+    async getAndSetVersion() {
+        try {
+            const response = await this.client.get(ApiEndpoints.version);
+            console.log(response.data);
+            this.version = response.data;
+            return response.data;
+        }
+        catch (e) {
+            throw new Error(`Failed to get qBittorrent version. Error: ${e}`);
+        }
     }
     async getTorrents(hashes) {
         const params = {};
@@ -72,9 +84,10 @@ export class QbittorrentApi {
     }
     async resumeTorrents(torrents) {
         const infohashes = torrents.map(torrent => torrent.hash);
+        const endpoint = this.version >= 'v5' ? ApiEndpoints.resumeTorrentsNew : ApiEndpoints.resumeTorrents;
         const payload = `hashes=${infohashes.join('|')}`;
         try {
-            await this.client.post(ApiEndpoints.resumeTorrents, payload, {
+            await this.client.post(endpoint, payload, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 }
@@ -88,8 +101,9 @@ export class QbittorrentApi {
         if (torrents.length === 0) {
             return;
         }
+        const endpoint = this.version >= 'v5' ? ApiEndpoints.pauseTorrentsNew : ApiEndpoints.pauseTorrents;
         const payload = `hashes=${torrents.map(torrent => torrent.hash).join('|')}`;
-        await this.client.post(ApiEndpoints.pauseTorrents, payload, {
+        await this.client.post(endpoint, payload, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             }
@@ -144,13 +158,16 @@ var ApiEndpoints;
     ApiEndpoints["torrentsInfo"] = "/api/v2/torrents/info";
     ApiEndpoints["torrentTrackers"] = "/api/v2/torrents/trackers";
     ApiEndpoints["resumeTorrents"] = "/api/v2/torrents/resume";
+    ApiEndpoints["resumeTorrentsNew"] = "/api/v2/torrents/start";
     ApiEndpoints["addTags"] = "/api/v2/torrents/addTags";
     ApiEndpoints["setCategory"] = "/api/v2/torrents/setCategory";
     ApiEndpoints["pauseTorrents"] = "/api/v2/torrents/pause";
+    ApiEndpoints["pauseTorrentsNew"] = "/api/v2/torrents/stop";
     ApiEndpoints["addTorrent"] = "/api/v2/torrents/add";
     ApiEndpoints["deleteTorrents"] = "/api/v2/torrents/delete";
     ApiEndpoints["reannounce"] = "/api/v2/torrents/reannounce";
     ApiEndpoints["transferInfo"] = "/api/v2/transfer/info";
+    ApiEndpoints["version"] = "/api/v2/app/version";
 })(ApiEndpoints || (ApiEndpoints = {}));
 export const login = (qbittorrentSettings) => {
     return axios.post(`${qbittorrentSettings.url}${ApiEndpoints.login}`, {

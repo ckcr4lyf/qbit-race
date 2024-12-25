@@ -15,6 +15,11 @@ export const loginV2 = async (qbittorrentSettings) => {
         logger.error(`Missing set cookie header from response!\nStatus: ${response.status}\nHeaders: ${response.headers}\nBody: ${response.data}`);
         throw new Error(`Failed to authenticate (UNKNOWN ERROR)`);
     }
-    return new QbittorrentApi(qbittorrentSettings.url, response.headers['set-cookie'][0]);
+    const api = new QbittorrentApi(qbittorrentSettings.url, response.headers['set-cookie'][0]);
+    // Need to get the version so we can choose which endpoints to use
+    // See: https://github.com/ckcr4lyf/qbit-race/issues/52
+    const version = await api.getAndSetVersion();
+    logger.info(`Detected qBitorrent version as: ${version}`);
+    return api;
 };
 //# sourceMappingURL=auth.js.map
